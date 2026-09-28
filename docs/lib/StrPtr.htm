@@ -21,20 +21,26 @@
 
   <dt>Value</dt>
   <dd>
-    <p>Type: <a href="../Concepts.htm#strings">String</a></p>
+    <p>Type: <a href="../Concepts.htm#strings">String</a>, <a href="../Concepts.htm#variable-references">VarRef</a> or <a href="StringBuffer.htm">StringBuffer</a></p>
+	<p>In a direct call, a variable, or an assignment to one such as <code>StrPtr(MyVar := "blue")</code>, is passed as the variable itself, as is <code>&amp;MyVar</code>, which an indirect call such as <code>StrPtr.Call(&amp;MyVar)</code> needs. A <a href="../Variables.htm#BuiltIn">built-in variable</a> is passed as its value, also when an <a href="_Import.htm">#Import</a> names it, and so is a variable which one module imports from another and <a href="_Import.htm#Export">passes on</a> to a third. Otherwise <em>Value</em> is a string, such as a literal, the result of an expression or a property's value.</p>
 	</dd>
 
 </dl>
 
 <h2 id="Return_Value">Return Value</h2>
-<p>Type: <a href="../Concepts.htm#numbers">Integer</a> or <a href="StringBuffer.htm">StringBuffer</a></p>
-<p>If <em>Value</em> is a variable, this function returns a StringBuffer entangled with that variable. Otherwise, it returns the address of a pinned UTF-16 copy of the string.</p>
+<p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
+<p>The address of the variable's own memory, of a StringBuffer's memory (its <a href="StringBuffer.htm#Ptr">Ptr</a>), or of a pinned copy of any other string.</p>
+
+<h2 id="Error_Handling">Error Handling</h2>
+<p>A <a href="Error.htm#TypeError">TypeError</a> is thrown if <em>Value</em> is a number or an object other than a StringBuffer or a reference, or if the variable or reference passed as <em>Value</em> holds such a value.</p>
 
 <h2 id="Remarks">Remarks</h2>
 <pre>Ptr := StrPtr(MyVar)</pre>
-<p>The returned StringBuffer can be passed directly as a pointer to <a href="DllCall.htm">DllCall</a>, <a href="NumPut.htm">NumPut</a> and similar functions. After such a call writes to it, the original variable is updated from the buffer. For new code, creating a <a href="StringBuffer.htm">StringBuffer</a> explicitly is clearer and is recommended.</p>
+<p>A variable keeps memory of its own for native code: StrPtr returns its address, and a <a href="DllCall.htm#str">Str</a> argument passes it. The first time a call or StrPtr needs the memory, it has room for 259 characters plus the null terminator (MAX_PATH), or for the variable's value if that is longer, unless <a href="VarSetStrCapacity.htm">VarSetStrCapacity</a> sized it. The memory grows, and moves to a new address, only when a longer value must fit or VarSetStrCapacity asks for more room, so the address stays the same while the variable exists and its value fits.</p>
+<p id="CopyIn">StrPtr and a Str argument copy the variable's value into the memory only when the variable holds a different string than the one last copied in or taken out. What native code wrote there therefore survives another <code>StrPtr(MyVar)</code>, and is what the next Str argument passes. Assigning the variable the very string it already holds does not count as assigning it. The most common case is <code>MyVar := ""</code> on a variable which is already empty, such as right after VarSetStrCapacity, and reassigning a literal the variable already holds counts the same way. In both cases the memory keeps what native code wrote, where AutoHotkey would overwrite it, so to discard such a write, assign a different value or call <code>VarSetStrCapacity(&amp;MyVar, 0)</code>.</p>
+<p>What native code writes there, through <a href="DllCall.htm">DllCall</a>, <a href="NumPut.htm">NumPut</a>, <a href="StrPut.htm">StrPut</a> or anything else, reaches the variable, up to the first null character, at <code><a href="VarSetStrCapacity.htm#neg1">VarSetStrCapacity</a>(&amp;MyVar, -1)</code> or when the variable is next passed as a Str or WStr argument, unless the variable was assigned a different string in the meantime. AutoHotkey shows a write which keeps the length at once, such as the one <code>DllCall("CharUpper", "Ptr", StrPtr(MyVar))</code> makes. Keysharp shows it only then, so pass the variable as Str instead, or call <code>VarSetStrCapacity(&amp;MyVar, -1)</code> afterwards. To have a function write a longer string, give the variable room first with VarSetStrCapacity.</p>
 <pre>Ptr := StrPtr("literal string")</pre>
-<p>Do not modify a literal string through the returned address. Release the pin with <a href="ObjFree.htm">ObjFree</a> when it is no longer needed; otherwise it remains allocated until script shutdown.</p>
+<p>A string which has no memory of its own is copied to pinned memory. That is the case for a literal, the result of an expression, a property's value, the value of any other object with a <code>__Value</code> property, a function's own local or static variable reached through <code>&amp;%Name%</code>, and a variable which one module imports from another and passes on to a third. What native code writes to the copy reaches nothing. The copy stays valid until <a href="ObjFree.htm">ObjFree</a> releases it; otherwise it remains allocated until the script exits. The address of a variable's own memory is not such a copy, and ObjFree does nothing to it.</p>
 
 <h2 id="Related">Related</h2>
 <p><a href="StringBuffer.htm">StringBuffer</a>, <a href="ObjFree.htm">ObjFree</a>, <a href="DllCall.htm">DllCall</a>, <a href="SendMessage.htm">SendMessage</a>, <a href="Buffer.htm">Buffer object</a>, <a href="NumPut.htm">NumPut</a>, <a href="NumGet.htm">NumGet</a></p>
