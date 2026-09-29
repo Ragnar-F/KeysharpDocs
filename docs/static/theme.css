@@ -123,11 +123,16 @@ img {
 .ks-project-links {
   border-bottom: 1px solid #ddd;
   border-top: 1px solid #ddd;
+  display: -ms-flexbox;
   display: flex;
+  -ms-flex-wrap: wrap;
   flex-wrap: wrap;
-  gap: .5em 1.5em;
   margin: 1.6em 0 1.8em;
-  padding: .9em 0;
+  padding: .65em 0;
+}
+
+.ks-project-links > * {
+  margin: .25em 1.5em .25em 0;
 }
 
 .ks-disclaimer {
