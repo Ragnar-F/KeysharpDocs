@@ -484,33 +484,65 @@ a.ks-download-btn:visited:hover {
 }
 
 .dl-grid {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-align: stretch;
   align-items: stretch;
-  display: grid;
-  gap: .8em;
-  grid-template-columns: repeat(auto-fit, minmax(9em, 1fr));
-  margin: 1.3em 0 .6em;
+  margin: 1.3em -0.4em .6em;
   max-width: 32em;
 }
 
 .dl-col {
-  display: flex;
-  flex-direction: column;
+  display: block;
+  -ms-flex: 1 1 9em; 
+  flex: 1 1 9em;
+  width: 9em;
+  max-width: 100%;
+  padding: 0 0.4em;
+  margin-bottom: 0.8em;
 }
 
 .dl-card {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -ms-flex-align: center;
   align-items: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  min-height: 1px;
   background: #fff;
   border: 2px solid #ddd6ea;
   border-radius: 10px;
   color: inherit;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: center;
   padding: 1em .7em;
   position: relative;
   text-decoration: none;
   transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+
+@supports (display: grid) {
+  .dl-grid {
+    display: grid;
+    gap: .8em;
+    grid-template-columns: repeat(auto-fit, minmax(9em, 1fr));
+    margin: 1.3em 0 .6em;
+  }
+  .dl-col {
+    max-width: none;
+    padding: 0;
+    margin-bottom: 0;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .dl-card {
+    height: auto;
+    flex: 1;
+  }
 }
 
 .dl-card,
@@ -539,6 +571,7 @@ a.ks-download-btn:visited:hover {
   height: 32px;
   margin: 0 auto .35em;
   width: 32px;
+  flex-shrink: 0;
 }
 
 .dl-os {
