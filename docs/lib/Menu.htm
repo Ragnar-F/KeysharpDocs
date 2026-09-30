@@ -165,11 +165,11 @@ MyMenuBar := MenuBar.<span class="func">Call</span>()
   <tr><td>&amp;Edit Script</td><td>6</td><td></td></tr>
   <tr><td><div class="fake-sep"></div></td><td>7</td><td></td></tr>
   <tr><td>&amp;Suspend Hotkeys</td><td>8</td><td>1</td></tr>
-  <tr><td>E&amp;xit</td><td>9</td><td>2</td></tr>
+  <tr><td>&amp;Pause Script</td><td>9</td><td>2</td></tr>
+  <tr><td>E&amp;xit</td><td>10</td><td>3</td></tr>
 </table>
-<p>There is no <code class="no-highlight">&amp;Pause Script</code> item, because <a href="Pause.htm#Remarks">pausing the whole script</a> is not supported. In AutoHotkey v2.1, the tray menu has one at position 9.</p>
-<p>Compiled scripts include only the last two by default. <code class="no-highlight">&amp;Open</code> is included only if <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is 1 when AddStandard is called (in that case, add 1 to the positions shown in the third column). If the tray menu contains standard items, <code class="no-highlight">&amp;Open</code> is inserted or removed whenever <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is changed. For other menus, <code class="no-highlight">&amp;Open</code> has no effect if <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is 0.</p>
-<p>Standard items can be modified or deleted like custom menu items. AddStandard detects existing standard items by their displayed names.</p>
+<p>Compiled scripts include only the last three by default. <code class="no-highlight">&amp;Open</code> is included only if <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is 1 when AddStandard is called (in that case, add 1 to the positions shown in the third column). If the tray menu contains standard items, <code class="no-highlight">&amp;Open</code> is inserted or removed whenever <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is changed. For other menus, <code class="no-highlight">&amp;Open</code> has no effect if <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is 0.</p>
+<p>Standard items can be modified or deleted like custom menu items. AddStandard detects existing standard items by their displayed names. If the <a href="#Add">Add</a> method is used to change the callback function associated with a standard menu item, it is no longer considered to be a standard item, so its checkmark and visibility no longer follow <a href="Suspend.htm">Suspend</a>, <a href="Pause.htm">Pause</a> or <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a>.</p>
 <p>Adding the <code class="no-highlight">&amp;Open</code> item to the tray menu causes it to become the default item if there wasn't one already.</p>
 </div>
 
