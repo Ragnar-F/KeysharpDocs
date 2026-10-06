@@ -23,7 +23,11 @@
 
 <h2 id="Linux">Linux</h2>
 
-<p>The <a href="howto/Install.htm#Linux">Linux setup script</a> installs Keysharp and two independent native components. <code class="no-highlight">keysharp-input</code> provides keyboard and mouse hooks, synthesis, blocking and idle queries through evdev/uinput. <code class="no-highlight">keysharp-desktop</code> provides window automation, capture, cursor queries and movement, monitor geometry and keyboard-map queries. These components serve both X11 and Wayland; operations also depend on the active desktop backend.</p>
+<p>On Ubuntu 24.04, Ubuntu 26.04, and derivatives using those bases, including Pop!_OS 24.04, prefer the <a href="howto/Install.htm#Linux_PPA">Launchpad PPA</a> for installation and updates. Debian, Pop!_OS 22.04, and other supported distributions use the <a href="howto/Install.htm#Linux_Release">release installer</a>. Both routes can install Keysharp and two independent native components. <code class="no-highlight">keysharp-input</code> provides keyboard and mouse hooks, synthesis, blocking and idle queries through evdev/uinput. <code class="no-highlight">keysharp-desktop</code> provides window automation, capture, cursor queries and movement, monitor geometry and keyboard-map queries. These components serve both X11 and Wayland; operations also depend on the active desktop backend.</p>
+<pre class="no-highlight">sudo apt install software-properties-common
+sudo add-apt-repository ppa:descolada/keysharp
+sudo apt update
+sudo apt install keysharp</pre>
 <p>Keysharp can run without these components, but their operations are unavailable. Input device access requires an active local logind session on seat0. Keyboard and relative-pointer hooks do not provide a complete touchpad gesture interface.</p>
 
 <table class="info">
