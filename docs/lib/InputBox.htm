@@ -17,7 +17,6 @@
 
 <pre class="Syntax">InputBoxObj := <span class="func">InputBox</span>(<span class="optional">Prompt, Title, Options, Default</span>)</pre>
 
-<p class="note"><strong>Note:</strong> On Linux and macOS, the X, Y, W, H and T options are ignored.</p>
 <h2 id="Parameters">Parameters</h2>
 <dl>
 
@@ -37,7 +36,7 @@
   <dd>
       <p>Type: <a href="../Concepts.htm#strings">String</a></p>
       <p>If blank or omitted, the input box will be centered horizontally and vertically on the screen, with a default size of about 380x200 pixels, depending on the OS version and theme. Otherwise, specify a string of one or more of the following options, each separated from the next with a space or tab:</p>
-      <p><strong>X</strong><em>n</em> and <strong>Y</strong><em>n</em>: The X and Y coordinates of the dialog. For example, <code class="no-highlight">x0 y0</code> puts the window at the upper left corner of the desktop. If either coordinate is omitted, the dialog will be centered in that dimension. Either coordinate can be negative to position the dialog partially or entirely off the desktop (or on a secondary monitor in a multi-monitor setup).</p>
+      <p><strong>X</strong><em>n</em> and <strong>Y</strong><em>n</em>: The X and Y coordinates of the dialog. For example, <code class="no-highlight">x0 y0</code> puts the window at the upper left corner of the desktop. If either coordinate is omitted, the dialog will be centered in that dimension. Either coordinate can be negative to position the dialog partially or entirely off the desktop (or on a secondary monitor in a multi-monitor setup). On Linux under Wayland, the compositor chooses the dialog's position, so X and Y do not control its placement.</p>
       <p><strong>W</strong><em>n</em> and <strong>H</strong><em>n</em>: The width and height of the dialog's client area, which excludes the title bar and borders. For example, <code class="no-highlight">w200 h100</code>.</p>
       <p><strong>T</strong><em>n</em>: Specifies the timeout in seconds. For example, <code class="no-highlight">T10.0</code> is ten seconds. If this value exceeds 2147483 (24.8 days), it will be set to 2147483. After the timeout has elapsed, the input box will be automatically closed and <a href="#return">InputBoxObj.Result</a> will be set to the word Timeout. <a href="#return">InputBoxObj.Value</a> will still contain what the user entered.</p>
       <p><strong>Password:</strong> Hides the user's input (such as for password entry) by substituting masking characters for what the user types. If a non-default masking character is desired, include it immediately after the word Password. For example, <code class="no-highlight">Password*</code> would make the masking character an asterisk rather than the black circle (bullet).</p>
@@ -62,7 +61,7 @@
 <h2 id="Remarks">Remarks</h2>
 <p>An input box usually looks like this:</p>
 <img src="../static/dlg_input.png" alt="InputBox" />
-<p>The dialog allows the user to enter text and then press OK or CANCEL. The user can resize the dialog window by dragging its borders.</p>
+<p>The dialog allows the user to enter text and then press OK or CANCEL. On Windows, the user can resize the dialog window by dragging its borders; on Linux and macOS, it has a fixed size.</p>
 <p>A GUI window may display a modal input box by means of <a href="Gui.htm#OwnDialogs">OwnDialogs option</a>. A modal input box prevents the user from interacting with the GUI window until the input box is dismissed.</p>
 <h2 id="Related">Related</h2>
 <p><a href="Gui.htm">Gui object</a>, <a href="MsgBox.htm">MsgBox</a>, <a href="FileSelect.htm">FileSelect</a>, <a href="DirSelect.htm">DirSelect</a>, <a href="ToolTip.htm">ToolTip</a>, <a href="InputHook.htm">InputHook</a></p>

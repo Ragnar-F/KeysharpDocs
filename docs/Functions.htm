@@ -95,6 +95,7 @@ Swap(&amp;Left, &amp;Right)
     %Right% := temp
 }</pre>
 <p>Since <a href="lib/Return.htm">return</a> can send back only one value to a function's caller, VarRefs can be used to send back extra results. This is achieved by having the caller pass in a reference to a variable (usually empty) in which the function stores a value.</p>
+<p id="VarRefName">Each VarRef has a read-only <code>Name</code> property containing the referenced variable or property name when one is available.</p>
 <p>A one-parameter fat arrow function can omit the parentheses around a ByRef parameter: <code class="no-highlight">double := &amp;n =&gt; n *= 2</code>.</p>
 <p>When passing large strings to a function, <em>ByRef</em> enhances performance and conserves memory by avoiding the need to make a copy of the string. Similarly, using <em>ByRef</em> to send a long string back to the caller usually performs better than something like <code>Return HugeString</code>. However, what the function receives is not a reference to the string, but a reference to the <em>variable</em>. Future improvements might supersede the use of ByRef for these purposes.</p>
 <p>Known limitations:</p>

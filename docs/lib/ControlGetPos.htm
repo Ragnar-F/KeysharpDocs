@@ -22,19 +22,20 @@
   <dt>&amp;OutX, &amp;OutY</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#variable-references">VarRef</a></p>
-    <p>If omitted, the corresponding value will not be stored. Otherwise, specify references to the output variables in which to store the X and Y coordinates (in pixels) of the control's upper left corner. These coordinates are relative to the upper-left corner of the target window's client area (which is the area not including title bar, menu bar, and borders) and thus are the same as those used by <a href="ControlMove.htm">ControlMove</a>.</p>
+    <p>If omitted, the corresponding value will not be stored. Otherwise, specify references to the output variables in which to store the Integer X and Y coordinates (in pixels) of the control's upper left corner. These coordinates are relative to the upper-left corner of the target window's client area (which is the area not including title bar, menu bar, and borders) and thus are the same as those used by <a href="ControlMove.htm">ControlMove</a>.</p>
+    <p>Controls inside nested containers use the same target-window origin. If <em>ControlID</em> is a HWND or an object with a Hwnd property, the window criteria are ignored and the containing top-level window supplies the client-area origin. A top-level window uses its own client-area origin.</p>
   </dd>
 
   <dt>&amp;OutWidth, &amp;OutHeight</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#variable-references">VarRef</a></p>
-    <p>If omitted, the corresponding value will not be stored. Otherwise, specify references to the output variables in which to store the control's width and height (in pixels).</p>
+    <p>If omitted, the corresponding value will not be stored. Otherwise, specify references to the output variables in which to store the control's Integer width and height (in pixels).</p>
   </dd>
 
   <dt>ControlID</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#strings">String</a>, <a href="../Concepts.htm#numbers">Integer</a> or <a href="../Concepts.htm#objects">Object</a></p>
-    <p>The control's ClassNN, text or HWND, or an object with a Hwnd property. For details, see <a href="../misc/ControlID.htm">Control Identifiers</a>. This parameter is required; that is, it cannot be omitted.</p>
+    <p>The control's ClassNN, text or HWND, or an object with a Hwnd property. For details, see <a href="../misc/ControlID.htm">Control Identifiers</a>. If omitted, the target window itself is used. A child target's position is reported relative to its containing top-level window's client area. A top-level target uses its own client area, so a window with a frame can have negative X and Y coordinates.</p>
   </dd>
 
   <dt>WinTitle, WinText, ExcludeTitle, ExcludeText</dt>
@@ -53,6 +54,10 @@
 <h2 id="Remarks">Remarks</h2>
 <p>This function is intended for use with controls in a non-GUI window, i.e. a window that is not created with the <a href="Gui.htm#Call">Gui</a> function. It works best with common or predefined Microsoft controls; some applications use custom or modified controls, in which case the function might not work as expected. For <a href="GuiControls.htm">GUI controls</a>, it is usually more convenient to use <a href="GuiControl.htm#GetPos">GuiControl.GetPos</a>.</p>
 <p>Unlike functions that change a control, ControlGetPos does not have an automatic delay (<a href="SetControlDelay.htm">SetControlDelay</a> does not affect it).</p>
+<h3 id="Linux">Linux</h3>
+<p>Position queries are supported for the script's own toolkit controls. Controls in foreign applications are not supported.</p>
+<h3 id="macOS">macOS</h3>
+<p>Position queries are supported for the script's own toolkit controls. These coordinate changes await macOS runtime verification.</p>
 
 <h2 id="Related">Related</h2>
 <p><a href="ControlMove.htm">ControlMove</a>, <a href="WinGetPos.htm">WinGetPos</a>, <a href="GuiControl.htm#GetPos">GuiControl.GetPos</a>, <a href="Control.htm">Control functions</a></p>

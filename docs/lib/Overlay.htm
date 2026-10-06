@@ -47,13 +47,14 @@ Surface.Present()</pre>
 <pre class="Syntax">Surface.<span class="func">OnEvent</span>(EventName, Callback <span class="optional">, AddRemove := 1</span>)</pre>
 <p>Registers a mouse-event callback in the style of <a href="GuiOnEvent.htm">Gui.OnEvent</a>. <em>EventName</em> is <code class="no-highlight">Click</code>, <code class="no-highlight">DoubleClick</code>, <code class="no-highlight">ContextMenu</code> or <code class="no-highlight">MouseMove</code>. The callback receives <code class="no-highlight">(Surface, X, Y)</code> in overlay-local native units. <em>AddRemove</em> 1 appends, -1 prepends and 0 unregisters the callback.</p>
 <p>An event's callbacks are called in order; a callback's return value or error can prevent the remaining callbacks from being called, as described for <a href="GuiOnEvent.htm#Callback_Return_Value">Gui.OnEvent</a>.</p>
+<p>While a MouseMove event waits for its callbacks to be called, further movement does not queue more events but updates the position that event reports, so the callbacks receive the latest position.</p>
 <p>Each registration runs on the <a href="RealThread.htm">RealThread</a> which made it and keeps that thread running until the thread ends or <code>Destroy</code> is called; <em>AddRemove</em> 0 removes only the current thread's registration. Set <code>ClickThrough := false</code> to receive pointer events.</p>
 
 <h2 id="Presentation">Presentation</h2>
 <dl>
   <dt><code>Show([X, Y, Width, Height])</code></dt><dd><p>Shows the surface, optionally changing its geometry.</p></dd>
   <dt><code>Move([X, Y, Width, Height])</code></dt><dd><p>Moves or resizes the surface.</p></dd>
-  <dt><code>Hide()</code></dt><dd><p>Hides the surface.</p></dd>
+  <dt><code>Hide()</code></dt><dd><p>Hides the surface and keeps its canvas. On Windows, Linux/X11 and macOS, the runtime retains the window and <code>Hwnd</code> for reuse. Wayland layer-shell surfaces and compositor overlays are created again by the next <code>Show</code>.</p></dd>
   <dt><code>Destroy()</code></dt><dd><p>Destroys the native surface and invalidates its canvas.</p></dd>
 </dl>
 
@@ -62,16 +63,17 @@ Surface.Present()</pre>
   <tr><th>Property</th><th>Description</th></tr>
   <tr><td><code>Canvas</code></td><td>The borrowed drawing Image. Reading it creates the canvas, so the overlay must already have a size.</td></tr>
   <tr><td><code>X</code>, <code>Y</code></td><td>Get or set the native screen position.</td></tr>
-  <tr><td><code>Width</code>, <code>Height</code></td><td>Get or set the display rectangle without discarding the canvas. Set either to 0 to use the canvas dimension.</td></tr>
+  <tr><td><code>Width</code>, <code>Height</code></td><td>Get or set the display rectangle without discarding the canvas, which is scaled to fit. Set either to 0 to use the canvas dimension. Use <code>Redraw</code> to change the canvas's own size.</td></tr>
   <tr><td><code>Opacity</code></td><td>Gets or sets opacity, clamped to 0 through 255.</td></tr>
   <tr><td><code>ClickThrough</code></td><td>Gets or sets whether pointer input passes through the surface.</td></tr>
   <tr><td><code>IsVisible</code></td><td>Whether the overlay is currently on screen. This property is read-only; use <code>Show</code> and <code>Hide</code> to change it.</td></tr>
-  <tr><td><code>Hwnd</code></td><td>The native surface handle or identifier, or 0 when the backing has none.</td></tr>
+  <tr><td><code>Hwnd</code></td><td>The native surface handle or identifier, or 0 when the backing has none. <code>Hide</code> and <code>Show</code> leave it unchanged, except for a Wayland layer-shell surface.</td></tr>
 </table>
 
 <h2 id="Remarks">Remarks</h2>
 <h3 id="Linux">Linux</h3>
 <p><strong>Wayland:</strong> On GNOME and Cinnamon, an overlay whose <code>ClickThrough</code> is false is shown as an ordinary window; on Cinnamon, it appears in the window list.</p>
+<p>Moving or resizing a visible layer-shell overlay preserves its canvas and scales it to the new rectangle, including across displays with different scales. Live compositor and mixed-DPI hardware verification remains outstanding.</p>
 
 <h2 id="Examples">Examples</h2>
 <pre>#Import "Ks" { Overlay }

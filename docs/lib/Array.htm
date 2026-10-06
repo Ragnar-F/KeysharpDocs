@@ -273,13 +273,13 @@ arr2 := arr.Map((x, i) =&gt; x * i)   <em>; [10, 40, 90]</em></pre>
 <div class="methodShort" id="Sort"><h3>Sort</h3>
 <p>Sorts the Array in place and returns the Array.</p>
 <pre class="Syntax">ArrayObj.<span class="func">Sort</span>(Callback)</pre>
-<p>The callback receives two values and should return a negative number when the first belongs before the second, zero when equal, or a positive number otherwise.</p>
+<p>The callback receives two values and should return a negative integer when the first belongs before the second, zero when equal, or a positive integer otherwise. A decimal portion is ignored, as with <a href="Sort.htm#callback">Sort callbacks</a>, and equal elements keep their order. An error which the callback raises ends the sort and reaches the script.</p>
 </div>
 
 <div class="methodShort" id="ToString"><h3>ToString</h3>
 <p>Returns a string representation of the array.</p>
 <pre class="Syntax">Text := ArrayObj.<span class="func">ToString</span>()</pre>
-<p>The result encloses the elements in square brackets and separates them with a comma and space. String elements are enclosed in double quotes, and elements without a value are represented by <code>unset</code>. <code>String(ArrayObj)</code> returns the same result.</p>
+<p>Returns elements separated by a comma and space in square brackets. Strings are double-quoted; valueless elements appear as <code>unset</code>. Objects use their <code>ToString</code> result, otherwise their type name. A failing <code>ToString</code> becomes <code>&lt;ERROR&gt;</code> without propagating its error; recursive array references become <code>[...]</code>. <code>String(ArrayObj)</code> returns the same result.</p>
 </div>
 
 <div class="methodShort" id="__New"><h3>__New</h3>

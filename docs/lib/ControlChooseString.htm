@@ -17,6 +17,7 @@
 <p>Selects an entry in a list box, combo box, or drop-down list, or a tab control page, by string.</p>
 
 <pre class="Syntax">Index := <span class="func">ControlChooseString</span>(String, ControlID <span class="optional">, WinTitle, WinText, ExcludeTitle, ExcludeText</span>)</pre>
+<p class="note"><strong>Note:</strong> On Linux and macOS, this function operates only on the script's own controls. Another program's control raises a <a href="Error.htm#TargetError">TargetError</a>.</p>
 
 <h2 id="Parameters">Parameters</h2>
 <dl>
@@ -46,7 +47,7 @@
 
 <h2 id="Error_Handling">Error Handling</h2>
 <p>A <a href="Error.htm#TargetError">TargetError</a> is thrown if the window or control could not be found, or if the control's class name does not contain "Combo" or "List".</p>
-<p>An <a href="Error.htm">Error</a> or <a href="Error.htm#OSError">OSError</a> is thrown if the change could not be applied.</p>
+<p>An <a href="Error.htm">Error</a> or <a href="Error.htm#OSError">OSError</a> is thrown if the change could not be applied. On Linux and macOS, a missing entry raises a <a href="Error.htm#TargetError">TargetError</a>, and Tab controls are not supported by this function; use <a href="GuiControl.htm#Choose">GuiControl.Choose</a>.</p>
 
 <h2 id="Remarks">Remarks</h2>
 <p>This function is intended for use with controls in a non-GUI window, i.e. a window that is not created with the <a href="Gui.htm#Call">Gui</a> function. It works best with common or predefined Microsoft controls; some applications use custom or modified controls, in which case the function might not work as expected. For <a href="GuiControls.htm">GUI controls</a>, it is usually more convenient to use <a href="GuiControl.htm#Choose">GuiControl.Choose</a>.</p>

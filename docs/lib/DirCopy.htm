@@ -41,7 +41,7 @@
       <p>If omitted, it defaults to 0. Otherwise, specify one of the following numbers to indicate whether to overwrite files if they already exist:</p>
       <p><strong>0:</strong> Do not overwrite existing files. The operation will fail and have no effect if <em>Dest</em> already exists as a file or directory.</p>
       <p><strong>1:</strong> Overwrite existing files.</p>
-      <p>Other values are reserved for future use.</p>
+      <p>Other values are converted to Boolean as in an <a href="If.htm">if</a> expression.</p>
   </dd>
 
 </dl>
@@ -52,6 +52,7 @@
 
 <h2 id="Remarks">Remarks</h2>
 <p>If the destination directory structure doesn't exist it will be created if possible.</p>
+<p>On Linux and macOS, symbolic-link entries inside the source are copied as links, preserving their stored target paths. Their targets are not traversed. Merging into a symbolic-link entry in the destination raises an <a href="Error.htm#OSError">OSError</a>.</p>
 <p>Since the operation will recursively copy a folder along with all its subfolders and files, the result of copying a folder to a destination somewhere inside itself is undefined. To work around this, first copy it to a destination outside itself, then use <a href="DirMove.htm">DirMove</a> to move that copy to the desired location.</p>
 <p>DirCopy copies a single folder. To instead copy the contents of a folder (all its files and subfolders), see the examples section of <a href="FileCopy.htm">FileCopy</a>.</p>
 <h2 id="Related">Related</h2>

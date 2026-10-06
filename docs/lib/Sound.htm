@@ -27,6 +27,8 @@
   <li><a href="SoundPlay.htm">SoundPlay</a></li>
 </ul>
 
+<p>On Linux, master controls require a reachable PulseAudio or pipewire-pulse server. See <a href="Audio.htm#PlatformLinux">Audio platform support</a>.</p>
+
 <h2 id="devices">Endpoint Devices</h2>
 <p>The "devices" referenced by the SoundGet and SoundSet functions are <em>audio endpoint devices</em>. A single device driver or physical device often has multiple endpoints, such as for different types of output or input. For example:</p>
 <table class="info">
@@ -40,7 +42,7 @@
 <p id="mmsys">Devices are listed in the Sound control panel, which can be opened by running <code class="no-highlight">mmsys.cpl</code> from the command line, or via the Run dialog (<kbd>Win</kbd>+<kbd>R</kbd>) or the <a href="Run.htm">Run</a> function. By default, the control panel only lists devices that are enabled and plugged in (if applicable), but this can be changed via the right-click menu. AutoHotkey detects devices which are not plugged in, but does not detect disabled devices.</p>
 
 <h2 id="components">Components</h2>
-<p>Components are as shown on the Levels tab of the sound device's properties dialog.</p>
+<p>On Windows, components are as shown on the Levels tab of the sound device's properties dialog.</p>
 <img src="../static/sound_levels.png" alt="Levels" />
 <p>In this example, the master controls are at the top, followed by the first four components: Microphone, FrontMic, Line In, and Side. All have volume and mute controls, except the fourth component, which only has volume.</p>
 <p>A sound device's properties dialog can be opened via the <a href="#mmsys">Sound control panel</a>.</p>
@@ -67,6 +69,7 @@
     </ul>
     <p>If only an index is specified, the display names are ignored. For example, <code>1</code>, <code>"1"</code> and <code>":1"</code> use the first component regardless of name, whereas <code>""</code> uses the master controls.</p>
     <p>If the sound device lacks the specified <em>Component</em>, a <a href="Error.htm#TargetError">TargetError</a> is thrown.</p>
+    <p>On Linux and macOS, only the master controls are available. Leave <em>Component</em> blank or omitted; any non-blank component raises a TargetError.</p>
   </dd>
 
   <dt id="device">Device</dt>

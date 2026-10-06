@@ -46,7 +46,9 @@
 </dl>
 
 <h2 id="Visibility">What the script can see</h2>
-<p>At module scope, a <code class="no-highlight">public static</code> method becomes a script function within its declaring module, while public static fields and properties enter the module's variable store. Anything that is not <code class="no-highlight">public</code> is a C# helper which the script cannot call. A module-scope <code class="no-highlight">public</code> method which is not <code class="no-highlight">static</code> is rejected because a module has no instance.</p>
+<p>At module scope, a <code class="no-highlight">public static</code> method becomes a script function within its declaring module, while public static fields and properties enter the module's variable store. Anything that is not <code class="no-highlight">public</code> is a C# helper which the script cannot call. A module-scope <code class="no-highlight">public</code> method which is not <code class="no-highlight">static</code> is rejected because module imports expose static members.</p>
+<p>Public static fields and properties can be named directly, dynamically or through an explicit import from their module. Imported aliases retain the original member's conversion, wrapping and public accessor rules. Inline C# can also read and write imported script variables by the alias name in lowercase.</p>
+<p><code class="no-highlight">[UserDeclaredName("Name")]</code> supplies a public member's script name for direct access, dynamic access and imports. C# continues to use the declared member name. Renamed fields, properties, functions and types retain the original storage or identity, including through chained imports. The name can be a C# constant expression, including a <code class="no-highlight">const</code> value or <code class="no-highlight">nameof</code>. Using aliases can name the attribute, and constants can come from a referenced <a href="_Package.htm">package</a>.</p>
 <p>An explicit <code class="no-highlight">{ Name }</code> import can request any public static module method. Add <code class="no-highlight">[Export]</code> to include one in wildcard imports. The attribute is valid only on public static methods at module scope.</p>
 <p>In a class-body block, public methods and public property accessors are script-visible. A private or protected accessor remains a C# helper, and an <code class="no-highlight">init</code> accessor is read-only after construction. A field is never script-visible, but it may hold C#-side state shared by that class's blocks.</p>
 
@@ -185,6 +187,7 @@ try
     Boom(5)
 catch IndexError
     MsgBox "caught"</pre>
+<p>The error is reported as if raised by a built-in function named after the member, and its <a href="Error.htm#Message">Message</a> names the exception, as in <em>Boom threw IndexOutOfRangeException: Index was outside the bounds of the array.</em></p>
 
 <h2 id="Performance">Performance</h2>
 <p>A call into inline C# costs as much as any other function call; only the body runs faster. Put the whole loop inside the C#: a million calls into a one-line helper is slower than staying in script code.</p>

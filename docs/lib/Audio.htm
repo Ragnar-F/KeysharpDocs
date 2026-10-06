@@ -45,7 +45,7 @@
 <p>These hold for every member on this page.</p>
 <table class="info">
   <tr><th style="width:12em">Subject</th><th abbr="Descr">Rule</th></tr>
-  <tr id="Levels"><td>Levels</td><td>Volume and peak are finite numbers from 0 through 100. Pan is finite, from -100 (full left) through 100 (full right).</td></tr>
+  <tr id="Levels"><td>Levels</td><td>Volume and peak are finite numbers from 0 through 100. Playback and session volume are linear gains: 50 halves the signal amplitude. Endpoint volume follows the system mixer's scale. Pan is finite, from -100 (full left) through 100 (full right).</td></tr>
   <tr><td>Times</td><td>Durations and positions are milliseconds and may be fractional.</td></tr>
   <tr><td>Absence</td><td>A value which is not yet known, does not apply, or has no default reads as an empty string. Enumerations return an empty <a href="Array.htm">Array</a> and counts return 0 instead.</td></tr>
   <tr><td>Tokens and names</td><td>Every documented string token, device name and executable name is matched without case sensitivity, and getters return the canonical casing shown here. An opaque <code>Id</code> is compared exactly.</td></tr>
@@ -242,6 +242,7 @@ Hooks := Audio.<span class="func">Hooks</span></pre>
 <h2 id="Session">Audio.Session</h2>
 <pre class="NoIndent">class Audio.Session extends Object</pre>
 <p>One application's audio on one device. Sessions are produced by <a href="#Sessions">Audio.Sessions</a>; calling <code class="no-highlight">Audio.Session()</code> throws an Error.</p>
+<p>On Linux, retitling a live audio stream keeps its session identity. This correction is source-reviewed and awaits Linux verification.</p>
 <p>A session object is bound to that exact session; a later session of the same application needs a new object from <a href="#Sessions">Audio.Sessions</a>.</p>
 <table class="info">
   <tr><th style="width:18em">Member</th><th abbr="Descr">Description</th></tr>
@@ -333,9 +334,11 @@ Hooks := Audio.<span class="func">Hooks</span></pre>
 
 <h3 id="PlatformLinux">Linux</h3>
 <p>Works on X11 and Wayland alike, and requires a reachable PulseAudio or pipewire-pulse server. An application's process name and display name are available only when it publishes them.</p>
+<p><a href="#Device">Audio.Device.Volume</a> uses the system mixer's slider percentage, so 50 means 50% in the mixer. Endpoint and session volume writes preserve channel balance; readings above 100 are clamped to 100. Session volume retains the linear-gain scale described <a href="#Levels">above</a>.</p>
 <p class="note"><strong>Note:</strong> A recording can include about 100 ms of audio buffered before it started, and a capture opened immediately after another on the same source can lose a similar amount. Use <code>DurationMilliseconds</code> for a recording's length, and leave a short gap between back-to-back captures.</p>
 
 <h3 id="PlatformMacOS">macOS</h3>
+<p>Device volume and mute use the selected input or output direction. If the device only exposes channel controls, writes cover every channel. This channel fallback is unverified on hardware.</p>
 <p><a href="#Sessions">Audio.Sessions</a> returns an empty Array, and <a href="#SetApplicationVolume">SetApplicationVolume</a> and <a href="#SetApplicationMute">SetApplicationMute</a> throw an OSError. Use <a href="#Device">Audio.Device.Volume</a> and <code>Mute</code> instead.</p>
 <p><a href="#Meter">Audio.Meter.Start</a> throws an OSError. <a href="#Output">Audio.Output.Peak</a>, <a href="#Playback">Audio.Playback.Peak</a> and <a href="#Recorder">Audio.Recorder.Peak</a> are supported.</p>
 <p>To record system output, install a loopback device such as BlackHole and record it as an input device.</p>

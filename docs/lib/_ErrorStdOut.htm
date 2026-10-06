@@ -20,6 +20,7 @@
 <h2 id="Remarks">Remarks</h2>
 <p>If this directive is unspecified in the script, load-time and uncaught runtime errors are normally displayed in a dialog.</p>
 <p>Errors are written to stderr instead of stdout. The command prompt and fancy editors usually display both.</p>
+<p>An uncaught runtime error is written as <code class="no-highlight"><i>File</i> (<i>Line</i>) : ==&gt; <i>Message</i></code>, followed by a line reading <code class="no-highlight">     Specifically: <i>Extra</i></code> when the error's <a href="Error.htm#Extra">Extra</a> is not empty.</p>
 <p>This allows editors such as TextPad, SciTE, Crimson, and EditPlus to jump to the offending line when a syntax error occurs. The <a href="../Scripts.htm#cmd">/ErrorStdOut command-line switch</a> can be configured in an editor to route load-time errors for every script, but it does not route uncaught runtime errors; use the directive when both are needed.</p>
 <p>Because AutoHotkey is not a console program, errors will not appear at the command prompt directly. This can be worked around by 1) compiling the script with the <a href="_App.htm#ConsoleApp">#App ConsoleApp key</a>, or 2) capturing the script's output via piping or redirection. For example:</p>
 <pre class="no-highlight">"C:\Program Files\AutoHotkey\AutoHotkey.exe" /ErrorStdOut "My Script.ahk" <strong>2&gt;&amp;1 |more</strong>

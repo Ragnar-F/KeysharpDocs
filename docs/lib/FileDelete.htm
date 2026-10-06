@@ -39,7 +39,7 @@
 
 <h2 id="Error_Handling">Error Handling</h2>
 <p>An <a href="Error.htm">Error</a> is thrown if any files failed to be deleted, with its <a href="Error.htm#Extra">Extra</a> property set to the number of failures. Deleting a wildcard pattern such as <code>"*.tmp"</code> is considered a success even if it does not match any files.</p>
-<p>If files were found, <a href="../Variables.htm#LastError">A_LastError</a> is set to 0 (zero) or the result of the operating system's GetLastError() function immediately after the last failure. Otherwise A_LastError contains an error code that might indicate why no files were found.</p>
+<p><a href="../Variables.htm#LastError">A_LastError</a> is not set by this function.</p>
 
 <h2 id="Remarks">Remarks</h2>
 <p>To send a file to the recycle bin, use the <a href="FileRecycle.htm">FileRecycle</a> function.</p>

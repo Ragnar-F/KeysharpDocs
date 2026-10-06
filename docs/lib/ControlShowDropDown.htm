@@ -17,6 +17,7 @@
 <p>Shows the popup list of a combo box or drop-down list.</p>
 
 <pre class="Syntax"><span class="func">ControlShowDropDown</span> ControlID <span class="optional">, WinTitle, WinText, ExcludeTitle, ExcludeText</span></pre>
+<p class="note"><strong>Note:</strong> On Linux, this function operates only on the script's own ComboBox and DropDownList controls. On macOS, showing or hiding their popup list raises an <a href="Error.htm#UnsupportedError">UnsupportedError</a>.</p>
 
 <h2 id="Parameters">Parameters</h2>
 <dl>
@@ -35,7 +36,7 @@
 </dl>
 
 <h2 id="Error_Handling">Error Handling</h2>
-<p>A <a href="Error.htm#TargetError">TargetError</a> is thrown if the window or control could not be found.</p>
+<p>A <a href="Error.htm#TargetError">TargetError</a> is thrown if the window or control could not be found. On Linux and macOS, this also applies to another program's control or a control which is not a ComboBox or DropDownList.</p>
 <p>An <a href="Error.htm#OSError">OSError</a> is thrown if a message could not be sent to the control.</p>
 
 <h2 id="Remarks">Remarks</h2>

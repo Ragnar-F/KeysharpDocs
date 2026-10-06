@@ -24,7 +24,7 @@
     <p>A value to throw; typically an <a href="Error.htm">Error</a> object. For example:</p>
       <pre>throw ValueError("Parameter #1 invalid", -1, theBadParam)</pre>
       <p>Values of all kinds can be thrown, but if <a href="Catch.htm">Catch</a> is used without specifying a class (or <a href="Try.htm">Try</a> is used without <a href="Catch.htm">Catch</a> or <a href="Finally.htm">Finally</a>), it will only catch instances of the <a href="Error.htm">Error</a> class.</p>
-      <p>In Keysharp, a value which is not an Error object is thrown as <code>Error(Value)</code>. If the value has a <em>Message</em> property, that property supplies the Error's message. <a href="Catch.htm">Catch</a> and <a href="OnError.htm">OnError</a> receive that Error object rather than the value, and a Catch without a class catches it.</p>
+      <p>If a value which is not an Error object is not caught, <a href="OnError.htm">OnError</a> callbacks receive <code>Error(Value)</code> in its place.</p>
       <p>While execution is within a <a href="Catch.htm">Catch</a>, <em>Value</em> can be omitted to re-throw the caught value (avoiding the need to specify an output variable just for that purpose). This is supported even within a nested <em>Try-Finally</em>, but not within a nested <em>Try-Catch</em>. The line with <code>throw</code> does not need to be physically contained by the <em>Catch</em> statement's body; it can be used by a called function.</p>
   </dd>
 

@@ -26,7 +26,7 @@
     <p>A version requirement begins with <code>Keysharp</code> or <code>AutoHotkey</code>. Use <code>Keysharp</code> to require a runtime version, or <code>AutoHotkey</code> to require the implemented language-compatibility version. An unrecognized product name causes an error and the program exits.</p>
     <p>The product name may be followed by any combination of the following, separated by spaces or tabs:</p>
     <ul>
-      <li>An optional letter "v" followed by a version number. <a href="../Variables.htm#AhkVersion">A_AhkVersion</a> is required to be greater than or equal to this version, but less than the next major version.</li>
+      <li>An optional letter "v" followed by a version number. <a href="../Variables.htm#AhkVersion">A_AhkVersion</a>, or for <code>Keysharp</code> <a href="../Variables.htm#A_KsVersion">A_KsVersion</a>, is required to be greater than or equal to this version, but less than the next major version.</li>
       <li>One of <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code> or <code>=</code> immediately followed by an optional letter "v" and a version number. For example, <code class="no-highlight">&gt;=2-rc &lt;2</code> allows v2 release candidates but not the final release.</li>
       <li>One of the following words to restrict the type of executable (EXE) which can run the script: "32-bit", "64-bit".</li>
     </ul>
@@ -45,7 +45,7 @@
 Error: This line does not contain a recognized action.</pre>
 
 <h2 id="CompatMode">Compatibility Mode <span class="ver">[v2.1-alpha.28+]</span></h2>
-<p>Specifying one or more version requirements also sets the compatibility mode for the script. v2.0-compatible mode is enabled if version "2.0.x" would meet the requirements, otherwise it is disabled. If the directive is not used, v2.0 mode is used by default. Using the directive without a version requirement does not affect the mode.</p>
+<p>Specifying one or more version requirements also sets the compatibility mode for the script. v2.0-compatible mode is enabled if version "2.0.x" would meet the requirements, otherwise it is disabled. A <code>Keysharp</code> requirement disables it, whatever version it names. If the directive is not used, v2.0 mode is used by default. Using the directive without a version requirement does not affect the mode.</p>
 <p>The first version directive used within a module sets the runtime mode for all startup code in that module across all files.</p>
 <p><a href="_Module.htm">#Module</a> sets the default mode of the new module to that of the __Init module.</p>
 <p>Version directives may be used throughout the code to set the runtime mode for any subsequent function definitions. Using the directive inside a function only affects nested functions; the mode reverts at the end of the function. This allows a v2.0 function to be placed inside a v2.1 function.</p>

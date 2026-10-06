@@ -33,7 +33,7 @@
       <p>Otherwise, specify a string of one or more of the following options (in any order, with optional spaces in between):</p>
       <p><strong>D:</strong> Wait for the key to be pushed down.</p>
       <p><strong>L:</strong> Check the logical state of the key, which is the state that the OS and the active window believe the key to be in (not necessarily the same as the physical state). This option is ignored for controller buttons.</p>
-      <p><strong>T:</strong> Timeout (e.g. <code class="no-highlight">T3</code>). The number of seconds to wait before timing out and returning 0. If the key or button achieves the specified state, the function will not wait for the timeout to expire. Instead, it will immediately return 1. The timeout value can be a floating point number such as 2.5, but it should not be a hexadecimal value such as 0x03.</p>
+      <p><strong>T:</strong> Timeout (e.g. <code class="no-highlight">T3</code>). The number of seconds to wait before timing out and returning 0. If the key or button achieves the specified state, the function will not wait for the timeout to expire. Instead, it will immediately return 1. The timeout value can be a floating point number such as 2.5, but it should not be a hexadecimal value such as 0x03. A T option without a number uses 0; a negative timeout raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
   </dd>
 
 </dl>

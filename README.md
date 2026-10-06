@@ -9,7 +9,7 @@ KeysharpDocs is the reference documentation for
 implementation of the AutoHotkey v2 language.
 
 > **Status:** Keysharp is under active development and is being brought up to
-> AutoHotkey v2.1-alpha.32 compatibility. Windows currently has the broadest
+> AutoHotkey v2.1-alpha.33 compatibility. Windows currently has the broadest
 > compatibility; Linux and macOS support continues to improve. Some inherited
 > reference pages can describe functionality which has not yet been verified
 > on every Keysharp platform.

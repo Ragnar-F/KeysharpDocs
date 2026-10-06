@@ -17,6 +17,7 @@
 <p>Returns the selected text in an edit control.</p>
 
 <pre class="Syntax">SelectedText := <span class="func">EditGetSelectedText</span>(ControlID <span class="optional">, WinTitle, WinText, ExcludeTitle, ExcludeText</span>)</pre>
+<p class="note"><strong>Note:</strong> On Linux and macOS, this function operates only on the script's own single-line, multi-line and password Edit controls. Another program's control or a control of the wrong type raises a <a href="Error.htm#TargetError">TargetError</a>.</p>
 
 <h2 id="Parameters">Parameters</h2>
 <dl>

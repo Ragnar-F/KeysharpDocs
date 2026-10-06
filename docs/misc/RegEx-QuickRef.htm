@@ -69,15 +69,11 @@
   </tr>
   <tr id="opt_extra">
     <td class="center bold">X</td>
-    <td>PCRE_EXTRA. Enables PCRE features that are incompatible with Perl. Currently, the only such feature is that any backslash in a pattern that is followed by a letter that has no special meaning causes an exception to be thrown. This option helps reserve unused backslash sequences for future use. Without this option, a backslash followed by a letter with no special meaning is treated as a literal (e.g. \g and g are both recognized as a literal g). Regardless of this option, non-alphabetic backslash sequences that have no special meaning are always treated as literals (e.g. \/ and / are both recognized as forward-slash).</td>
+    <td>PCRE_EXTRA. Enables PCRE features that are incompatible with Perl. Currently, the only such feature is that any backslash in a pattern that is followed by a letter that has no special meaning causes an exception to be thrown. This option helps reserve unused backslash sequences for future use. Without this option, a backslash followed by a letter with no special meaning is treated as a literal (e.g. \g and g are both recognized as a literal g). Regardless of this option, non-alphabetic backslash sequences that have no special meaning are always treated as literals (e.g. \/ and / are both recognized as forward-slash). In Keysharp, which uses PCRE2, a backslash followed by a letter with no special meaning always causes an exception, with or without this option.</td>
   </tr>
   <tr id="Study">
     <td class="center bold">S</td>
-    <td>Same as <strong>s</strong> (DotAll).</td>
-  </tr>
-  <tr id="opt_u">
-    <td class="center bold">u</td>
-    <td>Disables the PCRE2 auto-possess, start and dot-star-anchor optimizations. This can be useful with callouts because those optimizations can otherwise prevent some callouts from occurring.</td>
+    <td>Studies the pattern to try improve its performance. This is useful when a particular pattern (especially a complex one) will be executed many times. If PCRE finds a way to improve performance, that discovery is stored alongside the pattern in the cache for use by subsequent executions of the same pattern (subsequent uses of that pattern should also specify the S option because finding a match in the cache requires that the option letters exactly match, including their order). In Keysharp, every pattern is compiled for speed, so S has no further effect.</td>
   </tr>
   <tr id="opt_Callout">
     <td class="center bold">C</td>
@@ -100,6 +96,8 @@
   </tr>
 </table>
 <p class="note"><strong>Note:</strong> Spaces and tabs may optionally be used to separate each option from the next.</p>
+
+<p id="opt_u">To disable optimizations which can prevent <a href="RegExCallout.htm">callouts</a>, prefix the pattern with <code class="no-highlight">(*NO_AUTO_POSSESS)(*NO_START_OPT)(*NO_DOTSTAR_ANCHOR)</code>. Lowercase <code>u</code> is not an option.</p>
 
 <h2 id="Common">Commonly Used Symbols and Syntax</h2>
 <table class="info">

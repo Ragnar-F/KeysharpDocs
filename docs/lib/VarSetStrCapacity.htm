@@ -47,7 +47,7 @@
 <p>An exception is thrown under any of the following conditions:</p>
 <ul>
   <li><a href="Error.htm#TypeError">TypeError</a>: <em>TargetVar</em> is neither a <a href="../Concepts.htm#variable-references">VarRef</a> nor an object with a <code>__Value</code> property.</li>
-  <li><a href="Error.htm#TypeError">TypeError</a>: A capacity above 0 is requested for something which has no memory of its own to size: a reference to a property, a function's own local or static variable reached through <code>&amp;%Name%</code>, an imported variable reached through <code>%Name%</code>, or a variable which one module imports from another and passes on to a third.</li>
+  <li><a href="Error.htm#TypeError">TypeError</a>: A capacity above 0 is requested for something which has no memory of its own to size, such as a property or built-in variable reference. Dynamic references to locals and statics, and aliases imported through one or more modules, retain the original variable's memory.</li>
   <li><a href="Error.htm#TypeError">TypeError</a>: <em>RequestedCapacity</em> is omitted and the variable holds a number or an object.</li>
   <li>The requested capacity is too large to fit within any single contiguous memory block available to the script. In rare cases, this may be due to the system running out of memory.</li>
   <li><a href="Error.htm#ValueError">ValueError</a>: <em>RequestedCapacity</em> is less than -1, or is 2147483647 or greater.</li>
@@ -55,7 +55,7 @@
 
 <h2 id="Remarks">Remarks</h2>
 <p>The <a href="Buffer.htm">Buffer</a> object offers superior clarity and flexibility when dealing with binary data, structures, DllCall and similar. For instance, a Buffer object can be assigned to a property or array element or be passed to or returned from a function without copying its contents.</p>
-<p>The capacity belongs to the memory the variable keeps for native code: the address <a href="StrPtr.htm">StrPtr</a> returns, which a <a href="DllCall.htm#str">Str</a> argument also receives. The variable itself holds an ordinary string, so the capacity has no effect on concatenation and does not speed it up. With -1, a variable assigned a different string since native code wrote to that memory keeps its own value, up to its first null character. Assigning the variable the very string it already holds, such as <code>MyVar := ""</code> on a variable which is already empty, does not count, so the memory keeps what native code wrote; see <a href="StrPtr.htm#CopyIn">StrPtr</a>.</p>
+<p>Capacity applies to the native memory used by <a href="StrPtr.htm">StrPtr</a> and <a href="DllCall.htm#str">Str/WStr</a> arguments, not concatenation. With -1, a different string assigned since the memory was last synchronized takes precedence, up to its first null; reassigning the string already held preserves native writes. See <a href="StrPtr.htm#CopyIn">StrPtr's synchronization rules</a>.</p>
 
 <h2 id="Related">Related</h2>
 <p><a href="Buffer.htm">Buffer object</a>, <a href="DllCall.htm">DllCall</a>, <a href="NumPut.htm">NumPut</a>, <a href="NumGet.htm">NumGet</a></p>

@@ -148,10 +148,6 @@ MsgBox "This thread has run for " A_Thread.Elapsed " ms"</pre>
 <p>Requests that this thread exit, and returns its <a href="#Id">Id</a>. <em>ExitCode</em> defaults to 0. It becomes this thread's <a href="#ExitCode">ExitCode</a>, and the process exit code as <a href="Exit.htm">Exit</a> describes.</p>
 <p>The current thread exits immediately, so a call on it does not return. Any other thread is marked and unwinds when it next resumes and processes events; this is cooperative and does not asynchronously abort running code. A later request replaces a pending exit code. <a href="Exit.htm">Exit</a> is the equivalent for the current thread.</p>
 
-<h3 id="ToString">ToString</h3>
-<pre class="Syntax">String := ThreadObj.<span class="func">ToString</span>()</pre>
-<p>Returns <code class="no-highlight">Thread <em>Id</em></code>, including after the thread has ended.</p>
-
 <h3 id="Identity">Identity</h3>
 <p>Exactly one object exists per thread, so <code>==</code> answers whether a thread is the one the calling code is in:</p>
 <pre>#Import "Ks" { A_Thread }

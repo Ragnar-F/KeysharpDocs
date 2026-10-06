@@ -206,6 +206,7 @@ MsgBox(1.00)  <em>; Shows 1.0</em></pre>
 Var := "The color is " FoundColor    <em>; Auto-concat</em>
 </pre>
       <p>Sub-expressions can also be concatenated. For example: <code>Var := "The net price is " .  Price * (1 - Discount/100)</code>.</p>
+      <p>In AutoHotkey, concatenating an object raises a <a href="lib/Error.htm#TypeError">TypeError</a>. In Keysharp, an object with a <code>ToString</code> method, such as an Array, is used as the string that method returns, as with <a href="lib/String.htm">String</a>, here and wherever else a string is expected; any other object raises a TypeError.</p>
       <p>A line that begins with a period (or any other operator) is automatically <a href="Scripts.htm#continuation">appended to</a> the line above it.</p>
       <p>The entire <a href="lib/StrLen.htm">length</a> of each input is used, even if it includes binary zero. For example, <code>Chr(0x2010) Chr(0x0000) Chr(0x4030)</code> produces the following string of bytes (due to UTF-16-LE encoding): 0x10, 0x20, 0, 0, 0x30, 0x40. The result has an additional null-terminator (binary zero) which is not included in the length.</p>
       <p><strong>Other uses:</strong> If there is no space or tab to the right of a period (dot), it is interpreted as either a literal <a href="#numbers">floating-point number</a> or <a href="#objdot">member access</a>. For example, <code>1.1</code> and <code>(.5)</code> are numbers, <code>A_Args.Has(3)</code> is a method call and <code>A_Args.Length</code> is a property access.</p>
@@ -234,7 +235,7 @@ Var := "The color is " FoundColor    <em>; Auto-concat</em>
       <p><strong>Case-insensitive equal (=) / not-equal (!=)</strong> and <strong>case-sensitive equal (==) / not-equal (!==)</strong>. The <strong>==</strong> operator behaves identically to <strong>=</strong> except when either of the inputs is not numeric (or both are strings), in which case <strong>==</strong> is always case-sensitive and <strong>=</strong> is always case-insensitive. The built-in <strong>!=</strong> and <strong>!==</strong> behave identically to their counterparts without <strong>!</strong>, except that the result is inverted.</p>
       <p>For <a href="Objects.htm#Custom_Classes_operators">operator definitions</a>, <code>=</code> and <code>!=</code> must be declared together, as must <code>==</code> and <code>!==</code>. Each definition is called independently; inequality is not automatically produced by inverting equality.</p>
       <p>The <strong>==</strong> and <strong>!==</strong> operators can be used to compare strings which contain binary zero. All other comparison operators except <strong>~=</strong> compare only up to the first binary zero.</p>
-      <p>For case-insensitive comparisons, only the ASCII letters A-Z are considered equivalent to their lowercase counterparts. To instead compare according to the rules of the current user's locale, use <a href="lib/StrCompare.htm">StrCompare</a> and specify "Locale" for the <em>CaseSense</em> parameter.</p>
+      <p>In AutoHotkey, case-insensitive comparisons fold only the ASCII letters A-Z. Keysharp also folds Unicode letters using .NET's ordinal case-insensitive comparison. To instead compare according to the rules of the current user's locale, use <a href="lib/StrCompare.htm">StrCompare</a> and specify "Locale" for the <em>CaseSense</em> parameter.</p>
     </td>
   </tr>
   <tr id="is_in_contains">
@@ -482,6 +483,7 @@ sumfn := Sum</pre>
     <td>A_LineFile</td>
     <td>
       <p>The full path and name of the file to which <a href="#LineNumber">A_LineNumber</a> belongs. If the script was loaded from an external file, this is the same as <a href="#ScriptFullPath">A_ScriptFullPath</a> unless the line belongs to one of the script's <a href="lib/_Include.htm">#Include files</a>.</p>
+      <p>In a <code class="no-highlight">.cks</code> assembly, a line of an #Include file reports the file's path relative to the assembly's folder at compile time, resolved against its folder at run time, or A_ScriptFullPath if the file was on another drive.</p>
       <p>If the script was <a href="Scripts.htm#ahk2exe">compiled</a> based on a <a href="Scripts.htm#ahk2exe-base">.bin file</a>, this is the full path and name of the current executable file, the same as <a href="#ScriptFullPath">A_ScriptFullPath</a>.</p>
       <p>If the script is <a href="Program.htm#embedded-scripts">embedded</a>, A_LineFile contains an asterisk (*) followed by the resource name; e.g. *#1</p>
     </td>
@@ -492,7 +494,7 @@ sumfn := Sum</pre>
   </tr>
   <tr id="AhkVersion">
     <td>A_AhkVersion</td>
-    <td>Contains the AutoHotkey compatibility version targeted by the running Keysharp build, such as <code class="no-highlight">2.1-alpha.32</code>. It does not identify the Keysharp release; use <a href="#A_KsVersion">A_KsVersion</a> for that. See also: <a href="lib/_Requires.htm">#Requires</a> and <a href="lib/VerCompare.htm">VerCompare</a></td>
+    <td>Contains the AutoHotkey compatibility version targeted by the running Keysharp build, such as <code class="no-highlight">2.1-alpha.33</code>. It does not identify the Keysharp release; use <a href="#A_KsVersion">A_KsVersion</a> for that. See also: <a href="lib/_Requires.htm">#Requires</a> and <a href="lib/VerCompare.htm">VerCompare</a></td>
   </tr>
   <tr id="AhkPath">
     <td>A_AhkPath</td>
@@ -510,6 +512,7 @@ AhkPath := InstallDir ? InstallDir "\AutoHotkey.exe" : ""</pre>
   </tr>
 </table>
 <h3 id="date">Date and Time</h3>
+<p>A_MMM, A_MMMM, A_DDD and A_DDDD use the .NET thread culture, which normally defaults to the invariant culture. Using the current user's language, as AutoHotkey does, remains planned. See <a href="lib/FormatTime.htm">FormatTime</a> for an explicit locale.</p>
 <table class="info">
   <tr>
     <th abbr="Var">Variable</th>
@@ -997,7 +1000,7 @@ VirtualHeight := <a href="lib/SysGet.htm">SysGet</a>(79)
         <li>The <code>OnMove</code> and <code>OnCaretMove</code> slots of a <a href="lib/WinEvent.htm#Callback">WinEvent</a></li>
       </ul>
       <p>Note: Unlike variables such as A_ThisHotkey, each <a href="misc/Threads.htm">thread</a> retains its own value for A_EventInfo. Therefore, if a thread is interrupted by another, upon being resumed it will still see its original/correct values in these variables.</p>
-      <p>Mouse-wheel events use a positive value for upward scrolling and a negative value for downward scrolling.</p>
+      <p>For keyboard and mouse hook events, A_EventInfo is an object with <code>Timestamp</code>, <code>IsInjected</code> and <code>IsAutoRepeat</code> properties. <code>SendLevel</code>, <code>DeviceId</code>, <code>IsAbsolute</code>, and screen coordinates <code>X</code>/<code>Y</code> are present only when supplied by the event. For mouse-wheel hotkeys, <code>A_EventInfo.Extra</code> holds the signed wheel delta: positive for upward scrolling and negative for downward scrolling. AutoHotkey returns the wheel amount directly in A_EventInfo.</p>
       <p>A_EventInfo can also be set by the script.</p></td>
   </tr>
   <tr id="LastError">
@@ -1129,10 +1132,6 @@ VirtualHeight := <a href="lib/SysGet.htm">SysGet</a>(79)
     <td><span id="KS_A_HotIfTimeout">A_HotIfTimeout</span></td>
     <td>Gets or sets the maximum time, in milliseconds, allowed for evaluating a <a href="lib/_HotIf.htm">#HotIf</a> criterion. <a href="lib/_HotIfTimeout.htm">#HotIfTimeout</a> sets this value.</td>
   </tr>
-  <tr id="A_InputLevel">
-    <td><span id="KS_A_InputLevel">A_InputLevel</span></td>
-    <td>Gets or sets the default input level, from 0 through 100, for subsequently created hotkeys and hotstrings. Assigning another value throws a <a href="lib/Error.htm#ValueError">ValueError</a>. <a href="lib/_InputLevel.htm">#InputLevel</a> sets this value.</td>
-  </tr>
   <tr id="A_KsCorePath">
     <td><span id="KS_A_KsCorePath">A_KsCorePath</span></td>
     <td>The full path of <code class="no-highlight">Keysharp.Core.dll</code>.</td>
@@ -1140,10 +1139,6 @@ VirtualHeight := <a href="lib/SysGet.htm">SysGet</a>(79)
   <tr id="A_KsVersion">
     <td><span id="KS_A_KsVersion">A_KsVersion</span></td>
     <td>The file version of <code class="no-highlight">Keysharp.Core.dll</code>.</td>
-  </tr>
-  <tr id="A_LoopKey">
-    <td><span id="KS_A_LoopKey">A_LoopKey</span></td>
-    <td>The key or index of the current item in the innermost active <a href="lib/For.htm">for-loop</a>, or blank when no such loop is active.</td>
   </tr>
   <tr id="A_LoopRegValue">
     <td><span id="KS_A_LoopRegValue">A_LoopRegValue</span></td>
@@ -1196,10 +1191,6 @@ VirtualHeight := <a href="lib/SysGet.htm">SysGet</a>(79)
   <tr id="A_ProcessArch">
     <td><span id="KS_A_ProcessArch">A_ProcessArch</span></td>
     <td>The CPU architecture this script runs as: <code class="no-highlight">X64</code>, <code class="no-highlight">ARM64</code>, <code class="no-highlight">X86</code> or <code class="no-highlight">ARM</code>, matching the <a href="lib/KeysharpDirectives.htm#Conditional_Symbols">conditional-compilation symbol</a> of the same name. This is the calling convention <a href="lib/DllCall.htm">DllCall</a> and <a href="lib/ComCall.htm">ComCall</a> must obey, so interop code should branch on it rather than on <a href="#PtrSize">A_PtrSize</a>, which is 8 for both X64 and ARM64.</td>
-  </tr>
-  <tr id="A_SuspendExempt">
-    <td><span id="KS_A_SuspendExempt">A_SuspendExempt</span></td>
-    <td>Whether subsequent hotkeys/hotstrings are exempt because <code>#SuspendExempt true</code> was used.</td>
   </tr>
   <tr id="A_Thread">
     <td><span id="KS_A_Thread">A_Thread</span></td>

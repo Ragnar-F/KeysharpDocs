@@ -24,7 +24,7 @@
 <pre class="Syntax">Package := Clr.<span class="func">LoadPackage</span>(<span class="optional">Provider:</span>Name <span class="optional">, Version, Optional</span>)</pre>
 <p>Makes a package's assemblies available at run time, and returns a ManagedAssembly over that package's own assemblies. Its types are then reachable both from the return value and through <a href="#Navigation">Clr</a> by namespace. <em>Name</em> takes the same <code class="no-highlight">Provider:PackageId</code> form as <a href="_Package.htm">#Package</a>.</p>
 <p><em>Version</em> takes the same forms as the <a href="_Package.htm#Version">#Package</a> directive. If <em>Optional</em> is true, a package or separately installed provider that cannot be made available returns an empty string instead of raising an error. Malformed package or version syntax remains an error when the provider is installed.</p>
-<p class="note"><strong>Note:</strong> Prefer <a href="_Package.htm">#Package</a> where it fits. Each call re-resolves every package requested so far, including those named by #Package, but an assembly which is already loaded cannot be unloaded, so a version conflict is reported rather than repaired. Use this function for a package chosen by a computed name, or one needed only on some code paths.</p>
+<p class="note"><strong>Note:</strong> Prefer <a href="_Package.htm">#Package</a> where it fits. A new request resolves every package requested so far, including those named by #Package; repeating an already loaded request with the same version, or with no version, reuses its assemblies, but an assembly which is already loaded cannot be unloaded, so a version conflict is reported rather than repaired. Use this function for a package chosen by a computed name, or one needed only on some code paths.</p>
 <p class="note"><strong>Note:</strong> This function needs its provider at run time. An executable built with <a href="../Program.htm#cmd">--compile</a> includes the provider when the compiler can tell from the call which one is used; a non-default provider named only inside a computed name must be installed beside the executable.</p>
 
 <h2 id="Navigation">Namespaces, Types and Instances</h2>
@@ -34,6 +34,7 @@
   <li>Use ordinary property, method and index syntax with a ManagedInstance.</li>
 </ul>
 <p>Invalid generic signatures raise a <a href="Error.htm#ValueError">ValueError</a>.</p>
+<p>A <a href="For.htm">For loop</a> can enumerate a wrapped .NET collection, including one whose enumerator implements <code class="no-highlight">IEnumerator</code> explicitly. The enumerator is disposed when enumeration ends.</p>
 
 <h2 id="Enums">Enum Values</h2>
 <p>A .NET enum value is passed as an Integer:</p>

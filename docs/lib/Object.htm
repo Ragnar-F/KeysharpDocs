@@ -90,7 +90,7 @@ Obj := <span class="func">DefineProp</span>(Obj, Name, Descriptor) <em>; <span c
     <p>Type: <a href="../Concepts.htm#objects">Object</a></p>
     <p>To define or modify a dynamic property, specify an object with one or more of the following own properties:</p>
     <p><strong>Get:</strong> The <a href="../misc/Functor.htm">function object</a> to call when the property's value is retrieved.</p>
-    <p><strong>Set:</strong> The <a href="../misc/Functor.htm">function object</a> to call when the property is assigned a value. Its second parameter is the value being assigned.</p>
+    <p><strong>Set:</strong> The <a href="../misc/Functor.htm">function object</a> to call when the property is assigned a value. The value being assigned follows any index parameters, as described below.</p>
     <p><strong>Call:</strong> The <a href="../misc/Functor.htm">function object</a> to call when the property is called.</p>
     <p>To define a value property, specify an object with the following own property:</p>
     <p><strong>Value:</strong> Any value to assign to the property.</p>
@@ -113,8 +113,9 @@ Obj := <span class="func">DefineProp</span>(Obj, Name, Descriptor) <em>; <span c
   <li>If no <em>Call</em> is defined or inherited, <em>Get</em> may be called to retrieve a function object, which is then called.</li>
   <li>If no <em>Get</em> is defined or inherited but there is a <em>Call</em> accessor function, the function itself becomes the property's value (read-only).</li>
 </ul>
-<p>As with methods, the first parameter of <em>Get</em>, <em>Set</em> or <em>Call</em> is <code>this</code> (the target object). For <em>Set</em>, the second parameter is <code>value</code> (the value being assigned). These parameters are defined automatically by method and property definitions within a class, but must be defined explicitly if using normal functions. Any other parameters passed by the caller are appended to the parameter list.</p>
+<p>As with methods, the first parameter of <em>Get</em>, <em>Set</em> or <em>Call</em> is <code>this</code> (the target object). For <em>Set</em>, <code>value</code> (the value being assigned) follows any index parameters: <code>(this, indices..., value)</code>. AutoHotkey passes <code>(this, value, indices...)</code>. These parameters are defined automatically by method and property definitions within a class, but must be defined explicitly if using normal functions.</p>
 <p>The <a href="Func.htm#MaxParams">MaxParams</a> and <a href="Func.htm#IsVariadic">IsVariadic</a> properties of the function objects are evaluated to determine whether the property may accept parameters. If MaxParams is 1 for <em>Get</em> or 2 for <em>Set</em> and IsVariadic is false or undefined, the property cannot accept parameters; they are instead forwarded to the <a href="../Objects.htm#__Item">__Item</a> property of the object returned by <em>get</em>.</p>
+<p>This also applies to callable objects supplied as accessors. An unset final result can use <code>??</code> or <code>IsSet</code>. When indices are forwarded to a parameterless getter's result, that getter must return a value; an unset result raises <code>UnsetError</code> even with <code>??</code>. An indexed read of a missing property raises <code>PropertyError</code>.</p>
 <p><span class="ver">[v2.1-alpha.22+]</span>: DefineProp is predefined as a function. Unlike the method, it can be used directly with Prototype objects which do not derive from Object, such as for <a href="../Structs.htm#classdef">struct</a> subclasses.</p>
 </div>
 
@@ -239,6 +240,7 @@ Obj := <span class="func">DefineProp</span>(Obj, Name, Descriptor) <em>; <span c
 </div>
 
 <h2 id="Functions">Functions</h2>
+<p>The own-property functions <code>ObjGetCapacity</code>, <code>ObjSetCapacity</code>, <code>ObjHasOwnProp</code>, <code>ObjOwnPropCount</code> and <code>ObjOwnProps</code> require an object which can own properties. A <a href="Struct.htm">Struct</a> instance raises a <a href="Error.htm#TypeError">TypeError</a>.</p>
 <h3 id="SetBase">ObjSetBase</h3>
 <p>Sets an object's <a href="../Objects.htm#delegation">base object</a>.</p>
 <pre class="Syntax"><span class="func">ObjSetBase</span>(Obj, BaseObj)</pre>

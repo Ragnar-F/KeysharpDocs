@@ -53,7 +53,7 @@
 <p>Use <code class="no-highlight">--transpile</code> to write the generated C# without running the script, or a <code class="no-highlight">--compile</code> mode to write a reusable assembly or executable.</p>
 
 <h3 id="internal-names">Internal Type Names</h3>
-<p>Diagnostic output which reports managed types, such as the call frames of <a href="lib/Error.htm#Stack">Error.Stack</a> and the types shown by <a href="lib/ListVars.htm">ListVars</a>, can show implementation names for some built-in classes: <code>KeysharpObject</code> for <a href="lib/Object.htm">Object</a>, <code>KeysharpFile</code> for <a href="lib/File.htm">File</a>, <code>KeysharpFunc</code> for <a href="lib/Func.htm">Func</a>, and <code>StructInt32</code> and so on for the <a href="Structs.htm#numeric-types">numeric struct types</a>. Scripts use only the documented names, which <a href="lib/Type.htm">Type</a> reports.</p>
+<p>Diagnostic output which reports managed types, such as the types shown by <a href="lib/ListVars.htm">ListVars</a>, can show implementation names for some built-in classes: <code>KeysharpObject</code> for <a href="lib/Object.htm">Object</a>, <code>KeysharpFile</code> for <a href="lib/File.htm">File</a>, <code>KeysharpFunc</code> for <a href="lib/Func.htm">Func</a>, and <code>StructInt32</code> and so on for the <a href="Structs.htm#numeric-types">numeric struct types</a>. Scripts use only the documented names, which <a href="lib/Type.htm">Type</a> reports.</p>
 
 <h2 id="run">Run a Script</h2>
 <p>Pass the script path to the Keysharp executable:</p>
@@ -90,6 +90,7 @@
   <tr><td><code class="no-highlight">--help</code>, <code class="no-highlight">-h</code>, <code class="no-highlight">-?</code></td><td>Show command-line help.</td></tr>
 </table>
 <p>Release builds use the compile daemon for ordinary source runs by default; Debug builds do not. Set <code class="no-highlight">KEYSHARP_DAEMON</code> to <code class="no-highlight">1</code>, <code class="no-highlight">true</code>, <code class="no-highlight">yes</code> or <code class="no-highlight">on</code> to force it, or <code class="no-highlight">0</code>, <code class="no-highlight">false</code>, <code class="no-highlight">no</code> or <code class="no-highlight">off</code> to bypass it.</p>
+<p>The daemon runs unelevated; the requesting process runs the compiled script with its own privileges. On Windows, an elevated launcher can use its account's authenticated, unelevated daemon. If a normal daemon cannot start, or an elevated request fails to compile, the launcher compiles locally with its existing permissions. On Linux and macOS, a privileged launcher compiles locally instead of starting a privileged daemon.</p>
 
 <h2 id="compile">Compile a Script</h2>
 <pre class="no-highlight">Keysharp.exe --compile exe hello.ks</pre>

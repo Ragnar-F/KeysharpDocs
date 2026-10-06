@@ -25,12 +25,12 @@
         <p>Type: <a href="../Concepts.htm#numbers">Integer</a> or <a href="../Concepts.htm#strings">String</a></p>
         <p>Specify either a number (the PID) or a process name:</p>
         <p><strong>PID:</strong> The Process ID, which is a number that uniquely identifies one specific process (this number is valid only during the lifetime of that process). The PID of a newly launched process can be determined via the <a href="Run.htm">Run</a> function. Similarly, the PID of a window can be determined with <a href="WinGetPID.htm">WinGetPID</a>. <a href="ProcessExist.htm">ProcessExist</a> can also be used to discover a PID.</p>
-        <p><strong>Name:</strong> The name of a process is usually the same as its executable (without path), e.g. notepad.exe or winword.exe. Since a name might match multiple running processes, only the first process will be operated upon. The name is not case-sensitive.</p>
+        <p><strong>Name:</strong> The name of a process is usually the same as its executable (without path), e.g. notepad.exe or winword.exe. If a name matches multiple running processes, each is waited on until no match remains. The name is not case-sensitive.</p>
     </dd>
     <dt>Timeout</dt>
     <dd>
         <p>Type: <a href="../Concepts.htm#numbers">Integer</a> or <a href="../Concepts.htm#numbers">Float</a></p>
-        <p>If omitted, the function will wait indefinitely. Otherwise, specify the number of seconds (can contain a decimal point) to wait before timing out.</p>
+        <p>If omitted, the function will wait indefinitely. Otherwise, specify the number of seconds (can contain a decimal point) to wait before timing out. Zero or a negative value checks once without waiting.</p>
     </dd>
 </dl>
 
@@ -39,8 +39,9 @@
 <p>If all matching processes are closed, zero is returned. If this function times out, it returns the <a href="../misc/WinTitle.htm#ahk_pid">Process ID (PID)</a> of the first matching process that still exists.</p>
 
 <h2 id="Remarks">Remarks</h2>
-<p>Processes are checked every 100 milliseconds; the moment the condition is satisfied, the function stops waiting. In other words, rather than waiting for the timeout to expire, it immediately returns and continues execution of the script. Also, while the function is in a waiting state, new <a href="../misc/Threads.htm">threads</a> can be launched via <a href="../Hotkeys.htm">hotkey</a>, <a href="Menu.htm">custom menu item</a>, or <a href="SetTimer.htm">timer</a>.</p>
+<p>A found process is waited on until it exits. If the operating system does not allow waiting on that process, it is checked every 100 milliseconds instead; the moment the condition is satisfied, the function stops waiting. In other words, rather than waiting for the timeout to expire, it immediately returns and continues execution of the script. Also, while the function is in a waiting state, new <a href="../misc/Threads.htm">threads</a> can be launched via <a href="../Hotkeys.htm">hotkey</a>, <a href="Menu.htm">custom menu item</a>, or <a href="SetTimer.htm">timer</a>.</p>
 
+<p>While waiting for a found process to exit, timers, hotkeys and the GUI remain responsive. The timeout covers the entire wait when several processes share the name.</p>
 <h2 id="Related">Related</h2>
 <p><a href="ProcessWait.htm">ProcessWait</a>, <a href="Run.htm">Run</a>, <a href="WinWaitClose.htm">WinWaitClose</a>, <a href="Process.htm">Process functions</a>, <a href="Win.htm">Win functions</a></p>
 

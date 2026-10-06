@@ -19,8 +19,6 @@
 <pre class="Syntax">Style := <span class="func">ControlGetStyle</span>(ControlID <span class="optional">, WinTitle, WinText, ExcludeTitle, ExcludeText</span>)
 ExStyle := <span class="func">ControlGetExStyle</span>(ControlID <span class="optional">, WinTitle, WinText, ExcludeTitle, ExcludeText</span>)</pre>
 
-<p class="note"><strong>Note:</strong> On Linux and macOS, both functions return 1 for every control.</p>
-
 <h2 id="Parameters">Parameters</h2>
 <dl>
     <dt>ControlID</dt>
@@ -40,6 +38,7 @@ ExStyle := <span class="func">ControlGetExStyle</span>(ControlID <span class="op
 <h2 id="Return_Value">Return Value</h2>
 <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
 <p>These functions return an integer representing the style or extended style of the control.</p>
+<p>On Linux and macOS, ControlGetStyle maps a script-created control's child, visible and disabled state to the corresponding Win32 style bits. Other control-specific style bits are not reported. ControlGetExStyle returns 0 for these controls.</p>
 
 <h2 id="Error_Handling">Error Handling</h2>
 <p>A <a href="Error.htm#TargetError">TargetError</a> is thrown if the window or control could not be found.</p>

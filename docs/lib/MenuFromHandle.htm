@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <title>MenuFromHandle - Syntax &amp; Usage | Keysharp</title>
-<meta name="description" content="The MenuFromHandle function retrieves the Menu or MenuBar object corresponding to a Win32 menu handle." />
+<meta name="description" content="The MenuFromHandle function retrieves the Menu or MenuBar object which has the specified handle." />
 <meta name="ahk:equiv-v1" content="lib/Menu.htm" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,19 +14,20 @@
 
 <h1>MenuFromHandle</h1>
 
-<p>Retrieves the <a href="Menu.htm">Menu or MenuBar object</a> corresponding to a Win32 menu handle.</p>
+<p>Retrieves the <a href="Menu.htm">Menu or MenuBar object</a> which has the specified handle.</p>
 
 <pre class="Syntax">Menu := <span class="func">MenuFromHandle</span>(Handle)</pre>
 <h2 id="Parameters">Parameters</h2>
 <dl>
   <dt>Handle</dt><dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>A handle to a Win32 menu (of type <code class="no-highlight">HMENU</code>).</p>
+    <p>A value of <a href="Menu.htm#Handle">Menu.Handle</a>.</p>
   </dd>
 </dl>
 
 <h2 id="Remarks">Remarks</h2>
-<p>If the handle is invalid or does not correspond to a menu created by this script, the function returns <a href="../v2.1-changes.htm#CompatMode"><em>blank-unset</em></a>.</p>
+<p>If the handle is not the <a href="Menu.htm#Handle">Handle</a> of a menu of this script, the function returns an empty string.</p>
+<p>In AutoHotkey, <em>Handle</em> is a Win32 menu handle (<code class="no-highlight">HMENU</code>). In Keysharp, menus have no Win32 menu, so a native menu handle, such as one received with the WM_INITMENUPOPUP message, is never recognized. See <a href="Menu.htm#Win32_Menus">Win32 Menus</a>.</p>
 
 <h2 id="Related">Related</h2>
 <p><a href="Menu.htm#Win32_Menus">Win32 Menus</a>, <a href="Menu.htm">Menu/MenuBar object</a>, <a href="Menu.htm#Handle">Menu.Handle</a>, <a href="Menu.htm#Call">Menu()</a></p>

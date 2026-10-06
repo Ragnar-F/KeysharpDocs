@@ -38,7 +38,7 @@
 <h3 id="Text">Text</h3>
 <pre class="Syntax">Value := Clipboard.<span class="func">Text</span>
 Clipboard.<span class="func">Text</span> := Value</pre>
-<p>The clipboard's text, identical to <a href="A_Clipboard.htm">A_Clipboard</a>. Assigning an empty string clears the clipboard entirely.</p>
+<p>The clipboard's text, identical to <a href="A_Clipboard.htm">A_Clipboard</a>. Copied file paths are joined with LF (<code>`n</code>), where AutoHotkey uses CRLF (<code>`r`n</code>). Assigning an empty string clears the clipboard entirely.</p>
 
 <h3 id="Image">Image</h3>
 <pre class="Syntax">Picture := Clipboard.<span class="func">Image</span>
@@ -183,6 +183,8 @@ Report(ThisHook, DataType)
 }</pre>
 </div>
 
+<h2 id="Error_Handling">Error Handling</h2>
+<p>On Windows, a clipboard operation which cannot open the clipboard raises an <a href="Error.htm">Error</a>. Native writes also raise an Error when the clipboard cannot be emptied, data cannot be allocated, or a format cannot be published.</p>
 <h2 id="Related">Related</h2>
 <p><a href="A_Clipboard.htm">A_Clipboard</a>, <a href="ClipboardAll.htm">ClipboardAll</a>, <a href="ClipWait.htm">ClipWait</a>, <a href="OnClipboardChange.htm">OnClipboardChange</a>, <a href="_ClipboardTimeout.htm">#ClipboardTimeout</a>, <a href="Image.htm">Image</a>, <a href="EventHook.htm">EventHook</a>, <a href="../Platforms.htm">Platform Support</a></p>
 

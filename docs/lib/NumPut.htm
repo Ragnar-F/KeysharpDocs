@@ -55,6 +55,7 @@
 <p>A sequence of numbers can be written by repeating <em>Type</em> and <em>Number</em> any number of times after the first <em>Number</em>. Each number is written at the next byte after the previous number, with no padding. When creating a structure for use with <a href="DllCall.htm">DllCall</a>, be aware that some fields may need explicit padding added due to data alignment requirements.</p>
 <p>If an integer is too large to fit in the specified <em>Type</em>, its most significant bytes are ignored; e.g. <code>NumPut("Char", 257, buf)</code> would store the number 1.</p>
 <p>A <em>Type</em> which does not name one of the numbers listed above raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
+<p>An object target's <code>Size</code> provides a right-side bound, including a size of zero. Negative offsets are permitted as in AutoHotkey. An offset whose address arithmetic would overflow raises an <a href="Error.htm#IndexError">IndexError</a>.</p>
 <p>An exception may be thrown if the target address is invalid. However, some invalid addresses cannot be detected as such and may cause unpredictable behaviour. Passing a <a href="Buffer.htm">Buffer</a> object instead of an address ensures that the target address can always be validated.</p>
 
 <h2 id="Related">Related</h2>

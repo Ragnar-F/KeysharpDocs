@@ -26,9 +26,11 @@
   <dd>
     <p>Type: <a href="../Concepts.htm#strings">String</a></p>
     <p>The hotstring's trigger string, preceded by <a href="../Hotstrings.htm">the usual colons</a> and <a href="../Hotstrings.htm#Options">option characters</a>. For example, <code><span class="str">"::btw"</span></code> or <code>":*:]d"</code>.</p>
+    <p>The abbreviation has <a href="../Hotstrings.htm#abbreviation-length">no fixed character limit</a>. Recognition history grows as longer abbreviations are registered.</p>
     <p><em>String</em> may be matched to an existing hotstring by considering <a href="../Hotstrings.htm#C">case-sensitivity (C)</a>, <a href="../Hotstrings.htm#Question">word-sensitivity (?)</a>, activation criteria (as set by <a href="_HotIf.htm">#HotIf</a> or <a href="HotIf.htm">HotIf</a>) and the trigger string. For example, <code><span class="str">"::btw"</span></code> and <code><span class="str">"::BTW"</span></code> match unless the case-sensitive mode was enabled as a default, while <code>":C:btw"</code> and <code>":C:BTW"</code> never match. The <code class="no-highlight">C</code> and <code class="no-highlight">?</code> options may be included in <em>String</em> or set as defaults by the <a href="_Hotstring.htm">#Hotstring</a> directive or a previous use of <em>NewOptions</em>.</p>
     <p>If the hotstring already exists, any options specified in <em>String</em> are put into effect, while all other options are left as is. However, since hotstrings with <code class="no-highlight">C</code> or <code class="no-highlight">?</code> are considered distinct from other hotstrings, it is not possible to add or remove these options. Instead, turn off the existing hotstring and create a new one.</p>
     <p>When a hotstring is first created -- either by the Hotstring function or the <a href="../Hotstrings.htm">double-colon syntax</a> in the script -- its trigger string and sequence of option characters becomes the permanent name of that hotstring as reflected by <a href="../Hotstrings.htm#ThisHotkey">ThisHotkey</a>. This name does not change even if the Hotstring function later accesses the hotstring with different option characters.</p>
+    <p>The <a href="../Hotstrings.htm#In">I<em>n</em> option</a> sets the input level for a new or existing hotstring. For example, <code>Hotstring(":I1:btw", "by the way")</code> sets level 1. Omitting this option uses the hotstring default for a new hotstring and preserves the input level of an existing hotstring. Specify <code class="no-highlight">I0</code> to reset an existing hotstring to level 0.</p>
   </dd>
 
   <dt>Replacement</dt>
@@ -58,6 +60,7 @@
   <dd id="NewOptions">
     <p>Type: <a href="../Concepts.htm#strings">String</a></p>
     <p>To set new <a href="../Hotstrings.htm#Options">default options</a> for subsequently created hotstrings, pass the options to the Hotstring function without any leading or trailing colon. For example: <code>Hotstring "T"</code>.</p>
+    <p><code>Hotstring("I1")</code> sets the default input level for subsequently created hotstrings to 1. This does not change existing hotstrings or the default input level for hotkeys. An explicit hotstring default takes precedence over <a href="_InputLevel.htm">#InputLevel</a>, which supplies the fallback when no hotstring input-level default has been set.</p>
     <p>Turning on <a href="../Hotstrings.htm#C">case-sensitivity (C)</a> or <a href="../Hotstrings.htm#Question">word-sensitivity (?)</a> also affects which existing hotstrings will be found by any subsequent calls to the Hotstring function. For example, <code>Hotstring ":T:btw"</code> will find <code class="no-highlight">::BTW</code> by default, but not if <code>Hotstring "C"</code> or <code><a href="_Hotstring.htm">#Hotstring</a> C</code> is in effect. This can be undone or overridden by passing a mutually-exclusive option; for example, <code class="no-highlight">C0</code> and <code class="no-highlight">C1</code> override <code class="no-highlight">C</code>.</p>
   </dd>
 
@@ -97,9 +100,11 @@ MsgBox "The previous value was: " prev_chars</pre>
 <p>Immediately resets the hotstring recognizer.</p>
 <pre class="Syntax"><span class="func">Hotstring</span> "Reset"</pre>
 <p>In other words, the script will begin waiting for an entirely new hotstring, eliminating from consideration anything you previously typed.</p>
+<p>Returns the retained text before clearing it. The recognizer keeps recent text according to the longest registered abbreviation, so the returned string is not a complete typing history.</p>
 
 <h2 id="Errors">Errors</h2>
 <p>This function throws an exception if the parameters are invalid or a memory allocation fails.</p>
+<p>Unknown <a href="../Hotstrings.htm#Options">options</a> or malformed values throw a <a href="Error.htm#ValueError">ValueError</a>. K, P, and I require decimal integer suffixes; I must be from 0 through 100. Failed option strings leave defaults and existing hotstrings unchanged.</p>
 <p>A <a href="Error.htm#TargetError">TargetError</a> is thrown if <em>Replacement</em> is omitted and <em>String</em> is valid but does not match an existing hotstring. This can be utilized to test for the existence of a hotstring. For example:</p>
 <pre>try
     Hotstring "::btw"

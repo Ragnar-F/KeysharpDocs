@@ -84,8 +84,8 @@
 <p>On Linux and macOS, the mode is validated but ignored. <code>{Decorations: false}</code>, the default, requests client-area-only capture on a platform which can honor it, such as KWin. Other platforms ignore this property.</p>
 
 <h2 id="Colors">Colors and Fonts</h2>
-<p>A color can be a name such as <code class="no-highlight">"Red"</code>, an opaque <code class="no-highlight">0xRRGGBB</code> value, or a <code class="no-highlight">0xAARRGGBB</code> value with alpha. To preserve a fully transparent <code class="no-highlight">00</code> alpha, pass an eight-digit string or the color name <code class="no-highlight">"Transparent"</code>; a numeric <code class="no-highlight">0x00RRGGBB</code> is indistinguishable from an opaque RGB value.</p>
-<p>Fonts use the same two arguments as <a href="Gui.htm#SetFont">Gui.SetFont</a>: an <em>Options</em> string of <code class="no-highlight">s</code><em>Size</em> plus optional <code class="no-highlight">bold</code>, <code class="no-highlight">italic</code>, <code class="no-highlight">underline</code>, <code class="no-highlight">strike</code>, <code class="no-highlight">norm</code>, <code class="no-highlight">w</code><em>Weight</em> or <code class="no-highlight">q</code><em>Quality</em> tokens (such as <code class="no-highlight">"s16 bold italic"</code>), and a separate <em>FontName</em>. An unrecognized option throws ValueError; pass the text color as DrawText's <em>Color</em> parameter, not a <code class="no-highlight">c</code> option.</p>
+<p>A color can be a name such as <code class="no-highlight">"Red"</code>, an opaque <code class="no-highlight">0xRRGGBB</code> value, or a <code class="no-highlight">0xAARRGGBB</code> value with alpha. To preserve a fully transparent <code class="no-highlight">00</code> alpha, pass an eight-digit string or the color name <code class="no-highlight">"Transparent"</code>; a numeric <code class="no-highlight">0x00RRGGBB</code> is indistinguishable from an opaque RGB value. A string which is neither a color name nor a number, and a NaN or infinite number, raises a <a href="Error.htm#ValueError">ValueError</a> when the method is called.</p>
+<p>Fonts use the same two arguments as <a href="Gui.htm#SetFont">Gui.SetFont</a>: an <em>Options</em> string of <code class="no-highlight">s</code><em>Size</em> plus optional <code class="no-highlight">bold</code>, <code class="no-highlight">italic</code>, <code class="no-highlight">underline</code>, <code class="no-highlight">strike</code>, <code class="no-highlight">norm</code>, <code class="no-highlight">w</code><em>Weight</em> or <code class="no-highlight">q</code><em>Quality</em> tokens (such as <code class="no-highlight">"s16 bold italic"</code>), and a separate <em>FontName</em>. The options are checked when DrawText or MeasureText is called, and an unrecognized option throws ValueError; pass the text color as DrawText's <em>Color</em> parameter, not a <code class="no-highlight">c</code> option. A size is in points at 96 DPI, whatever resolution the image carries, so text drawn on a loaded or copied image has the size MeasureText reports.</p>
 
 <p>Options can also be a <a href="Font.htm">Font</a> object. An explicit FontName overrides the object&#39;s Name; FontName itself does not accept a Font object. DrawText uses the object&#39;s opaque Color when its separate Color argument is omitted. Sizes must be finite and greater than zero. Weights are approximated to normal below 700 and bold from 700 upward. Rendering quality is supported on Windows as described by <a href="Font.htm#Quality">Font.Quality</a>; non-default quality on other platforms raises Error.</p>
 <h3 id="LinearGradient">LinearGradient</h3>
@@ -167,7 +167,7 @@ Picture.<span class="func">RestoreState</span>(State)</pre>
   <tr><td><code>Rotate(Angle [, Background])</code></td><td>Rotates by degrees.</td></tr>
   <tr><td><code>Flip([Horizontal])</code></td><td>Flips the image.</td></tr>
   <tr><td><code>Crop(X, Y, Width, Height)</code></td><td>Crops to a rectangle.</td></tr>
-  <tr><td><code>Grayscale()</code></td><td>Converts color to grayscale.</td></tr>
+  <tr><td><code>Grayscale()</code></td><td>Converts color to grayscale: each pixel's red, green and blue become <code>Round(0.299 * R + 0.587 * G + 0.114 * B)</code>, with a half rounded up, and its alpha is kept.</td></tr>
   <tr><td><code>Alpha(Factor)</code></td><td>Multiplies each pixel's alpha by a value clamped to 0 through 1.</td></tr>
   <tr><td><code>Brightness(Amount)</code></td><td>Adjusts brightness by a value clamped to -1 through 1.</td></tr>
   <tr><td><code>Contrast(Amount)</code></td><td>Adjusts contrast by a value clamped to -1 through 1.</td></tr>
@@ -178,7 +178,7 @@ Picture.<span class="func">RestoreState</span>(State)</pre>
   <tr><th>Method</th><th>Effect</th></tr>
   <tr><td><code>Copy()</code></td><td>Returns an independent copy.</td></tr>
   <tr><td><code>Save(Filename)</code></td><td>Applies pending operations and writes the image to a file.</td></tr>
-  <tr><td><code>ToBitmap()</code></td><td>Applies pending operations and returns a native bitmap handle.</td></tr>
+  <tr><td><code>ToBitmap()</code></td><td>Applies pending operations and returns a native bitmap handle, which on Windows keeps the image's transparency.</td></tr>
   <tr><td><code>ToClr()</code></td><td>Applies pending operations and returns the underlying toolkit bitmap as a <a href="Clr.htm">Clr</a> object.</td></tr>
   <tr><td><code>Show([Title, Wait])</code></td><td>Shows a preview window. If <em>Wait</em> is non-zero, blocks until it closes.</td></tr>
   <tr><td><code>GetPixel(X, Y)</code></td><td>Returns the full <code class="no-highlight">0xAARRGGBB</code> pixel value.</td></tr>
@@ -190,6 +190,7 @@ Picture.<span class="func">RestoreState</span>(State)</pre>
 <h3 id="GetPixelData">GetPixelData</h3>
 <pre class="Syntax">Data := Picture.<span class="func">GetPixelData</span>(<span class="optional">BytesPerPixel := 4, Buffer</span>)</pre>
 <p>Returns a tightly packed <a href="Buffer.htm">Buffer</a>. Use 4 for RGBA or 1 for grayscale.</p>
+<p>With one byte per pixel, luminance uses the same <code>0.299 * R + 0.587 * G + 0.114 * B</code> calculation as <code>Grayscale()</code>, with a half rounded up. It is calculated with <code>(299 * R + 587 * G + 114 * B + 500) // 1000</code> integer arithmetic. Alpha does not affect the luminance byte.</p>
 <p>If <em>Buffer</em> is specified, the data is written into it and it is returned. It can be a <a href="Buffer.htm">Buffer</a> or any object with <code>Ptr</code> and <code>Size</code> properties, and must hold at least <code class="no-highlight">Width * Height * BytesPerPixel</code> bytes; bytes beyond that are left unchanged.</p>
 
 <h3 id="SetPixelData">SetPixelData</h3>

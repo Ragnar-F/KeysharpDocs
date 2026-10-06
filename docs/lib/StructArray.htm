@@ -15,6 +15,7 @@
 <pre class="NoIndent">class Struct.Array extends Struct</pre>
 
 <p>Struct.Array is the base class for all <a href="../Structs.htm#arrays">structured arrays</a>, which are fixed-size arrays with elements of a fixed type.</p>
+<p>When a structured array class such as <code>Int32[4]</code> is used as a <a href="DllCall.htm">DllCall</a> parameter type, the array is passed by address, regardless of its size. A structured array class cannot be used as the return type; doing so raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
 <p>"Obj" is used below as a placeholder for any instance of the Struct.Array class.</p>
 <p>In addition to the methods and properties inherited from <a href="Struct.htm">Struct</a>, struct arrays have the following predefined methods and properties.</p>
 

@@ -60,22 +60,27 @@
 
 <h2 id="Error_Handling">Error Handling</h2>
 <p>An exception is thrown on failure, such as if a parameter is invalid or the object does not support the interface specified by <em>IID</em>.</p>
-<p>On Linux, an error is thrown if the object has no usable interfaces at the requested path, if the object does not implement the requested interface, or if a member name is defined on more than one interface. An error reported by the service is thrown with the D-Bus error name it sent. A call which receives no reply within 25 seconds throws a timeout error.</p>
+<p>On Linux, an error is thrown if the object has no usable interfaces at the requested path, if the object does not implement the requested interface, or if a member name is ambiguous. An ambiguous method raises a <a href="Error.htm#MethodError">MethodError</a>, and an ambiguous property raises a <a href="Error.htm#PropertyError">PropertyError</a>; the error lists the interfaces to choose from. An error reported by the service is thrown with the D-Bus error name it sent. A call which receives no reply within 25 seconds throws a timeout error.</p>
 <p>On macOS, an error is thrown if no such application can be found, if it publishes no scripting terminology, if it has no suite of the requested name, or if a member name is defined by more than one suite. An error reported by the application is thrown with the message and number it sent. Refused Automation permission throws an <a href="Error.htm#OSError">OSError</a> naming the setting to grant, and a command which receives no reply within 25 seconds throws a timeout error.</p>
 
 <h2 id="Remarks">Remarks</h2>
 
+<h3 id="Windows">Windows</h3>
+<p>Implicit string conversion calls the COM object's <code>ToString</code> member. COM dispatch errors, including a missing ToString member, propagate.</p>
+
 <h3 id="Linux">Linux</h3>
-<p>Methods and properties are resolved through D-Bus introspection. A read-only property throws when assigned.</p>
+<p>Methods and properties are resolved through D-Bus introspection. Unless an interface is selected explicitly, the object's own interfaces take precedence over the standard <code>org.freedesktop.DBus.*</code> interfaces. If several interfaces at the same level define a name, select one with <em>IID</em> or <a href="ComObjQuery.htm">ComObjQuery</a>. A read-only property throws when assigned.</p>
 <p>A D-Bus method may return several values. A single return value is returned directly; two or more are returned as an <a href="Array.htm">Array</a> in declared order. A method which returns nothing yields an empty string.</p>
 <p>Indexing the object with an object path returns a child object, so <code>nm["Devices/0"]</code> and <code>nm["/org/freedesktop/NetworkManager/Devices/0"]</code> are equivalent. Child objects cannot be assigned.</p>
 <p>Waiting for a reply does not block timers, hotkeys or the GUI.</p>
+<p>Introspection data is read when the wrapper is created. Create another wrapper to see interfaces changed by the service.</p>
 
 <h3 id="macOS">macOS</h3>
 <p>Commands, properties and elements are resolved through the application's scripting definition and used with ordinary object syntax. A property whose definition marks it read-only throws when assigned.</p>
 <p>An object is a query which the application resolves each time it is used. Indexing a collection narrows it: <code>app.Windows[1]</code> by position, counting from one and reading a negative index from the end, or <code>app.Windows["Untitled"]</code> by name. <code>ById(value)</code> selects by unique identifier, <code>Count</code> returns the number of elements, and a <a href="For.htm">for-loop</a> iterates the elements present when the loop starts.</p>
 <p>A command takes its direct parameter as the first unnamed argument and every other value by name. When the command is sent to an object, that object is the direct parameter, so passing another unnamed argument is an error.</p>
 <p>Values convert both ways: text, numbers and booleans directly, a record to a <a href="Map.htm">Map</a>, a list to an <a href="Array.htm">Array</a>, a file reference to its POSIX path, a date to <code>YYYYMMDDHH24MISS</code>, and an object specifier back to another <code>ComObject</code>. An enumerator is reported by name, and a name is accepted wherever the definition declares an enumerated type. Use <a href="ComValue.htm">ComValue</a> where a value must carry a type the definition does not pin down.</p>
+<p>Apple Events calls are ordered per target application. A slow target does not block calls to other targets. Pending calls are skipped after their callers time out; an event already sent may still take effect. Native dispatch is unverified on macOS.</p>
 <p>Controlling another application requires <a href="../Platforms.htm#macOS_Permissions">Automation permission</a>, granted per application.</p>
 <p>Waiting for a reply does not block timers, hotkeys or the GUI.</p>
 
