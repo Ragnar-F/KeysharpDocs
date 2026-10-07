@@ -64,9 +64,11 @@
 <h2 id="Remarks">Remarks</h2>
 <p>The script must retain a reference to <em>ComObj</em>, otherwise it would be freed automatically and would disconnect from its COM object, preventing any further events from being detected. There is no standard way to detect when the connection is no longer required, so the script must disconnect manually by calling ComObjConnect.</p>
 <p>The <a href="Persistent.htm">Persistent</a> function may be needed to keep the script running while it is listening for events.</p>
+<p>On Linux and macOS, collecting the wrapper disconnects its subscription. Disconnecting suppresses callbacks still queued for delivery. Notification delivery is unverified on macOS.</p>
 <p>An exception is thrown on failure.</p>
 
 <h3 id="Linux">Linux</h3>
+<p>Registering a signal subscription times out after 25 seconds if the bus does not reply. Timers, hotkeys and the GUI continue to run while it waits.</p>
 <p>Subscribes to the D-Bus signals of every interface the object exposes; a signal named <code>StateChanged</code> calls <code><i>Prefix</i>StateChanged</code>. Only signals emitted by the service which owned the bus name at the time of the call are delivered; if the service restarts, call this function again. A value returned by a handler is discarded.</p>
 
 <h2 id="Related">Related</h2>

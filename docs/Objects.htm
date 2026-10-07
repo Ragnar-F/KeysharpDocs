@@ -140,6 +140,7 @@ For value in MyArray
 <p>Sometimes parameters are accepted when retrieving or assigning properties:</p>
 <pre>Value := MyObject.Property[Parameters]
 MyObject.Property[Parameters] := Value</pre>
+<p>If a property getter returns <a href="Language.htm#unset">unset</a> when its result must be indexed, as in <code>MyObject.Property[Index]</code>, an <a href="lib/Error.htm#UnsetError">UnsetError</a> is raised with the message <code class="no-highlight">No value was returned.</code> and the property name in <em>Extra</em>. This applies to both retrieval and assignment, including a retrieval followed by <code>??</code>.</p>
 <p>An object may also support indexing: <code>MyArray[Index]</code> actually invokes the <a href="#__Item">__Item</a> property of <code>MyArray</code>, passing <code>Index</code> as a parameter.</p>
 
 <h3 id="object-literal">Object Literal</h3>
@@ -435,7 +436,7 @@ C := -Example()     <em>; -10</em></pre>
 <p>Static properties can be defined by preceding the property name with the separate keyword <code>static</code>. In that case, <code>this</code> refers to the class itself or a subclass.</p>
 <p>The return value of <em>set</em> is ignored. For example, <code>val := obj.Property := 42</code> always assigns <code>val := 42</code> regardless of what the property does, unless it throws an exception or exits the thread.</p>
 <p>Each class can define one or both halves of a property. If a class overrides a property, it can use <code><a href="#Custom_Classes_super">super.Property</a></code> to access the property defined by its base class. If <em>Get</em> or <em>Set</em> is not defined, it can be inherited from a base object. If <em>Get</em> is undefined, the property can return a value inherited from a base. If <em>Set</em> is undefined in this and all base objects (or is obscured by an inherited value property), attempting to set the property causes an exception to be thrown.</p>
-<p>A property definition with both <em>get</em> and <em>set</em> actually creates two separate functions, which do not share local or static variables or nested functions. As with methods, each function has a hidden parameter named <code>this</code>, and <em>set</em> has a second hidden parameter named <code>value</code>. Any explicitly defined parameters come after those.</p>
+<p>A property definition with both <em>get</em> and <em>set</em> actually creates two separate functions, which do not share local or static variables or nested functions. As with methods, each function has a hidden parameter named <code>this</code>. The hidden <code>value</code> parameter of <em>set</em> comes after any explicitly defined index parameters. AutoHotkey places <code>value</code> immediately after <code>this</code>; this difference affects calls to accessor functions obtained with <a href="lib/Object.htm#GetOwnPropDesc">GetOwnPropDesc</a>.</p>
 <p>While a property definition defines the <em>get</em> and <em>set</em> accessor functions for a property in the same way as <a href="lib/Object.htm#DefineProp">DefineProp</a>, a method definition defines the <em>call</em> accessor function. Any class may contain a property definition and a method definition with the same name. If a property without a <em>call</em> accessor function (a method) is called, <em>get</em> is invoked with no parameters and the result is then called as a method.</p>
 
 <h4 id="Custom_Classes_property_short">Fat Arrow Properties</h4>
@@ -616,8 +617,8 @@ MsgBox "".test  <em>; 1</em>
 
 <h3 id="ObjPtr">Pointers to Objects</h3>
 <p class="note"><strong>Note:</strong> The object-pointer conversion functions are available only on Windows.</p>
-<p><code>ObjPtr(Object)</code> returns an IUnknown <a href="lib/ComValue.htm">ComValue</a> whose <code>Ptr</code> property contains the pointer. <code>ObjPtrAddRef(Object)</code> instead returns the raw integer pointer and adds a native COM reference.</p>
-<pre>wrapped := ObjPtr(myObject)
+<p><code>ObjPtr(Object)</code> returns the object's IUnknown address without adding a reference, so it is valid only while the object is kept alive by other means. <code>ObjPtrAddRef(Object)</code> also adds a native COM reference, which must be released with <code>ObjRelease</code>.</p>
+<pre>borrowed := ObjPtr(myObject)
 address := ObjPtrAddRef(myObject)
 try DllCall("NativeFunction", "Ptr", address)
 finally ObjRelease(address)</pre>

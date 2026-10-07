@@ -23,7 +23,7 @@
 
 <p>"BufferObj" is used below as a placeholder for any Buffer object, as "Buffer" is the class itself.</p>
 <p>In addition to the methods and properties inherited from <a href="Object.htm">Object</a>, Buffer objects have the following predefined properties.</p>
-<p><a href="#__Item">Byte indexing</a> is a Keysharp extension.</p>
+<p><a href="#__Item">Byte indexing</a> and <a href="#Clone">Clone</a> are Keysharp extensions.</p>
 
 <h2 id="toc">Table of Contents</h2>
 <ul>
@@ -36,6 +36,7 @@
   <li><a href="#Methods">Methods</a>:
     <ul>
       <li><a href="#__New">__New</a>: Allocates or reallocates the buffer and optionally fills it.</li>
+      <li><a href="#Clone">Clone</a>: Returns a copy of the buffer, holding a copy of its bytes.</li>
     </ul>
   </li>
   <li><a href="#Properties">Properties</a>:
@@ -90,6 +91,12 @@ BufferObj := Buffer.<span class="func">Call</span>(<span class="optional">ByteCo
 <p>Specify <em>ByteCount</em> to allocate, reallocate or free the buffer. This is equivalent to assigning <a href="#Size">Size</a>.</p>
 <p>Specify <em>FillByte</em> to fill the buffer with the given numeric byte value, overwriting any existing content.</p>
 <p>If both parameters are omitted, this method has no effect.</p>
+</div>
+
+<div class="methodShort" id="Clone"><h3>Clone</h3>
+<p>Returns a copy of the buffer.</p>
+<pre class="Syntax">Clone := BufferObj.<span class="func">Clone</span>()</pre>
+<p>The clone is an object of the same class and <a href="#Size">Size</a>, holding a copy of the bytes in memory of its own at a different <a href="#Ptr">Ptr</a>, and, as with <a href="Object.htm#Clone">Object's Clone</a>, its own copy of each own property. AutoHotkey raises a <a href="Error.htm#TypeError">TypeError</a> instead.</p>
 </div>
 
 <h2 id="Properties">Properties</h2>

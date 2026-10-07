@@ -98,7 +98,7 @@ MsgBox "This line is not commented out."
 MsgBox "This line is not commented out."
 </pre>
 <p>In AutoHotkey, excluding tabs and spaces, <code><em>/*</em></code> must appear at the start of the line, while <code><em>*/</em></code> can appear only at the start or end of a line. It is also valid to omit <code><em>*/</em></code>, in which case the remainder of the file is commented out.</p>
-<p>In Keysharp, <code><em>/*</em></code> can appear anywhere on a line. A comment which ends on the same line acts as whitespace, so <code>x := 1<em>/*c*/</em>23</code> produces the string <code class="no-highlight">"123"</code> by <a href="Variables.htm#concat">concatenation</a>. A comment which spans lines acts as a line break. An unterminated <code><em>/*</em></code> also comments out the remainder of the file.</p>
+<p>In Keysharp, <code><em>/*</em></code> can also appear inline, except in directives such as <a href="lib/_Include.htm">#Include</a> and <a href="lib/_Warn.htm">#Warn</a> which take the rest of the line as written. Inline comments act as whitespace: <code>x := 1<em>/*c*/</em>23</code> produces <code class="no-highlight">"123"</code> by <a href="Variables.htm#concat">concatenation</a>. Multiline comments act as a line break and use the closing rules above.</p>
 <p>Since comments are filtered out when the script is read from file, they do not impact performance or memory utilization.</p>
 
 <h2 id="expressions">Expressions</h2>

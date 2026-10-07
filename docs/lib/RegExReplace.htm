@@ -68,7 +68,7 @@
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
     <p>If omitted, it defaults to 1 (the beginning of <em>Haystack</em>). Otherwise, specify 2 to start at the second character, 3 to start at the third, and so on. If <em>StartingPos</em> is beyond the length of <em>Haystack</em>, the search starts at the empty string that lies at the end of <em>Haystack</em> (which typically results in no replacements).</p>
     <p>Specify a negative <em>StartingPos</em> to start at that position from the right. For example, -1 starts at the last character and -2 starts at the next-to-last character. If <em>StartingPos</em> tries to go beyond the left end of <em>Haystack</em>, all of <em>Haystack</em> is searched.</p>
-    <p>Specify 0 to start at the end of <em>Haystack</em>; i.e. the position to the right of the last character. This can be used with zero-width assertions such as <code class="no-highlight">(?&lt;=a)</code>.</p>
+    <p>Specify 0 to start at the beginning of <em>Haystack</em>. AutoHotkey interprets 0 as the position to the right of the last character; use <code>StrLen(Haystack) + 1</code> to select that position.</p>
     <p>Regardless of the value of <em>StartingPos</em>, the return value is always a complete copy of <em>Haystack</em> -- the only difference is that more of its left side might be unaltered compared to what would have happened with a <em>StartingPos</em> of 1.</p>
   </dd>
 
@@ -92,8 +92,9 @@
 <p>To replace simple substrings, use <a href="StrReplace.htm">StrReplace</a> because it is faster than RegExReplace.</p>
 <p>If you know what the maximum number of replacements will be, specifying that for the <em>Limit</em> parameter improves performance because the search can be stopped early (this might also reduce the memory load on the system during the operation). For example, if you know there can be only one match near the beginning of a large string, specify a limit of 1.</p>
 <p>To improve performance, the 100 most recently used regular expressions are kept cached in memory (in compiled form).</p>
-<p>The <a href="../misc/RegEx-QuickRef.htm#Study">study option (S)</a> can sometimes improve the performance of a regular expression that is used many times (such as in a loop).</p>
+<p>Every pattern is compiled for speed; the <a href="../misc/RegEx-QuickRef.htm#Study">study option (S)</a> has no further effect.</p>
 <h2 id="Remarks">Remarks</h2>
+<p>After an empty match, a CRLF pair is treated as one newline when advancing the search. AutoHotkey can advance between the CR and LF when the pattern specifies no newline option, so replacements at empty matches can differ.</p>
 <p>Most characters like abc123 can be used literally inside a regular expression. However, any of the characters in the set <code class="no-highlight">\.*?+[{|()^$</code> must be preceded by a backslash to be seen as literal. For example, <span class="regex">\.</span> is a literal period and <span class="regex">\\</span> is a literal backslash. Escaping can be avoided by using \Q...\E. For example: <span class="regex">\QLiteral Text\E</span>.</p>
 <p>Within a regular expression, special characters such as tab and newline can be escaped with either an accent (`) or a backslash (\). For example, <span class="regex">`t</span> is the same as <span class="regex">\t</span> except when the <a href="../misc/RegEx-QuickRef.htm#opt_x">x option</a> is used.</p>
 <p>To learn the basics of regular expressions (or refresh your memory of pattern syntax), see the <a href="../misc/RegEx-QuickRef.htm">RegEx Quick Reference</a>.</p>

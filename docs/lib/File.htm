@@ -97,6 +97,9 @@ MsgBox NumGet(buf, 0, "UInt")  <em>; 3735928559 - the bytes are in the Buffer it
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
     <p>If omitted, the rest of the file is read and returned as one string. Otherwise, specify the maximum number of characters to read. If the File object was created from a handle to a non-seeking device such as a console buffer or pipe, omitting this parameter may cause the method to fail or return only what data is currently available.</p>
+    <p>With UTF-8, a surrogate pair which does not fit is left for the next read; <code>Read(1)</code> at such a character returns the whole pair. UTF-16 reads count code units.</p>
+    <p>Stateful code pages return complete decoding groups. The first group of a read is returned intact even if it exceeds the requested character count. This preserves its characters and keeps unread bytes available to raw reads.</p>
+    <p>Unfinished multibyte characters stay at the current byte position, so a later <a href="#RawRead">RawRead</a> reads their bytes.</p>
   </dd>
 </dl>
 <h4 id="Read_Return_Value">Return Value</h4>
@@ -127,7 +130,8 @@ MsgBox NumGet(buf, 0, "UInt")  <em>; 3735928559 - the bytes are in the Buffer it
 <p>Type: <a href="../Concepts.htm#strings">String</a></p>
 <p>This method returns a line of text, excluding the line ending.</p>
 <h4 id="ReadLine_Remarks">Remarks</h4>
-<p>Lines up to 65,534 characters long can be read. If the length of a line exceeds this, the remainder of the line is returned by subsequent calls to this method.</p></div>
+<p>A line of any length is read whole. At the end of the file, an empty string is returned.</p>
+<p>As in AutoHotkey, CR and LF are recognized in the encoded bytes before text is decoded. A code page's escape or shift sequences do not change how line endings are recognized.</p></div>
 
 <div class="methodShort" id="WriteLine"><h3>WriteLine</h3>
 <p>Writes a line of text to the file and advances the file pointer.</p>
@@ -274,7 +278,7 @@ MsgBox NumGet(buf, 0, "UInt")  <em>; 3735928559 - the bytes are in the Buffer it
 <div class="methodShort" id="AtEOF"><h3>AtEOF</h3>
   <p>Gets a non-zero number if the file pointer has reached the end of the file, otherwise zero.</p>
 <pre class="Syntax">IsAtEOF := FileObj.<span class="func">AtEOF</span></pre>
-  <p>This property should be used only with an actual file. If the File object was created from a handle to a non-seeking device such as a console buffer or pipe, the returned value may not be meaningful, as such devices do not logically have an "end of file". In that case it is 0.</p></div>
+  <p>A closed file reports a non-zero value. For a non-seeking stream such as a pipe, this property reports whether the read-ahead buffer is empty without probing the device; it cannot determine whether more input will arrive.</p></div>
 
 <div class="methodShort" id="Encoding"><h3>Encoding</h3>
 <p>Gets or sets the text encoding used by this file object.</p>

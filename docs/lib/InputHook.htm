@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <title>InputHook - Syntax &amp; Usage | Keysharp</title>
-<meta name="description" content="The InputHook function creates an object which can be used to collect or intercept keyboard input." />
+<meta name="description" content="The InputHook function creates an object which can be used to collect or intercept keyboard and mouse input." />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="../static/theme.css" rel="stylesheet" />
@@ -13,7 +13,7 @@
 
 <h1>InputHook</h1>
 
-<p>Creates an object which can be used to collect or intercept keyboard input.</p>
+<p>Creates an object which can be used to collect or intercept keyboard and mouse input.</p>
 
 <pre class="Syntax">InputHookObj := <span class="func">InputHook</span>(<span class="optional">Options, EndKeys, MatchList</span>)</pre>
 <h2 id="Parameters">Parameters</h2>
@@ -130,6 +130,7 @@ if (ih.Input = CtrlC)
   <p>Type: <a href="../Concepts.htm#strings">String</a></p>
   <p>A list of keys. Braces are used to enclose key names, virtual key codes or scan codes, similar to the <a href="Send.htm">Send</a> function. For example, <code>"{Enter}.{{}"</code> would apply to <kbd>Enter</kbd>, <kbd>.</kbd> and <kbd>{</kbd>. Specifying a key by name, by <code class="no-highlight">{vkNN}</code> or by <code class="no-highlight">{scNNN}</code> may produce three different results; see below for details.</p>
   <p id="all-keys">Specify the string <code>"{All}"</code> (case-insensitive) on its own to apply <em>KeyOptions</em> to all VK and all SC, including <code class="no-highlight">{vkE7}</code> and <code class="no-highlight">{sc000}</code> as described below. KeyOpt may then be called a second time to remove options from specific keys.</p>
+  <p><code>"{Keyboard}"</code> applies <em>KeyOptions</em> to the same keys as <code>"{All}"</code>, and <code>"{Mouse}"</code>, which does not accept the I and N options, to all mouse buttons and wheels. Either can be combined with other keys, as in <code>"{Keyboard}{Mouse}"</code>.</p>
   <p id="sc000">Specify <code class="no-highlight">{sc000}</code> to apply <em>KeyOptions</em> to all events which lack a scan code.</p>
   <p id="vke7">Specify <code class="no-highlight">{vkE7}</code> to apply <em>KeyOptions</em> to Unicode events, such as those sent by <code>SendEvent "{U+221e}"</code> or <code>SendEvent "{Text}&infin;"</code>.</p>
   </dd>
@@ -161,7 +162,7 @@ InputHookObj.KeyOpt("{vkE7}{sc000}", "-I")  <em>; except Unicode events.</em></p
 <pre class="Syntax">InputHookObj.<span class="func">Start</span>()</pre>
 <p>Has no effect if the Input is already in progress.</p>
 <p>The newly started Input is placed on the top of the <a href="#stack">InputHook stack</a>, which allows it to override any previously started Input.</p>
-<p>This method installs the <a href="InstallKeybdHook.htm">keyboard hook</a> (if it was not already) unless the Input only observes the mouse, and installs the <a href="InstallMouseHook.htm">mouse hook</a> if a mouse callback, <a href="#VisibleMouseMove">VisibleMouseMove</a> or a key option on a mouse button needs it.</p>
+<p>This method installs the <a href="InstallKeybdHook.htm">keyboard hook</a> (if it was not already) unless the Input only observes the mouse, and installs the <a href="InstallMouseHook.htm">mouse hook</a> if a mouse callback, <a href="#VisibleMouseMove">VisibleMouseMove</a> or a key option on a mouse button or wheel needs it.</p>
 <p>If the input hook cannot be installed, as on a Linux host with no display, the Input does not start: <a href="#EndReason">EndReason</a> becomes Failed and <a href="#OnEnd">OnEnd</a> is not called.</p>
 </div>
 
@@ -303,21 +304,18 @@ InputHookObj.KeyOpt("{vkE7}{sc000}", "-I")  <em>; except Unicode events.</em></p
 <p>Gets or sets the <a href="../misc/Functor.htm">function object</a> which is called when a mouse button or wheel input is pressed.</p>
 <pre class="Syntax">MyCallback := InputHookObj.<span class="func">OnMouseDown</span></pre>
 <pre class="Syntax">InputHookObj.<span class="func">OnMouseDown</span> := MyCallback</pre>
-<p><em>MyCallback</em> is the function object to call (blank if none). Either <code>""</code> or <code>unset</code> can be assigned to remove the current callback.</p>
-<p>The callback accepts four parameters and can be defined as follows:</p>
+<p>Assign <code>""</code> or <code>unset</code> to remove the callback (blank if none).</p>
 <pre class="NoIndent">MyCallback(InputHookObj, ButtonName, X, Y) { ...</pre>
 <p><em>ButtonName</em> is the normalized name of the mouse button or wheel input. <em>X</em> and <em>Y</em> are the coordinates reported for the event.</p>
-<p>Mouse-button visibility is controlled by <a href="#VisibleNonText">VisibleNonText</a> and the <a href="#KeyOpt-s">S</a> and <a href="#KeyOpt-v">V</a> key options.</p>
 </div>
 
 <div class="methodShort" id="OnMouseMove"><h3>OnMouseMove</h3>
 <p>Gets or sets the <a href="../misc/Functor.htm">function object</a> which is called for each mouse-movement report.</p>
 <pre class="Syntax">MyCallback := InputHookObj.<span class="func">OnMouseMove</span></pre>
 <pre class="Syntax">InputHookObj.<span class="func">OnMouseMove</span> := MyCallback</pre>
-<p><em>MyCallback</em> is the function object to call (blank if none). Either <code>""</code> or <code>unset</code> can be assigned to remove the current callback.</p>
-<p>The callback accepts three parameters and can be defined as follows:</p>
+<p>Callback assignment is as for <a href="#OnMouseDown">OnMouseDown</a>.</p>
 <pre class="NoIndent">MyCallback(InputHookObj, DeltaX, DeltaY) { ...</pre>
-<p><em>DeltaX</em> and <em>DeltaY</em> are signed movement values. Each native movement report is queued separately, including reports where both values are zero. Additional event metadata, including absolute coordinates when supplied by the platform, is available through <a href="../Variables.htm#EventInfo">A_EventInfo</a> while the callback is running.</p>
+<p><em>DeltaX</em> and <em>DeltaY</em> are signed movement deltas. Each report is queued separately, including zero deltas. <a href="../Variables.htm#EventInfo">A_EventInfo</a> supplies additional metadata, including absolute coordinates when supplied by the platform, during the callback.</p>
 <p>Mouse-movement visibility is controlled by <a href="#VisibleMouseMove">VisibleMouseMove</a>.</p>
 </div>
 
@@ -325,7 +323,7 @@ InputHookObj.KeyOpt("{vkE7}{sc000}", "-I")  <em>; except Unicode events.</em></p
 <p>Gets or sets the <a href="../misc/Functor.htm">function object</a> which is called when a mouse button or wheel input is released.</p>
 <pre class="Syntax">MyCallback := InputHookObj.<span class="func">OnMouseUp</span></pre>
 <pre class="Syntax">InputHookObj.<span class="func">OnMouseUp</span> := MyCallback</pre>
-<p><em>MyCallback</em> is the function object to call (blank if none). Either <code>""</code> or <code>unset</code> can be assigned to remove the current callback.</p>
+<p>Callback assignment is as for <a href="#OnMouseDown">OnMouseDown</a>.</p>
 <p>The callback has the same parameters and visibility rules as <a href="#OnMouseDown">OnMouseDown</a>.</p>
 </div>
 
@@ -404,6 +402,7 @@ InputHookObj.KeyOpt("{vkE7}{sc000}", "-I")  <em>; except Unicode events.</em></p
 <pre class="Syntax">InputHookObj.<span class="func">Timeout</span> := NewSeconds</pre>
 <p><em>CurrentSeconds</em> is <em>NewSeconds</em> if assigned, otherwise 0 by default unless overwritten by the <a href="#option-t">T option</a>.</p>
 <p><em>NewSeconds</em> is a <a href="../Concepts.htm#numbers">floating-point number</a> representing the timeout. 0 means no timeout.</p>
+<p>A value which cannot be converted to a number raises a <a href="Error.htm#TypeError">TypeError</a>.</p>
 <p>The timeout period ordinarily starts when <a href="#Start">Start</a> is called, but will restart if this property is assigned a value while Input is in progress. If Input is still in progress when the timeout period elapses, it is terminated and <a href="#EndReason">EndReason</a> is set to the word Timeout.</p>
 </div>
 
@@ -426,7 +425,7 @@ InputHookObj.KeyOpt("{vkE7}{sc000}", "-I")  <em>; except Unicode events.</em></p
 <pre class="Syntax">CurrentSetting := InputHookObj.<span class="func">VisibleNonText</span></pre>
 <pre class="Syntax">InputHookObj.<span class="func">VisibleNonText</span> := NewSetting</pre>
 <p><em>CurrentSetting</em> is <em>NewSetting</em> if assigned, otherwise 1 (true) by default. The <a href="#vis">V option</a> sets this to 1 (true).</p>
-<p><em>NewSetting</em> is a <a href="../Concepts.htm#boolean">boolean value</a> that enables or disables this setting. If true, keys and key combinations which do not produce text may trigger hotkeys or be passed on to the active window. If false, they are blocked.</p>
+<p><em>NewSetting</em> is a <a href="../Concepts.htm#boolean">boolean value</a> that enables or disables this setting. If true, keys and key combinations which do not produce text may trigger hotkeys or be passed on to the active window. If false, they are blocked. This setting does not affect mouse buttons and wheels.</p>
 <p>See <a href="#VisibleText">VisibleText</a> for details about which keys are counted as producing text.</p>
 </div>
 
@@ -492,7 +491,7 @@ InputHookObj.KeyOpt("{vkE7}{sc000}", "-I")  <em>; except Unicode events.</em></p
   <li>If the key is a <a href="../KeyList.htm#modifier">standard modifier key</a> or <kbd>CapsLock</kbd>, <kbd>NumLock</kbd> or <kbd>ScrollLock</kbd>, it is not suppressed.</li>
   <li><a href="#VisibleText">VisibleText</a> or <a href="#VisibleNonText">VisibleNonText</a> is consulted, depending on whether the key produces text. If the property is 0 (false), the key is suppressed.   See <a href="#VisibleText">VisibleText</a> for details about which keys are counted as producing text.</li>
 </ul>
-<p>The <a href="InstallKeybdHook.htm">keyboard hook</a> is required while an Input is in progress, but will be uninstalled automatically if it is no longer needed when the Input is terminated.</p>
+<p>The <a href="InstallKeybdHook.htm">keyboard hook</a> is required while an Input is in progress, unless it only observes the mouse, but will be uninstalled automatically if it is no longer needed when the Input is terminated.</p>
 <p>The script is <a href="../Scripts.htm#persistent">automatically persistent</a> while an Input is in progress, so it will continue monitoring input even if there are no running <a href="../misc/Threads.htm">threads</a>. The script may exit automatically when input ends (if there are no running threads and the script is not persistent for some other reason).</p>
 <p>AutoHotkey does not support Input Method Editors (IME). The keyboard hook intercepts keyboard events and translates them to text by using <a href="https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-tounicodeex">ToUnicodeEx</a> or ToAsciiEx (except in the case of <a href="https://learn.microsoft.com/windows/win32/inputdev/virtual-key-codes#vk_packet">VK_PACKET</a> events, which encapsulate a single character).</p>
 <p>If you use multiple languages or keyboard layouts, InputHook uses the keyboard layout of the active window rather than the script's (regardless of whether the Input is <a href="#vis">visible</a>).</p>

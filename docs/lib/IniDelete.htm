@@ -39,13 +39,15 @@
 
 </dl>
 <h2 id="Error_Handling">Error Handling</h2>
-<p>An <a href="Error.htm#OSError">OSError</a> is thrown on failure.</p>
+<p>An <a href="Error.htm#OSError">OSError</a> is thrown on failure. On Linux and macOS, this includes unreadable files and symbolic-link cycles; a missing file has no effect.</p>
 <p>Regardless of whether an exception is thrown, <a href="../Variables.htm#LastError">A_LastError</a> is set to the result of the operating system's GetLastError() function.</p>
 
 <h2 id="Remarks">Remarks</h2>
 <p>A standard ini file looks like:</p>
 <pre class="no-highlight">[SectionName]
 Key=Value</pre>
+<h3>Linux and macOS</h3>
+<p>The file is replaced atomically, preserving unaffected content, encoding, line endings and permissions. A symbolic link to the file is preserved while its target is updated.</p>
 <h2 id="Related">Related</h2>
 <p><a href="IniRead.htm">IniRead</a>, <a href="IniWrite.htm">IniWrite</a>, <a href="RegDelete.htm">RegDelete</a>, <a href="RegDeleteKey.htm">RegDeleteKey</a></p>
 <h2 id="Examples">Examples</h2>

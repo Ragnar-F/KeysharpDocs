@@ -16,6 +16,7 @@
 
 <p>Struct is the base class for all <a href="../Structs.htm">structs</a>.</p>
 <p>Unlike <a href="Object.htm">Object</a>, a struct's properties are limited to those defined by its base object (the <a href="#Prototype">Prototype</a> of the struct's class). These are typically typed properties declared in a <a href="../Structs.htm#classdef">struct definition</a>, but can include dynamic properties, methods and read-only value properties.</p>
+<p>A struct instance cannot own properties. <a href="Object.htm#DefineProp">DefineProp</a>, <a href="Object.htm#GetCapacity">ObjGetCapacity</a>, <a href="Object.htm#SetCapacity">ObjSetCapacity</a>, <a href="Object.htm#HasOwnProp">ObjHasOwnProp</a>, <a href="Object.htm#OwnPropCount">ObjOwnPropCount</a> and <a href="Object.htm#OwnProps">ObjOwnProps</a> raise a <a href="Error.htm#TypeError">TypeError</a> when given a struct instance. Define members on the struct's prototype instead.</p>
 <p>"Obj" is used below as a placeholder for any instance of the Struct class.</p>
 <p>Instances of Struct are indirectly based on <code>Struct.Prototype</code>, which is based on <code>Any.Prototype</code>. In addition to the methods and properties inherited from <a href="Any.htm">Any</a>, Structs have the following predefined methods and properties.</p>
 

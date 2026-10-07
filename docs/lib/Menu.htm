@@ -55,7 +55,7 @@
     <ul>
       <li><a href="#ClickCount">ClickCount</a>: Gets or sets how many times the tray icon must be clicked to select its default menu item.</li>
       <li><a href="#Default">Default</a>: Gets or sets the default menu item.</li>
-      <li><a href="#Handle">Handle</a>: Gets the menu's Win32 handle.</li>
+      <li><a href="#Handle">Handle</a>: Gets the handle of the window the menu is drawn in.</li>
       <li><a href="#MenuItemCount">MenuItemCount</a>: Gets the number of items in the menu.</li>
     </ul>
   </li>
@@ -98,6 +98,7 @@ MyMenuBar := MenuBar.<span class="func">Call</span>()
   <dd>
     <p>Type: <a href="../misc/Functor.htm">Function Object</a> or <strong>Menu</strong></p>
     <p>The function to call as a new <a href="../misc/Threads.htm">thread</a> when the menu item is selected, or a reference to a Menu object to use as a submenu.</p>
+    <p>A <a href="Error.htm#ValueError">ValueError</a> is raised if the submenu is this menu, contains this menu among its nested submenus, or is a MenuBar.</p>
     <p>This parameter is required when creating a new item, but optional when updating the options of an existing item.</p>
     <p>The callback accepts three parameters and can be <a href="../Functions.htm#intro">defined</a> as follows:</p>
     <pre class="NoIndent">MyCallback(ItemName, ItemPos, MyMenu) { ...</pre>
@@ -112,20 +113,21 @@ MyMenuBar := MenuBar.<span class="func">Call</span>()
   <dt id="Options">Options</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#strings">String</a></p>
-    <p>If blank or omitted, it defaults to no options. Otherwise, specify one or more options from the list below (not case-sensitive). Separate each option from the next with a space or tab. To remove an option, precede it with a minus sign. To add an option, a plus sign is permitted but not required.</p>
-    <p><strong>P</strong><em>n</em>: Specify for <em>n</em> the menu item's <a href="../misc/Threads.htm">thread priority</a>, e.g. <code class="no-highlight">P1</code>. If this option is omitted when adding a menu item, the priority will be 0, which is the standard default. If omitted when updating a menu item, the item's priority will not be changed. Use a decimal (not hexadecimal) number as the priority.</p>
+    <p>If blank or omitted, it defaults to no options. Otherwise, specify one or more options from the list below (not case-sensitive). Separate each option from the next with a space or tab; line breaks are not separators. Except for <em>Pn</em>, each option name must match the whole word. To remove an option, precede it with a minus sign. To add an option, a plus sign is permitted but not required.</p>
+    <p><strong>P</strong><em>n</em>: Specify for <em>n</em> the menu item's <a href="../misc/Threads.htm">thread priority</a>, e.g. <code class="no-highlight">P1</code>. If this option is omitted when adding a menu item, the priority will be 0, which is the standard default. If omitted when updating a menu item, the item's priority will not be changed, even when replacing its callback. Use a decimal (not hexadecimal) number as the priority. The integer prefix following P is read, so <code class="no-highlight">P5text</code> means 5 and <code class="no-highlight">Pxyz</code> means 0. The priority can also be updated with <em>CallbackOrSubmenu</em> omitted.</p>
     <p><strong>Radio:</strong> If the item is checked, a bullet point is used instead of a check mark.</p>
-    <p><strong>Right:</strong> The item is right-justified within the menu bar. This only applies to <a href="Gui.htm#MenuBar">menu bars</a>, not popup menus or submenus.</p>
+    <p><strong>Right:</strong> The item is right-justified within the menu bar. This option is accepted only for a <a href="Gui.htm#MenuBar">MenuBar</a>; using it in a popup menu or submenu raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
     <p><strong>Break:</strong> The item begins a new column in a popup menu.</p>
     <p><strong>BarBreak:</strong> As above, but with a dividing line between columns.</p>
     <p><strong>RTL</strong> <span class="ver">[v2.1-alpha.17+]</span>: The item is displayed in right-to-left order. This is used to support right-to-left languages, such as Arabic and Hebrew.</p>
     <p>On macOS, <em>Right</em>, <em>Break</em> and <em>BarBreak</em> have no effect.</p>
+    <p>An invalid option raises a <a href="Error.htm#ValueError">ValueError</a> before the item is added or changed. If an <a href="OnError.htm">OnError</a> callback continues the error by returning -1, that option is skipped and the remaining valid options are processed.</p>
 <p>To change an existing item's options without affecting its callback or submenu, simply omit the <em>CallbackOrSubmenu</em> parameter.</p>
   </dd>
 </dl>
 <h4 id="Add_Remarks">Remarks</h4>
 <p>This is a multipurpose method that adds a menu item, updates one with a new submenu or callback, or converts one from a normal item into a submenu (or vice versa). If <em>MenuItemName</em> does not yet exist, it will be added to the menu. Otherwise, <em>MenuItemName</em> is updated with the newly specified <em>CallbackOrSubmenu</em> and/or <em>Options</em>.</p>
-<p>To add a menu separator line, omit all three parameters.</p>
+<p>To add a menu separator line, omit all three parameters. A blank <em>MenuItemName</em> with a callback, submenu or options raises a <a href="Error.htm#ValueError">ValueError</a>, as does a position past the last item.</p>
 <p>This method always adds new menu items at the bottom of the menu, while the <a href="#Insert">Insert</a> method can be used to insert an item before an existing custom menu item.</p>
 </div>
 
@@ -165,11 +167,11 @@ MyMenuBar := MenuBar.<span class="func">Call</span>()
   <tr><td>&amp;Edit Script</td><td>6</td><td></td></tr>
   <tr><td><div class="fake-sep"></div></td><td>7</td><td></td></tr>
   <tr><td>&amp;Suspend Hotkeys</td><td>8</td><td>1</td></tr>
-  <tr><td>E&amp;xit</td><td>9</td><td>2</td></tr>
+  <tr><td>&amp;Pause Script</td><td>9</td><td>2</td></tr>
+  <tr><td>E&amp;xit</td><td>10</td><td>3</td></tr>
 </table>
-<p>There is no <code class="no-highlight">&amp;Pause Script</code> item, because <a href="Pause.htm#Remarks">pausing the whole script</a> is not supported. In AutoHotkey v2.1, the tray menu has one at position 9.</p>
-<p>Compiled scripts include only the last two by default. <code class="no-highlight">&amp;Open</code> is included only if <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is 1 when AddStandard is called (in that case, add 1 to the positions shown in the third column). If the tray menu contains standard items, <code class="no-highlight">&amp;Open</code> is inserted or removed whenever <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is changed. For other menus, <code class="no-highlight">&amp;Open</code> has no effect if <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is 0.</p>
-<p>Standard items can be modified or deleted like custom menu items. AddStandard detects existing standard items by their displayed names.</p>
+<p>Compiled scripts include only the last three by default. <code class="no-highlight">&amp;Open</code> is included only if <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is 1 when AddStandard is called (in that case, add 1 to the positions shown in the third column). If the tray menu contains standard items, <code class="no-highlight">&amp;Open</code> is inserted or removed whenever <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is changed. For other menus, <code class="no-highlight">&amp;Open</code> has no effect if <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> is 0.</p>
+<p>Standard items can be modified or deleted like custom menu items. AddStandard detects existing standard items by their displayed names. If the <a href="#Add">Add</a> method is used to change the callback function associated with a standard menu item, it is no longer considered to be a standard item, so its checkmark and visibility no longer follow <a href="Suspend.htm">Suspend</a>, <a href="Pause.htm">Pause</a> or <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a>.</p>
 <p>Adding the <code class="no-highlight">&amp;Open</code> item to the tray menu causes it to become the default item if there wasn't one already.</p>
 </div>
 
@@ -233,6 +235,15 @@ MyMenuBar := MenuBar.<span class="func">Call</span>()
 </dl>
 </div>
 
+<div class="methodShort" id="Visibility">
+<h3>HideItem / ShowItem / ToggleItemVis</h3>
+<p>Hides, shows or toggles the visibility of a menu item.</p>
+<pre class="Syntax">IsVisible := MyMenu.<span class="func">HideItem</span>(MenuItemName)
+IsVisible := MyMenu.<span class="func">ShowItem</span>(MenuItemName)
+IsVisible := MyMenu.<span class="func">ToggleItemVis</span>(MenuItemName)</pre>
+<p><em>MenuItemName</em> is the name or position of an item as described under <a href="#MenuItemName">MenuItemName</a>. The return value is 1 if the item is visible after the operation, otherwise 0.</p>
+</div>
+
 <div class="methodShort" id="Insert">
 <h3>Insert</h3>
 <p>Inserts a new item before the specified item.</p>
@@ -262,6 +273,13 @@ MyMenuBar := MenuBar.<span class="func">Call</span>()
 <p>To insert a menu separator line before an existing custom menu item, omit all parameters except <em>MenuItemName</em>. To add a menu separator line at the bottom of the menu, omit all parameters.</p>
 </div>
 
+<div class="methodShort" id="GetMenuItemName">
+<h3>MenuItemName</h3>
+<p>Returns the stored name of a menu item.</p>
+<pre class="Syntax">Name := MyMenu.<span class="func">MenuItemName</span>(MenuItemName)</pre>
+<p>An empty string is returned if the specified item is not a named menu item.</p>
+</div>
+
 <div class="methodShort" id="Rename">
 <h3>Rename</h3>
 <p>Renames a menu item.</p>
@@ -276,17 +294,18 @@ MyMenuBar := MenuBar.<span class="func">Call</span>()
   <dt>NewName</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#strings">String</a></p>
-    <p>If blank or omitted, <em>MenuItemName</em> will be converted into a separator line. Otherwise, specify the new name.</p>
+    <p>Specify the new name. In AutoHotkey, a blank or omitted name converts the item into a separator line. In Keysharp, a blank name currently clears the caption, and an omitted name sets it to <code>"-"</code>.</p>
   </dd>
 </dl>
 <h4 id="Rename_Remarks">Remarks</h4>
 <p>The menu item's current callback or submenu is unchanged.</p>
-<p>A separator line can be converted to a normal item by specifying the position of the separator such as <code>"1&"</code> for <em>MenuItemName</em> and a non-blank name for <em>NewName</em>, and then using the <a href="#Add">Add</a> method to give the item a callback or submenu.</p>
+<p>Renaming a separator by its position, such as <code>"1&amp;"</code>, replaces it with a new menu item. Separator conversion which preserves a callback, submenu and item state is <a href="../Keysharp.htm#ReleaseReview">deferred</a>.</p>
 </div>
 
 <div class="methodShort" id="SetColor">
 <h3>SetColor</h3>
 <p>Changes the background color of the menu.</p>
+<p class="note"><strong>Note:</strong> This method has an effect only on Windows.</p>
 <pre class="Syntax">MyMenu.<span class="func">SetColor</span>(<span class="optional">ColorValue, ApplyToSubmenus</span>)</pre>
 <h4 id="SetColor_Parameters">Parameters</h4>
 
@@ -294,7 +313,7 @@ MyMenuBar := MenuBar.<span class="func">Call</span>()
   <dt>ColorValue</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#strings">String</a> or <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>If blank or omitted, it defaults to the word Default, which restores the default color of the menu. Otherwise, specify one of the 16 primary <a href="../misc/Colors.htm">HTML color names</a>, a hexadecimal RGB color string (the 0x prefix is optional), or a pure numeric RGB color value. Example values: <code>"Silver"</code>, <code>"FFFFAA"</code>, <code>0xFFFFAA</code>, <code>"Default"</code>.</p>
+    <p>If blank or omitted, it defaults to the word Default, which restores the default color of the menu. Otherwise, specify one of the 16 primary <a href="../misc/Colors.htm">HTML color names</a>, a hexadecimal RGB color string (the 0x prefix is optional), or a pure numeric RGB color value. Example values: <code>"Silver"</code>, <code>"FFFFAA"</code>, <code>0xFFFFAA</code>, <code>"Default"</code>. Any other value raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
   </dd>
   <dt>ApplyToSubmenus</dt>
   <dd>
@@ -418,42 +437,22 @@ MyMenuBar := MenuBar.<span class="func">Call</span>()
 </dl>
 </div>
 
-<div class="methodShort" id="Visibility">
-<h3>HideItem / ShowItem / ToggleItemVis</h3>
-<p>Hides, shows or toggles the visibility of a menu item.</p>
-<pre class="Syntax">IsVisible := MyMenu.<span class="func">HideItem</span>(MenuItemName)
-IsVisible := MyMenu.<span class="func">ShowItem</span>(MenuItemName)
-IsVisible := MyMenu.<span class="func">ToggleItemVis</span>(MenuItemName)</pre>
-<p><em>MenuItemName</em> is the name or position of an item as described under <a href="#MenuItemName">MenuItemName</a>. The return value is 1 if the item is visible after the operation, otherwise 0.</p>
-</div>
-
-<div class="methodShort" id="GetMenuItemName">
-<h3>MenuItemName</h3>
-<p>Returns the stored name of a menu item.</p>
-<pre class="Syntax">Name := MyMenu.<span class="func">MenuItemName</span>(MenuItemName)</pre>
-<p>An empty string is returned if the specified item is not a named menu item.</p>
-</div>
-
 <div class="methodShort" id="SetForeColor">
 <h3>SetForeColor</h3>
-<p>Changes the text color of this menu.</p>
+<p>Changes the text color of this menu, as <a href="#SetColor">SetColor</a> changes its background color. This method is a Keysharp extension.</p>
+<p class="note"><strong>Note:</strong> This method has an effect only on Windows.</p>
 <pre class="Syntax">MyMenu.<span class="func">SetForeColor</span>(<span class="optional">ColorValue, ApplyToSubmenus</span>)</pre>
-<p><em>ColorValue</em> is a color name or RGB value; omit it or pass blank to restore the default. If <em>ApplyToSubmenus</em> is omitted, it defaults to true.</p>
+<p><em>ColorValue</em> and <em>ApplyToSubmenus</em> are the same as for <a href="#SetColor">SetColor</a>: a blank or omitted <em>ColorValue</em>, or the word Default, restores the default color, and a number is an RGB value.</p>
 </div>
 
 <h2 id="Properties">Properties</h2>
-<div class="methodShort" id="MenuItemCount">
-<h3>MenuItemCount</h3>
-<p>Gets the number of items contained by the menu, including submenus and separator items at this level.</p>
-<pre class="Syntax">Count := MyMenu.<span class="func">MenuItemCount</span></pre>
-</div>
 <div class="methodShort" id="ClickCount">
 <h3>ClickCount</h3>
 <p>Gets or sets how many times the <a href="../Program.htm#tray-icon">tray icon</a> must be clicked to select its default menu item.</p>
 <pre class="Syntax">CurrentCount := MyMenu.<span class="func">ClickCount</span></pre>
 <pre class="Syntax">MyMenu.<span class="func">ClickCount</span> := NewCount</pre>
 <p><em>CurrentCount</em> is <em>NewCount</em> if assigned, otherwise 2 by default.</p>
-<p><em>NewCount</em> can be 1 to allow a single-click to select the tray menu's default menu item, or 2 to return to the default behavior (double-click). Any other value is invalid and throws an exception.</p>
+<p><em>NewCount</em> can be 1 to allow a single-click to select the tray menu's default menu item, or 2 to return to the default behavior (double-click). Any other value raises a <a href="Error.htm#ValueError">ValueError</a> and leaves the previous count unchanged.</p>
 </div>
 
 <div class="methodShort" id="Default">
@@ -464,15 +463,23 @@ IsVisible := MyMenu.<span class="func">ToggleItemVis</span>(MenuItemName)</pre>
 <p><em>CurrentDefault</em> is the name of the default menu item, or an empty string if there is no default.</p>
 <p><em>MenuItemName</em> is the name or position of a menu item. See <a href="#MenuItemName">MenuItemName</a>. If <em>MenuItemName</em> is an empty string, there will be no default.</p>
 <p>Setting the default item makes that item's font bold (setting a default item in menus other than the tray menu is currently purely cosmetic). When the user double-clicks the <a href="../Program.htm#tray-icon">tray icon</a>, its default menu item is selected (even if the item is disabled). If there is no default, double-clicking has no effect.</p>
+<p>Each menu has its own default item; setting it changes only the items of this menu, not those of its submenus.</p>
 <p>The default item for the tray menu is initially <code class="no-highlight">&amp;Open</code>, if present. Adding <code class="no-highlight">&amp;Open</code> to the tray menu by calling <a href="#AddStandard">AddStandard</a> or changing <a href="../Variables.htm#AllowMainWindow">A_AllowMainWindow</a> also causes it to become the default item if there wasn't one already.</p>
 <p>If the default item is deleted, the menu is left without one.</p>
 </div>
 
 <div class="methodShort" id="Handle">
 <h3>Handle</h3>
-<p>Gets a handle to a <a href="#Win32_Menus">Win32 menu</a> (a handle of type <code class="no-highlight">HMENU</code>), constructing it if necessary.</p>
+<p>Gets the handle of the window the menu is drawn in.</p>
 <pre class="Syntax">Handle := MyMenu.<span class="func">Handle</span></pre>
-<p>The returned handle is valid only until the Win32 menu is destroyed, which typically occurs when the Menu object is freed. Once the menu is destroyed, the operating system may reassign the handle value to any menus subsequently created by the script or any other program.</p>
+<p>Unlike in AutoHotkey, this is not a <a href="#Win32_Menus">Win32 menu</a> handle (<code class="no-highlight">HMENU</code>), so the Win32 menu functions cannot use it. <a href="MenuFromHandle.htm">MenuFromHandle</a> accepts it.</p>
+<p>On Windows, reading this property creates the underlying menu window if necessary. Closing a popup does not explicitly destroy that window.</p>
+</div>
+
+<div class="methodShort" id="MenuItemCount">
+<h3>MenuItemCount</h3>
+<p>Gets the number of items in this menu, separators and submenu items included, not counting the items of its submenus. This property is a Keysharp extension.</p>
+<pre class="Syntax">Count := MyMenu.<span class="func">MenuItemCount</span></pre>
 </div>
 
 <h2 id="MenuItemName">MenuItemName</h2>
@@ -481,13 +488,11 @@ IsVisible := MyMenu.<span class="func">ToggleItemVis</span>(MenuItemName)</pre>
 <p>When referring to an existing menu item, the name is not case-sensitive but any ampersands must be included. For example: <code>"&amp;Open"</code></p>
 <p>The names of menu items can be up to 260 characters long.</p>
 <p>To identify an existing item by its position in the menu, write the item's position followed by an ampersand. For example, <code>"1&amp;"</code> indicates the first item.</p>
+<p>A name or position refers only to the items of the menu itself, not to those of its submenus.</p>
 
 <h2 id="Win32_Menus">Win32 Menus</h2>
 <p>Windows provides a <a href="https://learn.microsoft.com/windows/win32/menurc/menus">set of functions and notifications</a> for creating, modifying and displaying menus with standard appearance and behavior. We refer to a menu created by one of these functions as a <em>Win32 menu</em>.</p>
-<p>As items are added to a menu or modified, the name and other properties of each item are stored in the Menu object. A native menu is constructed when the Menu object is created. Its cleanup follows the <a href="../Objects.htm#Lifetime">managed lifetime</a> of the Menu object.</p>
-<p><a href="#Handle">Menu.Handle</a> returns a handle to a Win32 menu (a handle of type <code class="no-highlight">HMENU</code>), constructing it if necessary.</p>
-<p>Any modifications which are made to the menu directly by Win32 functions are not reflected by the script's Menu object, so may be lost if an item is modified by one of the built-in methods.</p>
-<p>Each menu item is assigned an ID when it is first added to the menu. Scripts cannot rely on an item receiving a particular ID, but can retrieve the ID of an item by using GetMenuItemID as shown in <a href="#ExDllCall">example #5</a>. This ID cannot be used with the Menu object, but can be used with various <a href="https://learn.microsoft.com/windows/win32/menurc/menus">Win32 functions</a>.</p>
+<p>In AutoHotkey, each Menu object is backed by a Win32 menu. In Keysharp, a menu is drawn by the GUI toolkit in a window of its own, and there is no Win32 menu: <a href="#Handle">Menu.Handle</a> is the handle of that window rather than an <code class="no-highlight">HMENU</code>, so the Win32 menu functions, such as GetMenuItemCount and GetMenuItemID, cannot be used with it. A native menu handle which Windows passes to the script, such as with the WM_INITMENUPOPUP message, is not recognized by <a href="MenuFromHandle.htm">MenuFromHandle</a>. The name and other properties of each item are kept in the Menu object, and the menu's resources are released with it, following the <a href="../Objects.htm#Lifetime">managed lifetime</a> of the Menu object.</p>
 
 <h2 id="Remarks">Remarks</h2>
 <p>A menu usually looks like this:</p>
@@ -636,20 +641,19 @@ MenuHandler(*) {
 </div>
 
 <div class="ex" id="ExDllCall">
-<p><a class="ex_number" href="#ExDllCall"></a> Reports the number of items in a menu and the ID of the last item.</p>
+<p><a class="ex_number" href="#ExDllCall"></a> Reports the number of items in a menu, and that the items of a submenu are not counted.</p>
 <pre>
 MyMenu := Menu()
 MyMenu.Add("Item 1", NoAction)
 MyMenu.Add("Item 2", NoAction)
-MyMenu.Add("Item B", NoAction)
+MyMenu.Add()  <em>; A separator is an item too.</em>
 
-<em>; Retrieve the number of items in a menu.</em>
-item_count := DllCall("GetMenuItemCount", "ptr", MyMenu.Handle)
+Submenu := Menu()
+Submenu.Add("Item A", NoAction)
+Submenu.Add("Item B", NoAction)
+MyMenu.Add("My Submenu", Submenu)
 
-<em>; Retrieve the ID of the last item.</em>
-last_id := DllCall("GetMenuItemID", "ptr", MyMenu.Handle, "int", item_count-1)
-
-MsgBox("MyMenu has " item_count " items, and its last item has ID " last_id)
+MsgBox("MyMenu has " MyMenu.<a href="#MenuItemCount">MenuItemCount</a> " items, and its submenu has " Submenu.MenuItemCount ".")  <em>; 4 and 2.</em>
 
 NoAction(*) {
     <em>; Do nothing.</em>

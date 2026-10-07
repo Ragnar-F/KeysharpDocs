@@ -17,6 +17,7 @@
 <p>Deletes an entry from a list box, combo box, or drop-down list by index.</p>
 
 <pre class="Syntax"><span class="func">ControlDeleteItem</span> N, ControlID <span class="optional">, WinTitle, WinText, ExcludeTitle, ExcludeText</span></pre>
+<p class="note"><strong>Note:</strong> On Linux and macOS, this function operates only on the script's own controls. Another program's control raises a <a href="Error.htm#TargetError">TargetError</a>.</p>
 
 <h2 id="Parameters">Parameters</h2>
 <dl>
@@ -41,7 +42,7 @@
 
 <h2 id="Error_Handling">Error Handling</h2>
 <p>A <a href="Error.htm#TargetError">TargetError</a> is thrown if the window or control could not be found, or if the control's class name does not contain "Combo" or "List".</p>
-<p>An <a href="Error.htm">Error</a> or <a href="Error.htm#OSError">OSError</a> is thrown if the entry could not be deleted.</p>
+<p>An <a href="Error.htm">Error</a> or <a href="Error.htm#OSError">OSError</a> is thrown if the entry could not be deleted. On Linux and macOS, an index outside the control's items raises a <a href="Error.htm#TargetError">TargetError</a>.</p>
 
 <h2 id="Remarks">Remarks</h2>
 <p>This function is intended for use with controls in a non-GUI window, i.e. a window that is not created with the <a href="Gui.htm#Call">Gui</a> function. It works best with common or predefined Microsoft controls; some applications use custom or modified controls, in which case the function might not work as expected. For <a href="GuiControls.htm">GUI controls</a>, it is usually more convenient to use <a href="GuiControl.htm#Delete">GuiControl.Delete</a>.</p>

@@ -496,7 +496,7 @@ a.ks-download-btn:visited:hover {
 
 .dl-col {
   display: block;
-  -ms-flex: 1 1 9em; 
+  -ms-flex: 1 1 9em;
   flex: 1 1 9em;
   width: 9em;
   max-width: 100%;

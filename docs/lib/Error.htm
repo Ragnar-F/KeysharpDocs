@@ -30,7 +30,6 @@
   <li><a href="#Methods">Methods</a>:
     <ul>
       <li><a href="#Show">Show</a> <span class="ver">[v2.1-alpha.10+]</span>: Shows a standard script error dialog.</li>
-      <li><a href="#ToString">ToString</a>: Returns a readable description of the error.</li>
     </ul>
   </li>
   <li><a href="#Properties">Properties</a>:
@@ -114,7 +113,7 @@ SomeFunction() {
 <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
 <p>If the Return mode is used, the return value is -1 if the dialog was closed by the Continue button. Otherwise, the return value is 1.</p>
 <h4>Remarks</h4>
-<p>If present, the <a href="#Message">Message</a>, <a href="#Extra">Extra</a>, <a href="#File">File</a>, <a href="#Line">Line</a>, <a href="#Hint">Hint</a> and <a href="#Stack">Stack</a> properties are used to determine the content of the dialog. If blank, the corresponding element of the dialog is omitted. In particular, File can be removed to hide the "vicinity lines" normally shown in the dialog. If File does not correspond to the main script or an #include file, only the file name and line number are shown.</p>
+<p>If present, the <a href="#Message">Message</a>, <a href="#Extra">Extra</a>, <a href="#File">File</a>, <a href="#Line">Line</a>, <a href="#Hint">Hint</a> and <a href="#Stack">Stack</a> properties are used to determine the content of the dialog. If blank, the corresponding element of the dialog is omitted. In particular, File can be removed to hide the "vicinity lines" normally shown in the dialog. If File does not correspond to the main script or an #include file, or the script is <a href="../Scripts.htm#ahk2exe">compiled</a>, only the file name and line number are shown.</p>
 <p>Message can contain multiple lines of text, in which case the first line is rendered with the title font and subsequent lines are rendered with the default font.</p>
 <p>The <em>Mode</em> parameter and return value are compatible with <a href="OnError.htm">OnError</a> callbacks. For example:</p>
 <pre>
@@ -143,6 +142,7 @@ throw ValueError("This value is not 42", -1, 41)
 <p>Gets or sets the full path of the script file containing the line at which the error occurred, or at which the Error object was constructed.</p>
 <pre class="Syntax">CurrentFile := ErrorObj.<span class="func">File</span></pre>
 <pre class="Syntax">ErrorObj.<span class="func">File</span> := NewFile</pre>
+<p>A <a href="../Scripts.htm#ahk2exe">compiled</a> script records no full paths: a file in the script's folder or below it is named relative to that folder, as in <code class="no-highlight">./Lib/Name.ahk</code>, a library file as <code class="no-highlight">&lt;UserLib&gt;/Name.ahk</code> or <code class="no-highlight">&lt;StdLib&gt;/Name.ahk</code>, and any other file as <code class="no-highlight">&lt;External&gt;/Name.ahk</code>.</p>
 </div>
 
 <div class="methodShort" id="Hint"><h3>Hint <span class="ver">[v2.1-alpha.10+]</span></h3>
@@ -164,20 +164,6 @@ throw ValueError("This value is not 42", -1, 41)
 <pre class="Syntax">ErrorObj.<span class="func">Message</span> := NewMessage</pre>
 </div>
 
-<div class="methodShort" id="ToString"><h3>ToString</h3>
-<p>Returns a readable description of the error.</p>
-<pre class="Syntax">Text := ErrorObj.<span class="func">ToString</span>()</pre>
-<p>The result is a multi-line report with one labelled line per property, in this order: the error's class name, <a href="#Message">Message</a>, <a href="#What">What</a>, <a href="#Extra">Extra</a>, <a href="#File">File</a>, <a href="#Line">Line</a>, then <a href="#Stack">Stack</a> on the lines that follow. Every line is present even when the property is empty. This is the format the error dialog displays, and it is what an Error yields where a string is expected.</p>
-<pre>Exception: ValueError
-Message: Invalid capability name: fly.
-What: RequestCapabilities
-Extra/Code:
-File: C:\Scripts\demo.ks
-Line: 12
-Stack:
-	...</pre>
-</div>
-
 <div class="methodShort" id="Stack"><h3>Stack</h3>
 <p>Gets or sets a string representing the call stack at the time the Error object was constructed.</p>
 <pre class="Syntax">CurrentStack := ErrorObj.<span class="func">Stack</span></pre>
@@ -185,7 +171,7 @@ Stack:
 <p>Each line may be formatted as follows:</p>
 <dl>
   <dt><code class="no-highlight"><i>File</i> (<i>Line</i>) : [<i>What</i>] <i>SourceCode</i>`r`n</code></dt>
-  <dd>Represents a call to the function <em>What</em>. <em>File</em> and <em>Line</em> indicate the current script line at this stack depth. <em>SourceCode</em> is an approximation of the source code at that line, as it would be shown in <a href="ListLines.htm">ListLines</a>.</dd>
+  <dd>Represents a call to the function <em>What</em>. <em>File</em> and <em>Line</em> indicate the current script line at this stack depth. <em>SourceCode</em> is an approximation of the source code at that line, as it would be shown in <a href="ListLines.htm">ListLines</a>. A <a href="../Scripts.htm#ahk2exe">compiled</a> script omits <em>SourceCode</em>.</dd>
   <dt><code class="no-highlight">&gt; <i>What</i>`r`n</code></dt>
   <dd>Represents the launching of a thread, typically the direct cause of the function call above it.</dd>
   <dt><code class="no-highlight">... <i>N</i> more</code></dt>
@@ -206,9 +192,8 @@ Stack:
 <ul>
   <li id="ArgumentError"><strong>ArgumentError:</strong> A call omitted a required parameter, or supplied it as <a href="../Concepts.htm#unset">unset</a>. This subclass is a Keysharp addition.</li>
   <li id="MemoryError"><strong>MemoryError:</strong> A memory allocation failed.</li>
-  <li id="OSError"><strong>OSError:</strong> An internal call to an operating-system function failed. OSErrors have an additional <strong id="Number">Number</strong> property which contains the OS-specific error code. For errors raised by the runtime, <strong>Message</strong> describes the failed operation or underlying operating-system error.
-    <p class="note"><strong>Note:</strong> <code>OSError(Code)</code> ignores <em>Code</em>. On Windows, <em>Number</em> and <em>Message</em> are initialized from the last operating-system error. On Linux and macOS, <em>Number</em> is initialized from <a href="../Variables.htm#LastError">A_LastError</a> and no operating-system message is generated.</p>
-  </li>
+  <li id="OSError"><strong>OSError:</strong> An internal call to an operating-system function failed. <strong>Message</strong> includes an error code and description generated by the operating system. OSErrors have an additional <strong id="Number">Number</strong> property which contains the error code. Calling <code>OSError(Code)</code> where <em>Code</em> is numeric sets <em>Number</em> and <em>Message</em> based on the given OS-defined error code. If <em>Code</em> is omitted, it defaults to <a href="../Variables.htm#LastError">A_LastError</a>. For example, <code>OSError(5).Message</code> returns "(5) Access is denied."</li>
+  <li id="UnsupportedError"><strong>UnsupportedError:</strong> The active platform or desktop backend cannot provide an operation. This Keysharp-specific subclass of <a href="#OSError">OSError</a> can be caught separately; an OSError handler also catches it.</li>
   <li id="TargetError"><strong>TargetError:</strong> A function failed because its target could not be found. <strong>Message</strong> indicates what kind of target, such as a window, control, menu or status bar.</li>
   <li id="TimeoutError"><strong>TimeoutError:</strong> <a href="SendMessage.htm">SendMessage</a> timed out.</li>
   <li id="TypeError"><strong>TypeError:</strong> An unexpected type of value was used as input for a function, property assignment, or some other operation. Usually <strong>Message</strong> indicates the expected and actual type, and <strong>Extra</strong> contains a string representing the errant value.</li>
@@ -221,7 +206,7 @@ Stack:
   </ul></li>
   <li id="ValueError"><strong>ValueError:</strong> An unexpected value was used as input for a function, property assignment, or some other operation. Usually <strong>Message</strong> indicates which expectation was broken, and <strong>Extra</strong> contains a string representing the errant value.<ul>
     <li id="IndexError"><strong>IndexError:</strong> The index parameter of an object's <a href="../Objects.htm#__Item">__Item property</a> was invalid or out of range.<ul>
-      <li id="KeyError"><strong>KeyError:</strong> A requested key was not present in a <a href="Map.htm">Map</a>.</li>
+      <li id="KeyError"><strong>KeyError:</strong> <a href="Clr.htm">Clr</a> or <a href="_CSharp.htm">#CSharp</a> code threw a .NET <code>KeyNotFoundException</code>. This subclass is a Keysharp addition.</li>
     </ul></li>
   </ul></li>
   <li id="ZeroDivisionError"><strong>ZeroDivisionError:</strong> Division by zero was attempted in an expression or with the Mod function.</li>
@@ -230,7 +215,6 @@ Stack:
 
 <h2 id="Remarks">Remarks</h2>
 <p>The standard error dialog requires the Message, Extra, File, Line and Hint properties to be <a href="Object.htm">own value properties</a>.</p>
-<p>An error's stack trace begins where the error is thrown, not where its Error object was constructed.</p>
 
 <h2 id="Related">Related</h2>
 <p><a href="Throw.htm">Throw</a>, <a href="Try.htm">Try</a>, <a href="Catch.htm">Catch</a>, <a href="Finally.htm">Finally</a>, <a href="OnError.htm">OnError</a></p>

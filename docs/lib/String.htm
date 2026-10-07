@@ -21,7 +21,11 @@
 <p>Type: <a href="../Concepts.htm#strings">String</a></p>
 <p>This function returns the result of converting <em>Value</em> to a string, or <em>Value</em> itself if it is a string.</p>
 <p>If <em>Value</em> is a number, the <a href="../Concepts.htm#number-default-format">default decimal formatting</a> is used.</p>
-<p>If <em>Value</em> is an object, the return value is the result of calling <code>Value.ToString()</code>. If the object has no such method, a <a href="Error.htm#MethodError">MethodError</a> is thrown. This method is not implemented by default, so must be defined by the script.</p>
+<p>If <em>Value</em> is an object, the return value is the result of calling <code>Value.ToString()</code>. If the object has no such method, a <a href="Error.htm#MethodError">MethodError</a> is thrown. Of the built-in classes, <a href="Array.htm#ToString">Array</a>, <a href="Map.htm#ToString">Map</a> and <a href="StringBuffer.htm">StringBuffer</a> implement it, as do the .NET objects of <a href="Clr.htm">Clr</a>; any other object needs one defined by the script.</p>
+<p>The method's result is returned unchanged, including an object or <code>unset</code>.</p>
+
+<p>When an object is used where a string is required, such as in concatenation or <a href="StrLen.htm">StrLen</a>, its <code>ToString</code> result must be a scalar value; an object result or a missing method raises <a href="Error.htm#TypeError">TypeError</a>. An error raised by the method propagates. To obtain a class name, use <a href="Type.htm">Type</a>.</p>
+<p>A <a href="ComObject.htm">COM object</a> preserves its normal dispatch error if <code>ToString</code> is absent.</p>
 
 <h2 id="Length">Length</h2>
 <pre class="Syntax">Count := StringValue.<span class="func">Length</span></pre>

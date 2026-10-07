@@ -146,6 +146,7 @@ Hooks := Monitor.<span class="func">Hooks</span></pre>
 <p><code>Brightness</code> works on the built-in panel and on external monitors which support DDC/CI.</p>
 
 <h3 id="MonitorLinux">Linux</h3>
+<p>New queries refresh display geometry and scale after display changes; existing Monitor objects retain their <a href="#Snapshot">snapshot semantics</a>. Work-area queries account for panels and docks independently of display-layout changes.</p>
 <p>On X11, geometry, refresh rate and orientation are read through <code class="no-highlight">keysharp-desktop</code>. On Wayland, <code>RefreshRate</code> and <code>Orientation</code> are the empty string and 0 if the native compositor connection is unavailable. <code>Adapter</code> is the DRM driver name, such as <code>amdgpu</code> or <code>i915</code>.</p>
 <p>For external monitors, <code>Brightness</code> and the VCP methods need the <code>i2c-dev</code> kernel module and access to the i2c bus. A root install adds a udev rule granting the local-seat user access to display-controller i2c buses, and ddcutil's own rule also works; without either, they throw an OSError naming the requirement. <code>OnChange</code> works on X11 and every Wayland compositor.</p>
 

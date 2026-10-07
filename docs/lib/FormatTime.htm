@@ -31,7 +31,8 @@
   <dt>Format</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#strings">String</a></p>
-    <p>If blank or omitted, it defaults to the time followed by the long date, both of which will be formatted according to the current user's locale. For example: 4:55 PM Saturday, November 27, 2004</p>
+    <p>If blank or omitted, it defaults to the time followed by the long date. For example: 4:55 PM Saturday, November 27, 2004</p>
+    <p>AutoHotkey uses the current user's locale. Keysharp currently uses the .NET thread culture, which normally defaults to the invariant culture; specify an <a href="#Additional_Options">Ln</a> locale explicitly for localized output. Using the user's locale by default remains planned.</p>
     <p>Otherwise, specify one or more of the date-time formats from the tables below, along with any literal spaces and punctuation in between (commas do not need to be escaped; they can be used normally). In the following example, note that M must be capitalized: M/d/yyyy h:mm tt</p>
   </dd>
 
@@ -190,7 +191,7 @@
   </tr>
 </table>
 <h2 id="Additional_Options">Additional Options</h2>
-<p class="note"><strong>Note:</strong> The <code>D</code><em>n</em> and <code>T</code><em>n</em> timestamp options described below are not supported, except that <code>0x80000000</code> may be used to disallow user overrides. Specify the desired order and formatting in the <em>Format</em> parameter using <a href="https://learn.microsoft.com/dotnet/standard/base-types/custom-date-and-time-format-strings">.NET custom date and time format strings</a>.</p>
+<p class="note"><strong>Note:</strong> The <code>D</code><em>n</em> and <code>T</code><em>n</em> timestamp options described below are not supported, except that <code>0x80000000</code> may be used to disallow user overrides. Specify the desired order and formatting in the <em>Format</em> parameter.</p>
 <p>The following options can appear inside the <em>YYYYMMDDHH24MISS</em> parameter immediately after the timestamp (if there is no timestamp, they may be used alone). In the following example, note the lack of commas between the last four items:</p>
 <pre>OutputVar := FormatTime("20040228 LSys D1 D4")</pre>
 <p><strong>R:</strong> Reverse. Have the date come before the time (meaningful only when <em>Format</em> is blank).</p>

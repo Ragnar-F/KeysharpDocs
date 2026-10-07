@@ -17,7 +17,7 @@
 
 <pre class="Syntax"><span class="func">SoundBeep</span> <span class="optional">Frequency, Duration</span></pre>
 
-<p class="note"><strong>Note:</strong> On Linux, the tone is played through an external audio player. If none of the players listed under <a href="SoundPlay.htm">SoundPlay</a> is installed, an error is thrown.</p>
+<p class="note"><strong>Note:</strong> On Linux and macOS, the requested tone is synthesized and played through an audio player. On Linux, if none of the players listed under <a href="SoundPlay.htm#Linux">SoundPlay</a> is installed, an error is thrown.</p>
 <h2 id="Parameters">Parameters</h2>
 <dl>
 
@@ -30,7 +30,7 @@
   <dt>Duration</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>If omitted, it defaults to 150. Otherwise, specify the duration of the sound, in milliseconds.</p>
+    <p>If omitted or negative, it defaults to 150. Otherwise, specify the duration of the sound, in milliseconds. Zero produces no sound.</p>
   </dd>
 
 </dl>

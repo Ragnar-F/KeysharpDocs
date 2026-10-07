@@ -32,9 +32,11 @@
 <h2 id="Return_Value">Return Value</h2>
 <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
 <p>This function returns the process ID (PID) of the process which created the specified process.</p>
+<p>On Linux and macOS, it returns the current parent, which is not the creator if the creator has exited. This is unverified on macOS.</p>
 
 <h2 id="Error_Handling">Error Handling</h2>
 <p>A <a href="Error.htm#TargetError">TargetError</a> is thrown if the specified process could not be found.</p>
+<p>An <a href="Error.htm#OSError">OSError</a> is thrown if the parent PID cannot be retrieved.</p>
 
 <h2 id="Remarks">Remarks</h2>
 <p>If the parent process is no longer running, there is some risk that the returned PID has been reused by the system, and now identifies a different process.</p>

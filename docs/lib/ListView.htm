@@ -156,6 +156,7 @@ LV_DoubleClick(LV, RowNumber)
     <p>The <em>Icon</em> option accepts a one-based icon number, but this is internally translated to a zero-based index; therefore, <code class="no-highlight">Icon0</code> corresponds to the constant <a href="https://learn.microsoft.com/windows/win32/controls/list-view-controls-overview#callback-items-and-the-callback-mask">I_IMAGECALLBACK</a>, which is normally defined as -1, and <code class="no-highlight">Icon-1</code> corresponds to I_IMAGENONE. Other out of range values may also cause a blank space where the icon would be.</p>
     <p id="Select"><strong>Select:</strong> Selects the row. To later deselect it, use <code>LV.Modify(RowNumber, "-Select")</code>. When selecting rows, it is usually best to ensure that at least one row always has the <a href="#Focus">focus property</a> because that allows the Apps key to display its <a href="GuiOnEvent.htm#ContextMenu">context menu</a> (if any) near the focused row. The word <em>Select</em> may optionally be followed immediately by a 0 or 1 to indicate the starting state. In other words, both <code>"Select"</code> and <code>"Select" . VarContainingOne</code> are the same (the period used here is the <a href="../Variables.htm#concat">concatenation operator</a>). This technique also works with the <a href="#Focus">Focus</a> and <a href="#Check">Check</a> options above.</p>
     <p id="Vis"><strong>Vis:</strong> Ensures that the specified row is completely visible by scrolling the ListView, if necessary. This has an effect only for <a href="#Modify">LV.Modify</a>; for example: <code>LV.Modify(RowNumber, "Vis")</code>.</p>
+    <p>An option which is not one of the above raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
   </dd>
   <dt>Col1, Col2, ...</dt>
   <dd>
@@ -177,7 +178,7 @@ LV_DoubleClick(LV, RowNumber)
   <dt>RowNumber</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>The row number of the newly inserted row. Any rows at or beneath <em>RowNumber</em> are shifted downward to make room for the new row. If <em>RowNumber</em> is greater than the number of rows in the list (even as high as 2147483647), the new row is added to the end of the list.</p>
+    <p>The row number of the newly inserted row. Any rows at or beneath <em>RowNumber</em> are shifted downward to make room for the new row. If <em>RowNumber</em> is greater than the number of rows in the list (even as high as 2147483647), the new row is added to the end of the list. A number below 1 raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
   </dd>
   <dt>Options</dt>
   <dd>
@@ -204,7 +205,7 @@ LV_DoubleClick(LV, RowNumber)
   <dt>RowNumber</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>The number of the row to modify. If 0, <u>all</u> rows in the control are modified.</p>
+    <p>The number of the row to modify. If 0, <u>all</u> rows in the control are modified. If greater than the number of rows, nothing is modified and the method returns 0.</p>
   </dd>
   <dt>Options</dt>
   <dd>
@@ -218,7 +219,7 @@ LV_DoubleClick(LV, RowNumber)
   </dd>
 </dl>
 <h4 id="Modify_Remarks">Remarks</h4>
-<p>When only the first two parameters are present, only the row's attributes and not its text are changed.</p>
+<p>When only the first two parameters are present, only the row's attributes and not its text are changed. Only the states which <em>Options</em> names are changed; for example, <code>LV.Modify(RowNumber, "Check")</code> leaves the row's selection and focus as they are.</p>
 </div>
 
 <div class="methodShort" id="Delete">
@@ -230,7 +231,7 @@ LV_DoubleClick(LV, RowNumber)
   <dt>RowNumber</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>If omitted, <u>all</u> rows in the ListView are deleted. Otherwise, specify the number of the row to delete.</p>
+    <p>If omitted, <u>all</u> rows in the ListView are deleted. Otherwise, specify the number of the row to delete. A number below 1, such as 0, raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
   </dd>
 </dl>
 </div>
@@ -278,6 +279,8 @@ LV_DoubleClick(LV, RowNumber)
     <p><strong>Sort:</strong> Immediately sorts the column in ascending order (even if it has the <a href="#Desc">Desc</a> option).</p>
     <p><strong>SortDesc:</strong> Immediately sorts the column in descending order.</p>
     <p><strong>Uni:</strong> Unidirectional sort. This prevents a second click on the same column from reversing the sort direction.</p>
+    <hr>
+    <p>If more than one of <em>N</em>, Auto and AutoHdr is present, the last one applies. An option which is not one of the above raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
   </dd>
   <dt>ColumnTitle</dt>
   <dd>
@@ -302,7 +305,7 @@ LV_DoubleClick(LV, RowNumber)
   <dt>Options</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#strings">String</a></p>
-    <p>If omitted, the column always starts off at its defaults, such as whether or not it uses <a href="#Integer">integer sorting</a>. Otherwise, specify one or more options from the <a href="#ColOptions">list above</a>.</p>
+    <p>If omitted, the column always starts off at its defaults, such as whether or not it uses <a href="#Integer">integer sorting</a>. Otherwise, specify one or more options from the <a href="#ColOptions">list above</a>. Unless the options give a width, Auto or AutoHdr, the new column is sized to fit its header.</p>
   </dd>
   <dt>ColumnTitle</dt>
   <dd>
@@ -327,7 +330,7 @@ LV_DoubleClick(LV, RowNumber)
   <dt>ColumnNumber</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>The number of the column to delete. Once a column is deleted, the column numbers of any that lie to its right are reduced by 1. Consequently, calling <code>LV.DeleteCol(2)</code> twice would delete the second and third columns.</p>
+    <p>The number of the column to delete. Once a column is deleted, the column numbers of any that lie to its right are reduced by 1. Consequently, calling <code>LV.DeleteCol(2)</code> twice would delete the second and third columns. A column which does not exist raises an <a href="Error.htm">Error</a>.</p>
   </dd>
 </dl>
 </div>
@@ -344,6 +347,7 @@ LV_DoubleClick(LV, RowNumber)
     <p>If blank or omitted, the method returns the total number of rows in the control. Otherwise, specify one of the following strings:</p>
     <p><strong>S</strong> or <strong>Selected</strong>: The count includes only the selected/highlighted rows.</p>
     <p><strong>Col</strong> or <strong>Column</strong>: The method returns the number of columns in the control.</p>
+    <p>Any other mode raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
   </dd>
 </dl>
 <h4 id="GetCount_Return_Value">Return Value</h4>
@@ -422,7 +426,7 @@ IsChecked := (ItemState &gt;&gt; 12) - 1  <em>; This sets IsChecked to true if <
 </dl>
 <h4 id="GetText_Return_Value">Return Value</h4>
 <p>Type: <a href="../Concepts.htm#strings">String</a></p>
-<p>The method returns the retrieved text. Only up to 8191 characters are retrieved.</p>
+<p>The method returns the retrieved text. Only up to 8191 characters are retrieved. A row or column which does not exist raises an <a href="Error.htm">Error</a>.</p>
 <h4 id="GetText_Remarks">Remarks</h4>
 <p>Column numbers seen by the script are not altered by any dragging and dropping of columns the user may have done. For example, the original first column is still number 1 even if the user drags it to the right of other columns.</p>
 
@@ -477,8 +481,9 @@ IsChecked := (ItemState &gt;&gt; 12) - 1  <em>; This sets IsChecked to true if <
   <tr><td><a href="GuiOnEvent.htm#ItemCheck">ItemCheck</a></td><td>An item is checked or unchecked.</td></tr>
   <tr><td><a href="GuiOnEvent.htm#ItemEdit">ItemEdit</a></td><td>An item's label is edited by the user.</td></tr>
   <tr><td><a href="GuiOnEvent.htm#ItemFocus">ItemFocus</a></td><td>The focused item changes.</td></tr>
-  <tr><td><a href="GuiOnEvent.htm#ItemSelect">ItemSelect</a></td><td>An item is selected or deselected.</td></tr>
+  <tr><td><a href="GuiOnEvent.htm#ItemSelect">ItemSelect</a></td><td>The user selects or deselects an item. Adding or modifying rows through the control's methods does not raise this event.</td></tr>
 </table>
+<p>Changes made by <a href="#Add">Add</a>, <a href="#Insert">Insert</a> and <a href="#Modify">Modify</a> raise none of these events.</p>
 <p>Additional (rarely-used) notifications can be detected by using <a href="GuiControl.htm#OnNotify">GuiControl.OnNotify</a>. These notifications are <a href="https://learn.microsoft.com/windows/win32/controls/bumper-list-view-control-reference-notifications">documented at Microsoft Docs</a>. Microsoft Docs does not show the numeric value of each notification code; those can be found in the Windows SDK or by searching the Internet.</p>
 
 <h2 id="IL">ImageLists</h2>
@@ -500,9 +505,19 @@ MyGui.Show()</pre>
 </ul>
 <h3 id="IL_Create">IL_Create</h3>
 <p>Creates a new ImageList that is initially empty.</p>
-<pre class="Syntax">ImageListID := <span class="func">IL_Create</span>(<span class="optional">LargeIcons</span>)</pre>
+<pre class="Syntax">ImageListID := <span class="func">IL_Create</span>(<span class="optional">InitialCount, GrowCount, LargeIcons</span>)</pre>
 <h4 class="func_section" id="IL_Create_Parameters">Parameters</h4>
 <dl>
+  <dt>InitialCount</dt>
+  <dd>
+    <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>If omitted, it defaults to 2. Otherwise, specify the number of icons you expect to put into the list immediately.</p>
+  </dd>
+  <dt>GrowCount</dt>
+  <dd>
+    <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
+    <p>If omitted, it defaults to 5. Otherwise, specify the number of icons by which the list will grow each time it exceeds the current list capacity.</p>
+  </dd>
   <dt>LargeIcons</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#boolean">Boolean</a></p>
@@ -512,7 +527,7 @@ MyGui.Show()</pre>
     <p>Icons added to the list are scaled automatically to conform to the system's dimensions for small and large icons.</p>
   </dd>
 </dl>
-<p>Initial and growth capacities are managed automatically and therefore are not parameters.</p>
+<p>The list grows as needed, so <em>InitialCount</em> and <em>GrowCount</em> are accepted but have no effect.</p>
 <h4 class="func_section" id="IL_Create_Return_Value">Return Value</h4>
 <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
 <p>On success, this function returns the unique ID of the newly created ImageList. On failure, it returns 0.</p>
@@ -577,6 +592,7 @@ IconIndex := <span class="func">IL_Add</span>(ImageListID, PicFileName, MaskColo
 <p>It is normally not necessary to destroy ImageLists because once attached to a ListView, they are destroyed automatically when the ListView or its parent window is destroyed. However, if the ListView shares ImageLists with other ListViews (by having 0x40 in <em>Options</em>), the script should explicitly destroy the ImageList after destroying all the ListViews that use it. Similarly, if the script replaces one of a ListView's old ImageLists with a new one, it should explicitly destroy the old one.</p>
 
 <h2 id="Remarks">Remarks</h2>
+<p>On Linux and macOS, selection and focus follow their rows through edits and sorts. Adding, changing or deleting a row updates the affected rows without rebuilding the whole control.</p>
 <p>After a column is sorted -- either by means of the user clicking its header or the script calling <code>LV.<a href="#ModifyCol">ModifyCol</a>(1, "Sort")</code> -- any subsequently added rows will appear at the bottom of the list rather than obeying the sort order. The exception to this is the <a href="#Sort">Sort</a> and <a href="#SortDesc">SortDesc</a> styles, which move newly added rows into the correct positions.</p>
 <p id="Enter">To detect when the user has pressed <kbd>Enter</kbd> while a ListView has focus, use a <a href="GuiControls.htm#DefaultButton">default button</a> (which can be hidden if desired). For example:</p>
 <pre>MyGui.Add("Button", "Hidden Default", "OK").OnEvent("Click", LV_Enter)

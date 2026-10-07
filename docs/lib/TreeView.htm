@@ -120,18 +120,19 @@ MyGui.Show()  <em>; Show the window and its TreeView.</em></pre>
     <p>If blank or omitted, it defaults to no options. Otherwise, specify one or more options from the list below (not case-sensitive). Separate each option from the next with a space or tab. To remove an option, precede it with a minus sign. To add an option, a plus sign is permitted but not required.</p>
     <p id="Bold"><strong>Bold:</strong> Displays the item's name in a bold font. To later un-bold the item, use <code>TV.Modify(ItemID, "-Bold")</code>. The word <em>Bold</em> may optionally be followed immediately by a 0 or 1 to indicate the starting state.</p>
     <p id="Check"><strong>Check:</strong> Shows a checkmark to the left of the item (if the TreeView has <a href="#Checked">checkboxes</a>). To later uncheck it, use <code>TV.Modify(ItemID, "-Check")</code>. The word <em>Check</em> may optionally be followed immediately by a 0 or 1 to indicate the starting state. In other words, both <code>"Check"</code> and <code>"Check" . VarContainingOne</code> are the same (the period used here is the <a href="../Variables.htm#concat">concatenation operator</a>).</p>
-    <p id="Expand"><strong>Expand:</strong> Expands the item to reveal its children (if any). To later collapse the item, use <code>TV.Modify(ItemID, "-Expand")</code>. If there are no children, the <a href="#Modify">Modify</a> method returns 0 instead of the item's ID. By contrast, the <a href="#Add">Add</a> method marks the item as expanded in case children are added to it later. Unlike the <a href="#Select">Select</a> option below, expanding an item does not automatically expand its parent. Finally, the word <em>Expand</em> may optionally be followed immediately by a 0 or 1 to indicate the starting state. In other words, both <code>"Expand"</code> and <code>"Expand" . VarContainingOne</code> are the same.</p>
+    <p id="Expand"><strong>Expand:</strong> Expands the item to reveal its children (if any). To later collapse the item, use <code>TV.Modify(ItemID, "-Expand")</code>. The <a href="#Add">Add</a> method marks the item as expanded in case children are added to it later. Unlike the <a href="#Select">Select</a> option below, expanding an item does not automatically expand its parent. Finally, the word <em>Expand</em> may optionally be followed immediately by a 0 or 1 to indicate the starting state. In other words, both <code>"Expand"</code> and <code>"Expand" . VarContainingOne</code> are the same.</p>
     <p><strong>First | Sort | N:</strong> These options apply only to the <a href="#Add">Add</a> method. They specify the new item's position relative to its siblings (a <em>sibling</em> is any other item on the same level). If none of these options is present, the new item is added as the last/bottom sibling. Otherwise, specify the word <em>First</em> to add the item as the first/top sibling, or specify the word <em>Sort</em> to insert it among its siblings in alphabetical order. If a plain integer <em>N</em> is specified, it is assumed to be ID number of the sibling after which to insert the new item (if <em>N</em> is the only option present, it does not have to be enclosed in quotes).</p>
     <p><strong>Icon:</strong> Specify the word <em>Icon</em> followed immediately by the number of this item's icon, which is displayed to the left of the item's name. If this option is absent, the first icon in the <a href="#IL">ImageList</a> is used. To display a blank icon, specify a number that is larger than the number of icons in the ImageList. If the control lacks an ImageList, no icon is displayed nor is any space reserved for one.</p>
     <p id="Select"><strong>Select:</strong> Selects the item. Since only one item at a time can be selected, any previously selected item is automatically de-selected. In addition, this option reveals the newly selected item by expanding its parent(s), if necessary. To find out the current selection, call the <a href="#GetSelection">GetSelection</a> method.</p>
-    <p><strong>Sort:</strong> For the <a href="#Modify">Modify</a> method, this option alphabetically sorts the children of the specified item. To instead sort all top-level items, use <code>TV.Modify(0, "Sort")</code>. If there are no children, 0 is returned instead of the ID of the modified item.</p>
+    <p><strong>Sort:</strong> For the <a href="#Modify">Modify</a> method, this option alphabetically sorts the children of the specified item. To instead sort all top-level items, use <code>TV.Modify(0, "Sort")</code>. Only that one level is sorted, not the children's own children, and every item keeps its ID.</p>
     <p><strong>Vis:</strong> Ensures that the item is completely visible by scrolling the TreeView and/or expanding its parent, if necessary.</p>
     <p><strong>VisFirst:</strong> Same as above except that the TreeView is also scrolled so that the item appears at the top, if possible. This option is typically more effective when used with the <a href="#Modify">Modify</a> method than with the <a href="#Add">Add</a> method.</p>
+    <p>An option which is not one of the above raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
   </dd>
 </dl>
 <h4 id="Add_Return_Value">Return Value</h4>
 <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>On success, this method returns the unique ID number of the newly added item. On failure, it returns 0.</p>
+<p>On success, this method returns the unique ID number of the newly added item. On failure, it returns 0. On Windows, the ID is the item's native handle (HTREEITEM).</p>
 <h4 id="Add_Remarks">Remarks</h4>
 <p>When adding a large number of items, performance can be improved by using <code>TV.Opt("-Redraw")</code> before adding the items and <code>TV.Opt("+Redraw")</code> afterward. See <a href="GuiControl.htm#Redraw">Redraw</a> for more details.</p>
 </div>
@@ -160,7 +161,7 @@ MyGui.Show()  <em>; Show the window and its TreeView.</em></pre>
 </dl>
 <h4 id="Modify_Return_Value">Return Value</h4>
 <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-<p>This method returns the item's own ID.</p>
+<p>This method returns the item's own ID, including when Expand or Sort has no visible effect. It returns 0 if the item does not exist or ItemID is 0.</p>
 </div>
 
 <div class="methodShort" id="Delete">
@@ -172,7 +173,7 @@ MyGui.Show()  <em>; Show the window and its TreeView.</em></pre>
   <dt>ItemID</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>If omitted, <u>all</u> items in the TreeView are deleted. Otherwise, specify the ID number of the item to delete.</p>
+    <p>If omitted, <u>all</u> items in the TreeView are deleted. Otherwise, specify the ID number of the item to delete. An ID of 0 raises a <a href="Error.htm#ValueError">ValueError</a> rather than deleting every item, and an ID which names no item raises an <a href="Error.htm">Error</a>.</p>
   </dd>
 </dl>
 </div>
@@ -295,7 +296,7 @@ Loop
 </dl>
 <h4 id="GetText_Return_Value">Return Value</h4>
 <p>Type: <a href="../Concepts.htm#strings">String</a></p>
-<p>This method returns the retrieved text. Only up to 8191 characters are retrieved.</p>
+<p>This method returns the retrieved text. Only up to 8191 characters are retrieved. An ID of 0, or one which names no item, raises an <a href="Error.htm">Error</a>.</p>
 </div>
 
 <div class="methodShort" id="Get">
@@ -368,6 +369,7 @@ Loop
   <tr><td><a href="GuiOnEvent.htm#ItemExpand">ItemExpand</a></td><td>An item is expanded or collapsed.</td></tr>
   <tr><td><a href="GuiOnEvent.htm#ItemSelect">ItemSelect</a></td><td>An item is selected.</td></tr>
 </table>
+<p>Changes made by <a href="#Add">Add</a> and <a href="#Modify">Modify</a> raise none of these events.</p>
 <p>Additional (rarely-used) notifications can be detected by using <a href="GuiControl.htm#OnNotify">GuiControl.OnNotify</a>. These notifications are <a href="https://learn.microsoft.com/windows/win32/controls/bumper-tree-view-control-reference-notifications">documented at Microsoft Docs</a>. Microsoft Docs does not show the numeric value of each notification code; those can be found in the Windows SDK or by searching the Internet.</p>
 
 <h2 id="IL">ImageLists</h2>

@@ -51,6 +51,9 @@
 <h2 id="Remarks">Remarks</h2>
 <p>DirMove moves a single folder to a new location. To instead move the contents of a folder (all its files and subfolders), see the examples section of <a href="FileMove.htm">FileMove</a>.</p>
 <p>If the source and destination are on different volumes or UNC paths, a copy/delete operation will be performed rather than a move.</p>
+<p>On Linux and macOS, mode 1 merges into an existing destination across filesystems. Mode 2 merges both within and across filesystems. A directory symbolic link is moved as a link; its target's contents are not moved.</p>
+<p>Merging incompatible directory links raises an <a href="Error.htm#OSError">OSError</a>. On Windows, moving a source-root directory link across volumes also raises an OSError.</p>
+<p>The Windows cross-volume copy fallback follows nested directory links when copying their contents. Unix copies preserve those nested links.</p>
 <h2 id="Related">Related</h2>
 <p><a href="DirCopy.htm">DirCopy</a>, <a href="FileCopy.htm">FileCopy</a>, <a href="FileMove.htm">FileMove</a>, <a href="FileDelete.htm">FileDelete</a>, <a href="LoopFiles.htm">file loops</a>, <a href="DirSelect.htm">DirSelect</a>, <a href="SplitPath.htm">SplitPath</a></p>
 <h2 id="Examples">Examples</h2>

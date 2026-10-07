@@ -209,10 +209,10 @@ RControl &amp; Enter::ShiftAltTab  <em>; Without even having to release right-co
 <pre>MButton &amp; WheelDown::MsgBox "You turned the mouse wheel down while holding down the middle button."
 ^!WheelUp::MsgBox "You rotated the wheel up while holding down Control+Alt."</pre>
 <p id="HWheel">If the mouse supports it, horizontal scrolling can be detected via the key names WheelLeft and WheelRight. Some mice have a single wheel which can be scrolled up and down or tilted left and right. Generally in those cases, WheelLeft or WheelRight signals are sent repeatedly while the wheel is held to one side, to simulate continuous scrolling. This typically causes the hotkeys to execute repeatedly.</p>
-<p>The built-in variable <strong>A_EventInfo</strong> contains the amount by which the wheel was turned, which is typically 120. However, A_EventInfo can be greater or less than 120 under the following circumstances:</p>
+<p>For hook hotkeys, the built-in variable <a href="Variables.htm#EventInfo">A_EventInfo</a> is a metadata object. Its <strong>Extra</strong> property contains the signed amount by which the wheel was turned, whose absolute value is typically 120. AutoHotkey returns the amount directly in A_EventInfo. The absolute value can be greater or less than 120 under the following circumstances:</p>
 <ul>
-  <li>If the mouse hardware reports distances of less than one notch, A_EventInfo may be less than 120;</li>
-  <li>If the wheel is being turned quickly (depending on the type of mouse), A_EventInfo may be greater than 120. A hotkey like the following can help analyze your mouse: <code>~WheelDown::ToolTip A_EventInfo</code></li>
+  <li>If the mouse hardware reports distances of less than one notch, the amount may be less than 120;</li>
+  <li>If the wheel is being turned quickly (depending on the type of mouse), the amount may be greater than 120. A hotkey like the following can help analyze your mouse: <code>~WheelDown::ToolTip A_EventInfo.Extra</code></li>
 </ul>
 <p>Some of the most useful hotkeys for the mouse wheel involve alternate modes of scrolling a window's text. For example, the following pair of hotkeys scrolls horizontally instead of vertically when you turn the wheel while holding down the left <kbd>Ctrl</kbd>:</p>
 <pre>~LControl &amp; WheelUp::  <em>; Scroll left.</em>

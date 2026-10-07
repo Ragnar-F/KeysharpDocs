@@ -54,7 +54,6 @@ tocData = [
       ["Await","lib/Await.htm"],
       ["Lock","lib/Lock.htm"],
       ["Collect","lib/Collect.htm"],
-      ["ObjFree","lib/ObjFree.htm"],
       ["IsComponentAvailable","lib/IsComponentAvailable.htm"],
       ["ValidateScript / CompileScript","lib/ValidateScript.htm"],
       ["Clr Interop","lib/Clr.htm"],
@@ -290,7 +289,8 @@ tocData = [
   ["Modules","Modules.htm",
   [
     ["#Module","lib/_Module.htm"],
-    ["#Import","lib/_Import.htm"]
+    ["#Import","lib/_Import.htm"],
+    ["Module.__Ref","Modules.htm#__Ref"]
   ]],
   ["Monitor","lib/Monitor.htm",
   [

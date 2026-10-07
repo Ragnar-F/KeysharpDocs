@@ -18,10 +18,13 @@
 <pre class="Syntax">FoundPos := <span id="RegExMatchCs" class="func">RegExMatchCs</span>(Haystack, NeedleRegEx <span class="optional">, &amp;OutputVar, StartingPos := 1</span>)
 NewStr := <span id="RegExReplaceCs" class="func">RegExReplaceCs</span>(Haystack, NeedleRegEx <span class="optional">, Replacement := "", &amp;OutputVarCount, Limit := -1, StartingPos := 1</span>)</pre>
 <p id="MatchInfo">The general parameter and return conventions match <a href="RegExMatch.htm">RegExMatch</a> and <a href="RegExReplace.htm">RegExReplace</a>. RegExMatchCs writes a <a href="RegExMatch.htm#MatchObject">RegExMatchInfo</a> object. An invalid pattern throws an <a href="Error.htm">Error</a> whose <em>Extra</em> is the .NET error message.</p>
+<p>A <em>StartingPos</em> below 1 selects a right-to-left search. With 0, the search currently starts at index 0 rather than the end of the string; this limits the matches it can find.</p>
+<p><em>Replacement</em> is converted to a string; a function replacement is not supported.</p>
 
 <h2 id="Differences">Pattern and Option Differences</h2>
 <ul>
-  <li>Option <code class="no-highlight">S</code> is the same as <code class="no-highlight">s</code>, and <code class="no-highlight">X</code> is the same as <code class="no-highlight">x</code>.</li>
+  <li>Options <code class="no-highlight">S</code> and <code class="no-highlight">X</code> are accepted and have no effect.</li>
+  <li>Option <code class="no-highlight">A</code> anchors at the beginning of <em>Haystack</em>, rather than at <em>StartingPos</em>.</li>
   <li>Options <code class="no-highlight">C</code>, <code class="no-highlight">D</code> and <code class="no-highlight">U</code>, the newline options, PCRE newline escapes and <code class="no-highlight">\K</code> are unavailable.</li>
   <li><code class="no-highlight">$</code> matches before <code class="no-highlight">`n</code> but not before <code class="no-highlight">`r`n</code>; use <code class="no-highlight">\r?$</code> for CRLF text.</li>
 </ul>

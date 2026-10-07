@@ -49,6 +49,7 @@ Number := <span class="func">NumGet</span>(Source, Type)</pre>
 <h2 id="General_Remarks">General Remarks</h2>
 <p>If only two parameters are present, the second parameter must be <em>Type</em>. For example, <code>NumGet(var, "int")</code> is valid.</p>
 <p>A <em>Type</em> which does not name one of the numbers listed above raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
+<p>An object source's <code>Size</code> provides a right-side bound, including a size of zero. Negative offsets are permitted as in AutoHotkey. An offset whose address arithmetic would overflow raises an <a href="Error.htm#IndexError">IndexError</a>.</p>
 <p>An exception may be thrown if the source address is invalid. However, some invalid addresses cannot be detected as such and may cause unpredictable behaviour. Passing a <a href="Buffer.htm">Buffer</a> object instead of an address ensures that the source address can always be validated.</p>
 
 <h2 id="Related">Related</h2>

@@ -23,7 +23,11 @@
 
 <h2 id="Linux">Linux</h2>
 
-<p>The <a href="howto/Install.htm#Linux">Linux setup script</a> installs Keysharp and two independent native components. <code class="no-highlight">keysharp-input</code> provides keyboard and mouse hooks, synthesis, blocking and idle queries through evdev/uinput. <code class="no-highlight">keysharp-desktop</code> provides window automation, capture, cursor queries and movement, monitor geometry and keyboard-map queries. These components serve both X11 and Wayland; operations also depend on the active desktop backend.</p>
+<p>On Ubuntu 24.04, Ubuntu 26.04, and derivatives using those bases, including Pop!_OS 24.04, prefer the <a href="howto/Install.htm#Linux_PPA">Launchpad PPA</a> for installation and updates. Debian, Pop!_OS 22.04, and other supported distributions use the <a href="howto/Install.htm#Linux_Release">release installer</a>. Both routes can install Keysharp and two independent native components. <code class="no-highlight">keysharp-input</code> provides keyboard and mouse hooks, synthesis, blocking and idle queries through evdev/uinput. <code class="no-highlight">keysharp-desktop</code> provides window automation, capture, cursor queries and movement, monitor geometry and keyboard-map queries. These components serve both X11 and Wayland; operations also depend on the active desktop backend.</p>
+<pre class="no-highlight">sudo apt install software-properties-common
+sudo add-apt-repository ppa:descolada/keysharp
+sudo apt update
+sudo apt install keysharp</pre>
 <p>Keysharp can run without these components, but their operations are unavailable. Input device access requires an active local logind session on seat0. Keyboard and relative-pointer hooks do not provide a complete touchpad gesture interface.</p>
 
 <table class="info">
@@ -62,7 +66,7 @@
 <p>A user-owned desktop authority is also available. Its consent records can be modified by programs running as that user and do not authorize the system input service. See <a href="howto/Install.htm#Linux_User">installing without root</a>.</p>
 
 <h3 id="Linux_Controls">Controls and accessibility automation</h3>
-<p>Controls created by the script support toolkit-based control functions. X11 also exposes native child windows, title, focus and targeted input operations through the desktop component, but it does not expose the full Windows control model. Wayland foreign controls require application accessibility support.</p>
+<p>Controls created by the script support toolkit-based control functions, including <a href="lib/ControlSend.htm">ControlSend and ControlSendText</a>. Those functions raise an <a href="lib/Error.htm#UnsupportedError">UnsupportedError</a> for another program's window or control on X11 and Wayland. X11 also exposes native child windows, title and focus operations through the desktop component, but it does not expose the full Windows control model.</p>
 <p>For cross-process inspection and automation, use <a href="https://github.com/keysharp-org/Keysharp/blob/master/Keysharp/Scripts/AtSpi.ks"><code>AtSpi.ks</code></a>. Running it directly opens AtSpiViewer; the library also provides APIs similar to Windows accessibility and UI Automation libraries.</p>
 
 <h3 id="Linux_DBus">Interprocess automation with ComObject</h3>

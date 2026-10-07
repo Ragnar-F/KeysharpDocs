@@ -22,7 +22,7 @@
   <dt>Code</dt>
   <dd><p>Type: String</p><p>The source code to compile and execute, or the path of a script file. If a file of that name exists it is used. A <code class="no-highlight">.cks</code> or <code class="no-highlight">.dll</code> file is taken as an already-compiled script and run without being compiled.</p></dd>
   <dt>Async</dt>
-  <dd><p>If true, the function returns as soon as the child starts. If false or omitted, it waits until the child exits. A synchronous call drains standard output and standard error concurrently while it waits, so filling either pipe does not block the child.</p>
+  <dd><p>If true, the function returns as soon as the child starts. If false or omitted, it waits until the child exits. A synchronous call drains standard output and standard error concurrently while it waits, so filling either pipe does not block the child, and waits as <a href="Run.htm">RunWait</a> does, so timers, hotkeys and the <em>Callback</em> can run before it returns.</p>
     <p>For an asynchronous call, read both <a href="#StdOut">StdOut</a> and <a href="#StdErr">StdErr</a> while a verbose child is running so neither pipe fills.</p></dd>
   <dt>Callback</dt>
   <dd><p>Type: <a href="Func.htm">Func</a></p><p>An optional function called with the ScriptProcess as its only parameter once the child exits. It is called on the <a href="RealThread.htm">real thread</a> which called RunScript, and a pending callback keeps the script running.</p></dd>
@@ -38,7 +38,7 @@
     <p>An Array supplies each argument separately, which needs no quoting and is the reliable form when a value may contain quotes or trailing backslashes:</p>
     <pre>RunScript(src, , , , , ["--define:FEATURE_X", "--include", "My include.ahk"])</pre>
     <p>No switches are inherited from the calling script.</p>
-    <p><code class="no-highlight">--define</code> applies to the compilation of <em>Code</em>; every other switch is passed to the child process.</p>
+    <p><code class="no-highlight">--define</code> and <code class="no-highlight">--include</code> apply to the compilation of <em>Code</em>; every other switch is passed to the child process.</p>
   </dd>
 </dl>
 
@@ -48,7 +48,7 @@
 
 <h2 id="Error_Handling">Error Handling</h2>
 <p>An <a href="Error.htm">Error</a> is thrown if the compiler component is needed but not installed, or if <em>Code</em> fails to compile; its message contains the compiler's report.</p>
-<p>A <a href="Error.htm#ValueError">ValueError</a> is thrown if <em>Options</em> contains an invalid <code class="no-highlight">--define</code>, or any <code class="no-highlight">--define</code> when <em>Code</em> names an already-compiled script.</p>
+<p>A <a href="Error.htm#ValueError">ValueError</a> is thrown if <em>Options</em> contains an invalid <code class="no-highlight">--define</code>, an <code class="no-highlight">--include</code> without a file or a second one, or any <code class="no-highlight">--define</code> or <code class="no-highlight">--include</code> when <em>Code</em> names an already-compiled script.</p>
 
 <h2 id="ScriptProcess">Process Object (ScriptProcess)</h2>
 <p>The object returned by RunScript encapsulates the child process and its redirected I/O. This object has the following methods and properties:</p>

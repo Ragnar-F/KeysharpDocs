@@ -10,7 +10,7 @@ runs the resulting .NET assembly.
 
 This repository began as the AutoHotkeyDocs `alpha` branch with permission
 from the AutoHotkey team. Its current compatibility target is AutoHotkey
-v2.1-alpha.32. That target defines intended language semantics; it does not
+v2.1-alpha.33. That target defines intended language semantics; it does not
 prove that every feature is implemented on every Keysharp platform.
 
 Windows currently has the broadest coverage. Linux support varies between X11

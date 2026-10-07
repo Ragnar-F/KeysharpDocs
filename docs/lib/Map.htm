@@ -132,7 +132,7 @@ MapObj := Map.<span class="func">Call</span>(Key1, Value1, Key2, Value2, ...)</p
 <div class="methodShort" id="ToString"><h3>ToString</h3>
 <p>Returns a string representation of the map.</p>
 <pre class="Syntax">Text := MapObj.<span class="func">ToString</span>()</pre>
-<p>The result encloses the key-value pairs in braces, separates pairs with a comma and space, and separates each key from its value with a colon. String keys and values are enclosed in double quotes. <code>String(MapObj)</code> returns the same result.</p>
+<p>The result encloses the key-value pairs in square brackets, separates pairs with a comma and space, and separates each key from its value with a colon, as in <code>["one": 1, 2: "two"]</code>. Keys and values are formatted as <a href="Array.htm#ToString">Array.ToString</a> formats elements. <code>String(MapObj)</code> returns the same result.</p>
 </div>
 
 <div class="methodShort" id="__Enum"><h3>__Enum</h3>
@@ -151,7 +151,7 @@ MapObj := Map.<span class="func">Call</span>(Key1, Value1, Key2, Value2, ...)</p
     <p>The value.</p>
   </dd>
 </dl>
-<p>The Map is copied and sorted before enumeration, so modifying it during enumeration does not have the same effect as in AutoHotkey. Use <a href="HashMap.htm">HashMap</a> when sorted enumeration is unnecessary.</p>
+<p>The Map is sorted before enumeration. An enumerator can retain a snapshot of its items, so changes to keys or values during enumeration may not be reflected as they are in AutoHotkey. Use <a href="HashMap.htm">HashMap</a> when sorted enumeration is unnecessary.</p>
 </div>
 
 <div class="methodShort" id="__New"><h3>__New</h3>
@@ -181,7 +181,7 @@ MapObj := Map.<span class="func">Call</span>(Key1, Value1, Key2, Value2, ...)</p
 <p><em>CurrentSetting</em> is <em>NewSetting</em> if assigned, otherwise On by default (but note that this property only retrieves the string variant of the current setting).</p>
 <p><em>NewSetting</em> is one of the following <a href="../Concepts.htm#strings">strings</a> or <a href="../Concepts.htm#boolean">integers (boolean)</a>:</p>
 <p><strong>On</strong> or <strong>1</strong> (true): Key lookups are case-sensitive. This is the default setting.</p>
-<p><strong>Off</strong> or <strong>0</strong> (false): Key lookups are not case-sensitive, i.e. the letters A-Z are considered identical to their lowercase counterparts.</p>
+<p><strong>Off</strong> or <strong>0</strong> (false): Key lookups are not case-sensitive, i.e. the letters A-Z are considered identical to their lowercase counterparts. Unicode case pairs, such as &Auml; and &auml;, also identify the same key; AutoHotkey folds only ASCII letters in this mode.</p>
 <p><strong>Locale:</strong> Key lookups are not case-sensitive according to the rules of the current user's locale. For example, most English and Western European locales treat not only the letters A-Z as identical to their lowercase counterparts, but also non-ASCII letters like &Auml; and &Uuml; as identical to theirs. <em>Locale</em> is 1 to 8 times slower than <em>Off</em> depending on the nature of the strings being compared.</p>
 <p>Attempting to assign to this property causes an exception to be thrown if the Map is not empty.</p>
 </div>

@@ -13,31 +13,45 @@
 
 <h1>StringBuffer Object</h1>
 <pre class="NoIndent">class StringBuffer extends Object</pre>
-<p>Provides writable string memory for <a href="DllCall.htm">DllCall</a>, <a href="NumPut.htm">NumPut</a> and other pointer-based operations. It is implicitly convertible to String.</p>
+<p>Provides writable string memory for <a href="DllCall.htm">DllCall</a>, <a href="NumPut.htm">NumPut</a> and other pointer-based operations. It is implicitly convertible to String. It holds UTF-16 text only; for another encoding, use a <a href="Buffer.htm">Buffer</a> with <a href="StrGet.htm">StrGet</a> and <a href="StrPut.htm">StrPut</a>.</p>
+<pre>#Import Ks { StringBuffer }</pre>
+<p>Converting a StringBuffer to a String, with <code>String(sb)</code> or implicitly, gives its text up to the first null character or <a href="#Pos">Pos</a>, whichever is further, so null characters before Pos are kept. DllCall leaves Pos unchanged, so after a native function writes a shorter string than the buffer held, call <code><a href="#Seek">Seek</a>(-1)</code> to move Pos to the new terminator.</p>
+<p>DllCall accepts a StringBuffer as a <a href="DllCall.htm#ptr">Ptr</a>, <a href="DllCall.htm#str">Str</a> or WStr argument, each of which passes its UTF-16 memory. As an <a href="DllCall.htm#astr">AStr</a> argument it raises a <a href="Error.htm#TypeError">TypeError</a>, and as a Ptr* argument it does not receive the pointer the function writes; see <a href="DllCall.htm#DoublePointer">double pointers</a>.</p>
 
-<pre class="Syntax">Buffer := <span class="func">StringBuffer</span>(<span class="optional">InitialValue := "", Capacity := 256</span>)</pre>
+<pre class="Syntax">Buffer := <span class="func">StringBuffer</span>(<span class="optional">InitialValue := "", Capacity</span>)</pre>
 
 <h2 id="Parameters">Parameters</h2>
 <dl>
   <dt>InitialValue</dt>
-  <dd><p>Type: String</p><p>The initial string.</p></dd>
+  <dd><p>Type: String</p><p>The initial string. <a href="#Pos">Pos</a> starts at its end.</p></dd>
   <dt>Capacity</dt>
-  <dd><p>Type: Integer</p><p>The writable capacity, in characters. If omitted, it is 256, or more if <em>InitialValue</em> is longer.</p></dd>
+  <dd><p>Type: Integer</p><p>The writable capacity, in characters, excluding the null terminator. If omitted, it is the larger of 256 and the length of <em>InitialValue</em>. A capacity shorter than <em>InitialValue</em> is grown to fit it. A negative capacity raises a <a href="Error.htm#ValueError">ValueError</a>.</p></dd>
 </dl>
 
 <h2 id="Properties">Properties</h2>
 <table class="info">
   <tr><th>Property</th><th>Type</th><th>Description</th></tr>
-  <tr id="Ptr"><td><code>Ptr</code></td><td>Integer</td><td>The address of the buffer's memory. Read-only.</td></tr>
-  <tr id="Pos"><td><code>Pos</code></td><td>Integer</td><td>The current read/write position, in characters. Assigning a negative value moves the position to the end of the current string by scanning for its null terminator; any other value is clamped to <a href="#Capacity">Capacity</a>.</td></tr>
-  <tr id="Capacity"><td><code>Capacity</code></td><td>Integer</td><td>The writable capacity, in characters, excluding the null terminator. Assigning to it reallocates the buffer, preserving existing content up to the new capacity.</td></tr>
-  <tr id="Size"><td><code>Size</code></td><td>Integer</td><td>The capacity in <em>bytes</em>, excluding the null terminator: <a href="#Capacity">Capacity</a> multiplied by the size of one character in the buffer's encoding. Read-only.</td></tr>
+  <tr id="Ptr"><td><code>Ptr</code></td><td>Integer</td><td>The address of the buffer's memory, which is pinned on first use. The address stays the same while the text fits; assigning <a href="#Capacity">Capacity</a> reallocates the memory. Read-only.</td></tr>
+  <tr id="Pos"><td><code>Pos</code></td><td>Integer</td><td>The write position, in characters, clamped to <a href="#Capacity">Capacity</a>. Assigning it is the same as calling <a href="#Seek">Seek</a>, so a negative value moves it to the first null character.</td></tr>
+  <tr id="Capacity"><td><code>Capacity</code></td><td>Integer</td><td>The writable capacity, in characters, excluding the null terminator. Assigning to it reallocates the buffer, keeping the text which fits. A negative value raises a <a href="Error.htm#ValueError">ValueError</a>.</td></tr>
+  <tr id="Size"><td><code>Size</code></td><td>Integer</td><td>The capacity in <em>bytes</em>, excluding the null terminator: <a href="#Capacity">Capacity</a> multiplied by 2. Read-only.</td></tr>
+</table>
+
+<h2 id="Methods">Methods</h2>
+<table class="info">
+  <tr><th>Method</th><th>Description</th></tr>
+  <tr id="Append"><td><code>Append(Text)</code></td><td>Writes <em>Text</em> at <a href="#Pos">Pos</a>, followed by a null character, grows <a href="#Capacity">Capacity</a> as needed, and returns the new position.</td></tr>
+  <tr id="AppendLine"><td><code>AppendLine(Text := "")</code></td><td>Appends <em>Text</em> and a linefeed (<code>`n</code>), and returns the new position.</td></tr>
+  <tr id="Clear"><td><code>Clear()</code></td><td>Empties the buffer and moves the position to 0.</td></tr>
+  <tr id="Clone"><td><code>Clone()</code></td><td>Returns a StringBuffer with memory of its own holding the same text, <a href="#Capacity">Capacity</a> and <a href="#Pos">Pos</a>.</td></tr>
+  <tr id="Seek"><td><code>Seek(Position)</code></td><td>Moves the position to <em>Position</em>, clamped to <a href="#Capacity">Capacity</a>, and returns the new position. A negative <em>Position</em> moves it to the first null character, which is where a native function's output ends.</td></tr>
 </table>
 
 <h2 id="Examples">Examples</h2>
 <div class="ex" id="ExWsprintf">
 <p><a class="ex_number" href="#ExWsprintf"></a> Receives formatted text directly into a StringBuffer.</p>
-<pre>sb := StringBuffer()
+<pre>#Import Ks { StringBuffer }
+sb := StringBuffer()
 DllCall("wsprintf", "Ptr", sb, "Str", "%010d", "Int", 432, "Cdecl")
 MsgBox sb  <em>; 0000000432</em></pre>
 </div>

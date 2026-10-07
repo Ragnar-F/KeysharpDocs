@@ -37,6 +37,7 @@
 <h2 id="Return_Value">Return Value</h2>
 <p>Type: <a href="../Concepts.htm#strings">String</a></p>
 <p>This function returns the <a href="../misc/ControlID.htm#ClassNN">ClassNN</a> (class name and sequence number) of the control.</p>
+<p>The sequence number is determined among controls of the same class in the resolved target window's descendants, including nested containers. If <em>ControlID</em> is a HWND or an object with a Hwnd property, the window criteria are ignored and the containing top-level window supplies the numbering scope.</p>
 
 <h2 id="Error_Handling">Error Handling</h2>
 <p>A <a href="Error.htm#TargetError">TargetError</a> is thrown if there is a problem determining the target window or control.</p>

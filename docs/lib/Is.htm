@@ -71,7 +71,7 @@
 </table>
 
 <h2 id="cat-string">String</h2>
-<p>Check whether a string matches a specific pattern. <em>Value</em> must be a string, otherwise a <a href="Error.htm#TypeError">TypeError</a> is thrown.</p>
+<p>Check whether a string matches a specific pattern. <em>Value</em> must be a string, a number or a <a href="StringBuffer.htm">StringBuffer</a>, otherwise a <a href="Error.htm#TypeError">TypeError</a> is thrown. A number is checked as its decimal text, as in <code>IsDigit(42)</code>, where AutoHotkey throws a TypeError.</p>
 <table class="info">
   <tr>
     <th style="width:15%">Function</th>

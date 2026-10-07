@@ -22,7 +22,7 @@
   <dt>X, Y</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>If either is omitted, the control's position in that dimension will not be changed. Otherwise, specify the X and Y coordinates (in pixels) of the upper left corner of the control's new location. The coordinates are relative to the upper-left corner of the client area of the control's immediate parent (see <a href="#Remarks">Remarks</a>); <a href="ControlGetPos.htm">ControlGetPos</a> or <a href="../Program.htm#Window_Spy">Window Spy</a> can be used to determine them.</p>
+    <p>If either is omitted, the control's position in that dimension will not be changed. Otherwise, specify the X and Y coordinates (in pixels) of the upper left corner of the control's new location. The coordinates are relative to the upper-left corner of the target window's client area (see <a href="#Remarks">Remarks</a>); <a href="ControlGetPos.htm">ControlGetPos</a> or <a href="../Program.htm#Window_Spy">Window Spy</a> can be used to determine them.</p>
   </dd>
 
   <dt>Width, Height</dt>
@@ -34,7 +34,7 @@
   <dt>ControlID</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#strings">String</a>, <a href="../Concepts.htm#numbers">Integer</a> or <a href="../Concepts.htm#objects">Object</a></p>
-    <p>The control's ClassNN, text or HWND, or an object with a Hwnd property. For details, see <a href="../misc/ControlID.htm">Control Identifiers</a>. This parameter is required; that is, it cannot be omitted.</p>
+    <p>The control's ClassNN, text or HWND, or an object with a Hwnd property. For details, see <a href="../misc/ControlID.htm">Control Identifiers</a>. If omitted, the target window itself is used, with coordinates relative to its containing top-level window's client area. A top-level target uses its own client-area origin.</p>
   </dd>
 
   <dt>WinTitle, WinText, ExcludeTitle, ExcludeText</dt>
@@ -52,9 +52,13 @@
 
 
 <h2 id="Remarks">Remarks</h2>
-<p>Coordinates are relative to the control's immediate parent. If the control is inside a tab, group or other container, that parent might not be the main window.</p>
+<p>Controls inside a tab, group or other container use the same target-window client-area origin as <a href="ControlGetPos.htm">ControlGetPos</a>. If <em>ControlID</em> is a HWND or an object with a Hwnd property, the window criteria are ignored and the containing top-level window supplies that origin. A top-level window uses its own client-area origin.</p>
 <p>This function is intended for use with controls in a non-GUI window, i.e. a window that is not created with the <a href="Gui.htm#Call">Gui</a> function. It works best with common or predefined Microsoft controls; some applications use custom or modified controls, in which case the function might not work as expected. For <a href="GuiControls.htm">GUI controls</a>, it is usually more convenient to use <a href="GuiControl.htm#Move">GuiControl.Move</a>.</p>
 <p>To improve reliability, a delay is done automatically after each use of this function. That delay can be changed via <a href="SetControlDelay.htm">SetControlDelay</a> or by assigning a value to <a href="../Variables.htm#ControlDelay">A_ControlDelay</a>. For details, see <a href="SetControlDelay.htm#Remarks">SetControlDelay remarks</a>.</p>
+<h3 id="Linux">Linux</h3>
+<p>The target-client coordinate mapping applies to the script's own toolkit controls. Native window movement remains limited by the active desktop backend; see <a href="../Platforms.htm">Platform Support</a>.</p>
+<h3 id="macOS">macOS</h3>
+<p>The target-client coordinate mapping applies to the script's own toolkit controls. Native window movement uses the platform backend and its permission requirements. These coordinate changes await macOS runtime verification.</p>
 
 <h2 id="Related">Related</h2>
 <p><a href="ControlGetPos.htm">ControlGetPos</a>, <a href="WinMove.htm">WinMove</a>, <a href="SetControlDelay.htm">SetControlDelay</a>, <a href="GuiControl.htm#Move">GuiControl.Move</a>, <a href="Control.htm">Control functions</a></p>

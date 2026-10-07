@@ -39,12 +39,16 @@
 <h2 id="Return_Value">Return Value</h2>
 <p>Type: <a href="../Concepts.htm#numbers">Float</a></p>
 <p>This function returns a floating point number between 0.0 and 100.0.</p>
+<p>On Linux, this is the system mixer's slider percentage of the loudest channel. Readings above 100% are clamped to 100.</p>
 
 <h2 id="Error_Handling">Error Handling</h2>
 <p>A <a href="Error.htm#TargetError">TargetError</a> is thrown if the device or component could not be found or if the component does not support this control type. Otherwise, an <a href="Error.htm#OSError">OSError</a> is thrown on failure.</p>
 
 <h2 id="Remarks">Remarks</h2>
 <p>To discover the capabilities of the sound devices installed on the system -- such as the names and available components -- run the <a href="Sound.htm#ExSoundcard">soundcard analysis script</a>.</p>
+
+<h3 id="macOS">macOS</h3>
+<p>Volume uses the selected input or output direction. If only channel controls are available, the first channel is read. This fallback is unverified on hardware.</p>
 
 <h2 id="Related">Related</h2>
 <p><a href="Sound.htm">Sound Functions</a></p>

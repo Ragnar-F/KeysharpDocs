@@ -18,7 +18,7 @@
 <p>Provides an interface for modifying GUI controls and retrieving information about them. <a href="Gui.htm#Add">Gui.Add</a>, <a href="Gui.htm#__Item">Gui.__Item</a> and <a href="GuiCtrlFromHwnd.htm">GuiCtrlFromHwnd</a> return an object of this type.</p>
 
 <p>"GuiCtrl" is used below as a placeholder for instances of the <code>Gui.Control</code> class.</p>
-<p><code>Gui.Control</code> serves as the base class for all GUI controls, but each type of control has its own class. Some of the following methods are defined by the prototype of the appropriate class, or the <code>Gui.List</code> base class. See <a href="../ObjList.htm">Built-in Classes</a> for a full list.</p>
+<p><code>Gui.Control</code> serves as the base class for all GUI controls, but each type of control has its own class. Some of the following methods are defined by the prototype of the appropriate class, or the <code>Gui.List</code> base class. See <a href="../ObjList.htm">Built-in Classes</a> for a full list. Calling such a method on a control of another type raises a <a href="Error.htm#MethodError">MethodError</a>.</p>
 <p>In addition to the methods and properties inherited from <a href="Object.htm">Object</a>, GuiControl objects may have the following predefined methods and properties.</p>
 
 <h2 id="toc">Table of Contents</h2>
@@ -40,7 +40,6 @@
       <li><a href="#Redraw">Redraw</a>: Redraws the region of the GUI window occupied by a control.</li>
       <li><a href="#SetCue">SetCue</a> <span class="ver">[v2.1-alpha.7+]</span>: Sets the cue banner text of an Edit or ComboBox control.</li>
       <li><a href="#SetFont">SetFont</a>: Changes a control's font typeface, size, color, and/or style.</li>
-      <li><a href="#SetTabIcon">SetTabIcon</a>: Changes the icon of a tab.</li>
       <li><a href="#ToClr">ToClr</a>: Returns the backing toolkit control as a Clr object.</li>
     </ul>
   </li>
@@ -99,10 +98,12 @@
   <dt>Item</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a> or <a href="../Concepts.htm#strings">String</a></p>
-    <p>Specify 1 for the first item, 2 for the second, and so on. Specify 0 to deselect all items.</p>
-    <p>If a string is specified (even a numeric string), the item whose name starts with the string will be selected. The search is not case-sensitive. For example, if a multi-item control contains the item "UNIX Text", specifying the word unix (lowercase) would be enough to select it. For a <a href="GuiControls.htm#ListBoxMulti">multi-select ListBox</a>, all matching items are selected.</p>
+    <p>Specify 1 for the first item, 2 for the second, and so on. Specify 0 or an empty string to deselect all items in a ListBox, DropDownList or ComboBox. A Tab control always has a selected tab, so 0 or an empty string raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
+    <p>If a string is specified (even a numeric string), the item whose name starts with the string will be selected. The search is not case-sensitive. For example, if a multi-item control contains the item "UNIX Text", specifying the word unix (lowercase) would be enough to select it. For a <a href="GuiControls.htm#ListBoxMulti">multi-select ListBox</a>, all matching items are selected on Windows. On Linux and macOS, only the first matching item is selected.</p>
   </dd>
 </dl>
+<h4 id="Choose_Error_Handling">Error Handling</h4>
+<p>A <a href="Error.htm#ValueError">ValueError</a> is raised if the requested item or tab does not exist.</p>
 <h4 id="Choose_Remarks">Remarks</h4>
 <p>To select all items in a <a href="GuiControls.htm#ListBoxMulti">multi-select ListBox</a>, use <code>PostMessage(0x0185, 1, -1, GuiCtrl)</code>, where 0x0185 is <a href="https://learn.microsoft.com/windows/win32/controls/lb-setsel">LB_SETSEL</a>. As an alternative, call this method for each item in the array returned by <a href="ControlGetItems.htm">ControlGetItems</a>:</p>
 <pre>for index, text in ControlGetItems(GuiCtrl)
@@ -119,7 +120,7 @@
 <dl>
   <dt>Item</dt><dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>If omitted, all items will be deleted. Otherwise, specify 1 for the first item, 2 for the second, etc.</p>
+    <p>If omitted, all items will be deleted. Otherwise, specify 1 for the first item, 2 for the second, etc. A number below 1 raises a <a href="Error.htm#ValueError">ValueError</a>.</p>
   </dd>
 </dl>
 <h4 id="Delete_Remarks">Remarks</h4>
@@ -256,6 +257,8 @@
 <h4 id="Opt_Remarks">Remarks</h4>
 <p>All valid options and styles are usually recognized. However, this does not mean that all of them are applied or removed after a control has been created. Some <a href="../misc/Styles.htm">styles</a> cannot be changed retroactively. For <a href="Gui.htm#PosSize">positioning and sizing options</a>, use <a href="#Move">GuiControl.Move</a> instead, optionally with <a href="GuiControl.htm#GetPos">GuiControl.GetPos</a> for relative adjustments.</p>
 <p>If a change could not be applied, an exception is thrown. Even if a change is successfully applied, the control might choose to ignore it.</p>
+<p>Named options and numeric styles are not applied identically by <a href="Gui.htm#Add">Gui.Add</a> and Opt. Consistent option application and native style updates are <a href="../Keysharp.htm#ReleaseReview">deferred release-review work</a>.</p>
+<p>Raw style numbers are generally ignored on Linux and macOS. UpDown emulates <code class="no-highlight">0x80</code> to suppress thousands separators.</p>
 </div>
 <span id="redraw-remarks"></span><div class="methodShort" id="Redraw">
 <h3>Redraw</h3>
@@ -286,6 +289,7 @@ EditCtrl.<span class="func">SetCue</span>(NewText <span class="optional">, ShowW
 </dl>
 <h4 id="SetCue_Remarks">Remarks</h4>
 <p>The cue banner is displayed only when the control has no text, and may be displayed by a ComboBox control even if there is a selection (i.e. when <a href="#Value">Value</a> is non-zero but the selected item has no text).</p>
+<p>On Linux and macOS, only a single-line Edit control has a cue banner, which it shows whether or not it has the focus. Calling this method on a multi-line or password Edit control, or on a ComboBox, raises an <a href="Error.htm">Error</a> there.</p>
 </div>
 
 <div class="methodShort" id="SetFont">
@@ -295,13 +299,6 @@ EditCtrl.<span class="func">SetCue</span>(NewText <span class="optional">, ShowW
 <p>Omit both parameters to set the font to the GUI's current font, as set by <a href="Gui.htm#SetFont">Gui.SetFont</a>. Otherwise, any font attributes which are not specified will be copied from the control's previous font. Text color is changed only if specified in <em>Options</em>.</p>
 <p>Options also accepts a <a href="Font.htm">Font</a> object, applying only its specified attributes. For details about both parameters, see <a href="Gui.htm#SetFont">Gui.SetFont</a>.</p>
 <p>See <a href="#ExFont">example #7</a> for a demonstration.</p>
-</div>
-
-<div class="methodShort" id="SetTabIcon">
-<h3>SetTabIcon</h3>
-<p>Changes the icon displayed by a tab control page.</p>
-<pre class="Syntax">TabCtrl.<span class="func">SetTabIcon</span>(TabIndex, ImageIndex)</pre>
-<p><em>TabIndex</em> identifies the tab and <em>ImageIndex</em> identifies an image in the tab control's image list.</p>
 </div>
 
 <div class="methodShort" id="ToClr">
@@ -373,7 +370,7 @@ EditCtrl.<span class="func">SetCue</span>(NewText <span class="optional">, ShowW
 <pre class="Syntax">Container := GuiCtrl.<span class="func">Parent</span></pre>
 <pre class="Syntax">GuiCtrl.<span class="func">Parent</span> := Container</pre>
 <p><em>Container</em> is the <a href="#Gui">GuiControl</a> holding the control &mdash; a <a href="GuiControls.htm#GroupBox">GroupBox</a> or <a href="GuiControls.htm#Tab">Tab</a> page, for example &mdash; or the control's <a href="Gui.htm">Gui</a> when it sits directly on the window.</p>
-<p>The value read from this property can be assigned back to it, so a control can be moved from one container to another. Assigning a Gui returns the control to the window itself.</p>
+<p>Assign a container's GuiControl object to move the control into that container. Assigning a Gui object currently has no effect.</p>
 <p>Use <a href="#Gui">GuiCtrl.Gui</a> to reach the owning window regardless of nesting; Parent reports only the immediate container.</p>
 </div>
 
@@ -390,7 +387,7 @@ EditCtrl.<span class="func">SetCue</span>(NewText <span class="optional">, ShowW
 <p>Gets or sets the explicit name of a control.</p>
 <pre class="Syntax">CurrentName := GuiCtrl.<span class="func">Name</span></pre>
 <pre class="Syntax">GuiCtrl.<span class="func">Name</span> := NewName</pre>
-<p><em>CurrentName</em> is the control's current name, or an empty string if it has no name. The <a href="Gui.htm#var">V option</a> affects the initial setting.</p>
+<p><em>CurrentName</em> is the control's current name, or an empty string if it has no name. A Button starts with its caption as its name. The <a href="Gui.htm#var">V option</a> affects the initial setting.</p>
 <p><em>NewName</em> is the control's new name.</p>
 <p>This name can be used with <a href="Gui.htm#__Item">Gui.__Item</a> to retrieve the corresponding GuiControl object. For most input-capable controls, the name is also used by <a href="Gui.htm#Submit">Gui.Submit</a>.</p>
 </div>
@@ -407,8 +404,8 @@ EditCtrl.<span class="func">SetCue</span>(NewText <span class="optional">, ShowW
 <h4 id="Text_Control_Group_2"><a href="GuiControls.htm#DateTime">DateTime</a></h4>
 <p><em>CurrentText</em> is the current formatted text displayed by the control. <em>NewText</em> is invalid and throws an exception. To change the date/time being displayed, use <a href="#Value">GuiControl.Value</a> to set a date-time stamp in <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDDHH24MISS</a> format.</p>
 <h4 id="Text_Control_Group_3"><a href="GuiControls.htm#ComboBox">ComboBox</a> / <a href="GuiControls.htm#DropDownList">DropDownList</a> / <a href="GuiControls.htm#ListBox">ListBox</a> / <a href="GuiControls.htm#Tab">Tab</a></h4>
-<p><em>CurrentText</em> is the text of the currently selected item or tab, or blank if none is selected. For a ComboBox, if no item is selected, it is the text in the edit field. For a <a href="GuiControls.htm#ListBoxMulti">multi-select ListBox</a>, it is an <a href="Array.htm">array</a> containing the text of each selected item, or blank if none is selected.</p>
-<p><em>NewText</em> is the full text (case-insensitive) of the item or tab to select, or blank to clear the current selection. For a <a href="GuiControls.htm#ListBoxMulti">multi-select ListBox</a>, all items that fully match the text are selected. To select multiple items with different text, call <a href="#Choose">GuiControl.Choose</a> repeatedly. <a href="#Value">GuiControl.Value</a> selects an item or tab by index.</p>
+<p><em>CurrentText</em> is the text of the currently selected item or tab, or blank if none is selected. For a ComboBox, if no item is selected, it is the text in the edit field. For a <a href="GuiControls.htm#ListBoxMulti">multi-select ListBox</a>, it is an <a href="Array.htm">array</a> containing the text of each selected item, or an empty array if none is selected.</p>
+<p><em>NewText</em> is the full text (case-insensitive) of the item or tab to select, or blank to clear the current selection. An editable ComboBox accepts any text in its edit field. For a <a href="GuiControls.htm#ListBoxMulti">multi-select ListBox</a>, assigning Text replaces the selection with the first item whose text fully matches. To select multiple items on Windows, call <a href="#Choose">GuiControl.Choose</a> repeatedly. <a href="#Value">GuiControl.Value</a> selects an item or tab by index.</p>
 <h4 id="Text_Control_Group_4"><a href="GuiControls.htm#Edit">Edit</a></h4>
 <p><em>CurrentText</em> and <em>NewText</em> are the current and new text, respectively. As with other controls, the text is retrieved or set as-is; no end-of-line translation is performed. To get or set the text of a multi-line Edit control while also translating between CR+LF (`r`n) and LF (`n), use <a href="#Value">GuiControl.Value</a>.</p>
 <h4 id="Text_Control_Group_5"><a href="GuiControls.htm#StatusBar">StatusBar</a></h4>
@@ -434,7 +431,7 @@ EditCtrl.<span class="func">SetCue</span>(NewText <span class="optional">, ShowW
 <p><em>CurrentValue</em> and <em>NewValue</em> are the current and new setting, respectively: 1 for checked, 0 for unchecked, or -1 for indeterminate. For radio buttons, if one is being checked (turned on) and it is a member of a multi-radio group, the other radio buttons in its group will be automatically unchecked. To get or set the control's text/caption instead, use <a href="#Text">GuiControl.Text</a>.</p>
 <h4 id="Value_Control_Group_3"><a href="GuiControls.htm#ComboBox">ComboBox</a> / <a href="GuiControls.htm#DropDownList">DropDownList</a> / <a href="GuiControls.htm#ListBox">ListBox</a> / <a href="GuiControls.htm#Tab">Tab</a></h4>
 <p><em>CurrentValue</em> is the index of the currently selected item or tab, or 0 if none is selected. For a ComboBox, if text is entered, it is the index of the first item that fully matches the text (case-insensitive), or 0 if there is no match. For a <a href="GuiControls.htm#ListBoxMulti">multi-select ListBox</a>, it is an <a href="Array.htm">array</a> containing the index of each selected item, or an empty array if none is selected.</p>
-<p><em>NewValue</em> is the index of an item or tab to select, or 0 to clear the current selection (this is valid even for Tab controls). For a <a href="GuiControls.htm#ListBoxMulti">multi-select ListBox</a>, to select multiple items, call <a href="#Choose">GuiControl.Choose</a> repeatedly. <a href="#Text">GuiControl.Text</a> selects an item or tab by text.</p>
+<p><em>NewValue</em> is the index of an item or tab to select, or 0 to clear the current selection (this is valid even for Tab controls). Assigning an <a href="Array.htm">Array</a> raises a <a href="Error.htm#TypeError">TypeError</a>, including for a multi-select ListBox; on Windows, call <a href="#Choose">GuiControl.Choose</a> repeatedly to select multiple items. On Linux and macOS, a ListBox selects one item at a time. <a href="#Text">GuiControl.Text</a> selects an item or tab by text. Assigning Text or Value to a ListBox, DropDownList or ComboBox does not raise a <a href="GuiOnEvent.htm#Change">Change</a> event.</p>
 <h4 id="Value_Control_Group_4"><a href="GuiControls.htm#DateTime">DateTime</a> / <a href="GuiControls.htm#MonthCal">MonthCal</a></h4>
 <p><em>CurrentValue</em> and <em>NewValue</em> are date-time stamps in <a href="FileSetTime.htm#YYYYMMDD">YYYYMMDDHH24MISS</a> format representing the date/time currently selected and to be selected in the control, respectively. Specify <a href="../Variables.htm#Now">A_Now</a> for <em>NewValue</em> to use the current date and time (today). For DateTime controls, <em>NewValue</em> can be blank to cause the control to have no date/time selected (if it was created with <a href="GuiControls.htm#ChooseNone">that ability</a>). For MonthCal controls, a range may be specified if the control is <a href="GuiControls.htm#MonthCalMulti">multi-select</a>.</p>
 <h4 id="Value_Control_Group_5"><a href="GuiControls.htm#Edit">Edit</a></h4>
@@ -448,6 +445,8 @@ EditCtrl.<span class="func">SetCue</span>(NewText <span class="optional">, ShowW
 <p><em>NewValue</em> is blank to clear the picture, or the filename or a <a href="../misc/ImageHandles.htm">handle</a> of the new image to load (see <a href="GuiControls.htm#Picture">Picture</a> for supported file types). Zero or more of the following options may be specified immediately in front of the filename: <code class="no-highlight">*wN</code> (width N), <code class="no-highlight">*hN</code> (height N), and <code class="no-highlight">*IconN</code> (icon group number N in a DLL or EXE file). For example, <code>"*icon2 *w100 *h-1 C:\My Application.exe"</code> loads the default icon from the second icon group with a width of 100 and an automatic height via "keep aspect ratio". Specify <code class="no-highlight">*w0 *h0</code> to use the image's actual width and height. If <code class="no-highlight">*w</code> and <code class="no-highlight">*h</code> are omitted, the image will be scaled to fit the current size of the control. When loading from a multi-icon .ICO file, specifying a width and height also determines which icon to load. Note: Use only one space or tab between the final option and the filename itself; any other spaces and tabs are treated as part of the filename.</p>
 <h4 id="Value_Control_Group_8"><a href="GuiControls.htm#Progress">Progress</a> / <a href="GuiControls.htm#Slider">Slider</a> / <a href="GuiControls.htm#UpDown">UpDown</a></h4>
 <p><em>CurrentValue</em> and <em>NewValue</em> are the current and new position of the control, respectively. If the new position would be outside the range of the control, the control is generally set to the nearest valid value.</p>
+<h4 id="Value_Control_StatusBar"><a href="GuiControls.htm#StatusBar">StatusBar</a></h4>
+<p><em>CurrentValue</em> is an empty string. Assigning <em>NewValue</em> raises an <a href="Error.htm">Error</a>; set <a href="#Text">Text</a> or call <a href="GuiControls.htm#SB_SetText">SetText</a> to change a part's text.</p>
 <h4 id="Value_Control_Group_9"><a href="GuiControls.htm#Text">Text</a></h4>
 <p><em>CurrentValue</em> and <em>NewValue</em> are the current and new text/caption, respectively. Since the control will not expand automatically, use <a href="#Move">GuiControl.Move</a> if the control needs to be widened.</p>
 </div>

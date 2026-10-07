@@ -5,7 +5,7 @@ Thank you for helping document Keysharp.
 ## Source of truth
 
 Documentation should describe observed Keysharp behavior. AutoHotkey
-v2.1-alpha.32 is the compatibility target and a valuable language reference,
+v2.1-alpha.33 is the compatibility target and a valuable language reference,
 but it is not evidence that a feature is already implemented on every Keysharp
 platform.
 

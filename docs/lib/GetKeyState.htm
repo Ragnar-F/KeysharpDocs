@@ -58,7 +58,7 @@
 <p>When <em>KeyName</em> is a button or control of a controller that could not be detected, this function returns an empty string.</p>
 
 <h2 id="Error_Handling">Error Handling</h2>
-<p>A <a href="Error.htm#ValueError">ValueError</a> is thrown if invalid parameters are detected, e.g. when <em>KeyName</em> does not exist on the current keyboard layout, or <em>Mode</em> does not begin with <code>L</code>, <code>P</code> or <code>T</code> and is not a device identifier from 1 to 4294967295.</p>
+<p>A <a href="Error.htm#ValueError">ValueError</a> is thrown if invalid parameters are detected, e.g. when <em>KeyName</em> does not exist on the script's current keyboard layout, or <em>Mode</em> does not begin with <code>L</code>, <code>P</code> or <code>T</code> and is not a device identifier from 1 to 4294967295. An ASCII letter A-Z without a layout mapping uses the corresponding virtual key, as with <a href="GetKeyVK.htm#Remarks">GetKeyVK</a>.</p>
 
 <h2 id="Remarks">Remarks</h2>
 <p>Except for modifier state and the toggle state of lock keys, polling a key or mouse button can require the <a href="RequestCapabilities.htm">InputMonitoring</a> capability.</p>

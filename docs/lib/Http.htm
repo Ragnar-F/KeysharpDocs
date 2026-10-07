@@ -126,7 +126,7 @@ Client := Session.<span class="func">ToClr</span>()</pre>
   <dt id="TimeoutOption">Timeout</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Number</a></p>
-    <p>A positive number of seconds, default 30, or <code class="no-highlight">-1</code> to wait indefinitely. Anything else throws a <a href="Error.htm#ValueError">ValueError</a>.</p>
+    <p>A positive number of seconds, default 30, or <code class="no-highlight">-1</code> to wait indefinitely. A value that cannot be converted to a number throws a <a href="Error.htm#TypeError">TypeError</a>; an invalid number throws a <a href="Error.htm#ValueError">ValueError</a>.</p>
     <p>It limits the wait for the response headers and then for each further piece of the body, not the transfer as a whole.</p>
   </dd>
   <dt>OnData</dt>
@@ -175,7 +175,7 @@ Client := Session.<span class="func">ToClr</span>()</pre>
   <dd><p>Type: <a href="../Concepts.htm#numbers">Integer</a></p><p>The body length the server declared, or <code class="no-highlight">-1</code> when it declared none.</p></dd>
 </dl>
 <p>Bytes accumulate for about 100 ms, or up to 1 MB, before each call. <a href="#Response">Body and Text</a> on the response are then empty.</p>
-<p>The callback runs in its own <a href="../misc/Threads.htm">script thread</a> on the real thread which made the request, and the transfer waits for it to return. Time spent in the callback does not count toward <em>Timeout</em>. The callback starts even when <a href="Critical.htm">Critical</a>, <a href="_MaxThreads.htm">#MaxThreads</a> or a higher-priority thread would otherwise keep a new thread from starting.</p>
+<p>The callback runs in its own <a href="../misc/Threads.htm">script thread</a> on the real thread which made the request, and the transfer waits for it to return. Time spent in the callback does not count toward <em>Timeout</em>. The callback starts even when <a href="Critical.htm">Critical</a>, <a href="_MaxThreads.htm">#MaxThreads</a> or a higher-priority thread would otherwise keep a new thread from starting. Each transfer with OnData keeps the script running until it ends.</p>
 <p>The callback may declare fewer than three parameters; it is passed only as many as it accepts. An error raised inside it fails the request without calling <a href="OnError.htm">OnError</a> at the throw site.</p>
 
 <h3 id="OnData_Stopping">Stopping a transfer</h3>

@@ -28,8 +28,10 @@
 </dl>
 
 <h2 id="Remarks">Remarks</h2>
-<p>If the script's process has no debugger, the system debugger displays the string. If the system debugger is not active, this function has no effect.</p>
+<p>If the script's process has no debugger, the system debugger displays the string. If the system debugger is not active, the string reaches only the debug tab described below. A .NET debugger attached to the script's process receives the string in place of the system debugger.</p>
 <p>One example of a debugger is DebugView, which is free and available at <a href="https://learn.microsoft.com/sysinternals/downloads/debugview">microsoft.com</a>.</p>
+<p>The string is also kept for the debug tab of the script's main window, which <a href="#ShowDebug">ShowDebug</a> displays. The tab holds the most recent output, up to about a million characters.</p>
+<p>On Linux and macOS, the string reaches an attached .NET debugger and the debug tab only.</p>
 <p>See also: <a href="../Scripts.htm#debug">other debugging methods</a></p>
 <h2 id="Related">Related</h2>
 <p><a href="FileAppend.htm">FileAppend</a>, <a href="../Scripts.htm#continuation">continuation sections</a></p>

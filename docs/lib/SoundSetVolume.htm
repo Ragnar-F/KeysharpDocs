@@ -25,6 +25,7 @@
     <p>Type: <a href="../Concepts.htm#strings">String</a>, <a href="../Concepts.htm#numbers">Integer</a> or <a href="../Concepts.htm#numbers">Float</a></p>
     <p>A string containing a percentage number between -100 and 100 inclusive. If the number begins with a plus or minus sign, the <u>current setting</u> will be adjusted up or down by the indicated amount. Otherwise, the setting will be set explicitly to the level indicated by <em>NewSetting</em>.</p>
     <p>If the percentage number begins with a minus sign or is unsigned, it does not need to be enclosed in quotation marks.</p>
+    <p>On Linux, this is the system mixer's slider percentage, so <code>SoundSetVolume(50)</code> sets 50% in the mixer.</p>
   </dd>
 
   <dt>Component</dt>
@@ -54,6 +55,9 @@ Send "{Volume_Down 3}"  <em>; Lower the master volume by 3 intervals.</em>
 <p>To discover the capabilities of the sound devices installed on the system -- such as the names and available components -- run the <a href="Sound.htm#ExSoundcard">soundcard analysis script</a>.</p>
 <p>SoundSetVolume attempts to preserve the existing balance when changing the volume level.</p>
 <p>Use <a href="SoundGetVolume.htm">SoundGetVolume</a> to retrieve the current volume setting.</p>
+
+<h3 id="macOS">macOS</h3>
+<p>Volume uses the selected input or output direction. If only channel controls are available, every channel is written. This fallback is unverified on hardware.</p>
 
 <h2 id="Related">Related</h2>
 <p><a href="Sound.htm">Sound Functions</a></p>

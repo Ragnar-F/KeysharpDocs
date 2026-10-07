@@ -43,19 +43,28 @@ if (-not (Test-Path -LiteralPath $assemblyPath -PathType Leaf)) {
 
 $auditDirectory = Join-Path $docsRepo 'audits'
 $toolProject = Join-Path $docsRepo 'tools/KeysharpApiCatalog/KeysharpApiCatalog.csproj'
-$jsonOutput = Join-Path $auditDirectory "global-api.$platform.json"
-$markdownOutput = Join-Path $auditDirectory "global-api.$platform.md"
 
 New-Item -ItemType Directory -Path $auditDirectory -Force | Out-Null
 
-& dotnet run --project $toolProject --configuration Release -- `
-    --assembly $assemblyPath `
-    --source-repo $keysharpRepoPath `
-    --docs-repo $docsRepo `
-    --docs (Join-Path $docsRepo 'docs') `
-    --json $jsonOutput `
-    --markdown $markdownOutput
+foreach ($scope in @('global', 'class-members', 'module-exports')) {
+    $filePrefix = switch ($scope) {
+        'global' { 'global-api' }
+        'class-members' { 'class-members' }
+        default { 'module-exports' }
+    }
+    $jsonOutput = Join-Path $auditDirectory "$filePrefix.$platform.json"
+    $markdownOutput = Join-Path $auditDirectory "$filePrefix.$platform.md"
 
-if ($LASTEXITCODE -ne 0) {
-    throw "The source audit failed with exit code $LASTEXITCODE."
+    & dotnet run --project $toolProject --configuration Release -- `
+        --scope $scope `
+        --assembly $assemblyPath `
+        --source-repo $keysharpRepoPath `
+        --docs-repo $docsRepo `
+        --docs (Join-Path $docsRepo 'docs') `
+        --json $jsonOutput `
+        --markdown $markdownOutput
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "The '$scope' source audit failed with exit code $LASTEXITCODE."
+    }
 }

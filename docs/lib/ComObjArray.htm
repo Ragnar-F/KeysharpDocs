@@ -79,7 +79,7 @@ if ComObjType(obj) &amp; 0x2000
 if ComObjType(obj) = 0x2008
     MsgBox "obj is a ComObjArray of strings"</pre>
 <p>Arrays with up to 8 dimensions are supported.</p>
-<p>Since SafeArrays are not designed to support multiple references, when one SafeArray is assigned to an element of another SafeArray, a separate copy is created. However, this only occurs if the wrapper object has the F_OWNVALUE flag, which indicates it is responsible for destroying the array. This flag can be removed by using <a href="ComObjFlags.htm">ComObjFlags</a>.</p>
+<p>Since SafeArrays are not designed to support multiple references, when one SafeArray is assigned to an element of another SafeArray, a separate copy is created. In AutoHotkey, this depends on the wrapper's F_OWNVALUE flag. In Keysharp, the array is copied regardless of that flag, so clearing it with <a href="ComObjFlags.htm">ComObjFlags</a> does not share the original array.</p>
 <p>When a function or method called by a COM client returns a SafeArray with the F_OWNVALUE flag, a copy is created and returned instead, as the original SafeArray is automatically destroyed.</p>
 
 <h2 id="Related">Related</h2>

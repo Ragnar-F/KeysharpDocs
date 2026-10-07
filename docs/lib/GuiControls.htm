@@ -368,8 +368,8 @@ MyGui.Show("h70")</pre>
   <dd>
     <p>Type: <a href="../Concepts.htm#strings">String</a></p>
     <p>In addition to the <a href="Gui.htm#Add_Options">general options and styles</a>, the following are supported or noteworthy:</p>
-    <p><strong>Limit</strong><em>N</em>: Restricts the user's input. If <em>N</em> is omitted, input is restricted to the visible width of the edit field. Otherwise, specify for <em>N</em> a specific number of characters to limit input. For example, <code class="no-highlight">Limit10</code> would allow no more than 10 characters to be entered.</p>
-    <p><strong>Uppercase</strong> or <strong>Lowercase</strong>: The characters typed by the user are automatically converted to uppercase or lowercase.</p>
+    <p><strong>Limit</strong><em>N</em>: Restricts the user's input. If <em>N</em> is omitted, input is restricted to the visible width of the edit field. Otherwise, specify for <em>N</em> a specific number of characters to limit input. For example, <code class="no-highlight">Limit10</code> would allow no more than 10 characters to be entered. On Linux and macOS, this option is ignored by multi-line Edit controls.</p>
+    <p><strong>Uppercase</strong> or <strong>Lowercase</strong>: The characters typed by the user are automatically converted to uppercase or lowercase. On Linux and macOS, this also applies to pasted text and text assigned by the script.</p>
     <p id="EditMulti"><strong>Multi:</strong> Makes it possible to have more than one line of text. However, it is usually not necessary to specify this because the control is auto-detected as multi-line if <em>Text</em> containing multiple lines, its <a href="#Edit_R">height</a> being taller than its default row height, or its <a href="#Edit_R">row-count</a> having been explicitly specified as greater than 1. For example, specifying <code class="no-highlight">r3</code> in <em>Options</em> will create a 3-line edit control with the following default properties: a vertical scroll bar, word-wrapping enabled, and <kbd>Enter</kbd> captured as part of the input rather than triggering the window's <a href="#DefaultButton">default button</a>.</p>
     <p id="EditNum"><strong>Number:</strong> Prevents the user from typing anything other than digits into the field (however, it is still possible to paste non-digits into it). An alternate way of forcing a numeric entry is to attach an <a href="#UpDown">UpDown</a> control to the Edit.</p>
     <p><strong>Password:</strong> Hides the user's input (such as for password entry) by substituting masking characters for what the user types. If a non-default masking character is desired, include it immediately after the word Password. For example, <code class="no-highlight">Password*</code> would make the masking character an asterisk rather than the black circle (bullet). Note that this option has no effect for <a href="#EditMulti">multi-line</a> edit controls.</p>
@@ -392,6 +392,7 @@ MyGui.Show("h70")</pre>
 </dl>
 
 <h3 id="Edit_Remarks">Edit Remarks</h3>
+<p>On Linux and macOS, the <a href="EditGetLine.htm">Edit functions</a> operate on the script's own single-line, multi-line and password Edit controls. Line numbers count line breaks in the text; a line which wraps on screen still counts as one line.</p>
 <p>Whenever the user changes the control's content, the <a href="GuiOnEvent.htm#Change">Change</a> event is raised.</p>
 <p>If the control has word-wrapping enabled (which is the default for <a href="#EditMulti">multi-line</a> edit controls), any wrapping that occurs as the user types will not produce linefeed characters (only <kbd>Enter</kbd> can do that).</p>
 <p>To load a text file into an edit control, use <a href="FileRead.htm">FileRead</a> and <a href="GuiControl.htm#Value">GuiControl.Value</a>:</p>
@@ -417,7 +418,7 @@ MyGui.Show()</pre>
   <dt>Options</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#strings">String</a></p>
-    <p>The same options an <a href="#Edit">Edit</a> takes, with these differences: multi-line mode is on by default; <code>WantReturn</code> and <code>Password</code> are not supported; and <code>Uppercase</code> and <code>Lowercase</code> affect typed characters but not pasted text. See also <a href="Gui.htm#Add_Options">general options and styles</a>.</p>
+    <p>The same options an <a href="#Edit">Edit</a> takes, with these differences: multi-line mode is on by default; <code>WantReturn</code> and <code>Password</code> are not supported; and <code>Uppercase</code> and <code>Lowercase</code> affect typed characters but not pasted text on Windows. On Linux and macOS, casing also applies to pasted text and text assigned by the script. See also <a href="Gui.htm#Add_Options">general options and styles</a>.</p>
   </dd>
   <dt>Text</dt>
   <dd>
@@ -540,7 +541,7 @@ MyGui.Show()</pre>
   <dt id="RichEdit_PosFromLine">PosFromLine</dt>
   <dd>
     <p><code>Line := GuiCtrl.LineFromPos(Pos)</code>, <code>Pos := GuiCtrl.PosFromLine(Line)</code></p>
-    <p>Converts between a 1-based character position and the 1-based line it is on. <code>PosFromLine</code> returns the position of the line's first character.</p>
+    <p>Converts between a 1-based character position and the 1-based line it is on. <code>PosFromLine</code> returns the position of the line's first character. These queries use the current text, including immediately after editing.</p>
   </dd>
   <dt id="RichEdit_PosFromPoint">PosFromPoint</dt>
   <dd>
@@ -716,7 +717,8 @@ Rich.SetFormat(Pos, Len, "BackgroundFFFF00")  <em>; leaves the text color alone<
 </dl>
 
 <h3 id="Hotkey_Remarks">Hotkey Remarks</h3>
-<p><a href="GuiControl.htm#Value">GuiControl.Value</a> returns the control's hotkey modifiers and name, which are compatible with the <a href="Hotkey.htm">Hotkey</a> function. Examples: <code class="no-highlight">^!c</code>, <code class="no-highlight">+!Home</code>, <code class="no-highlight">+^Down</code>, <code class="no-highlight">^Numpad1</code>, <code class="no-highlight">!NumpadEnd</code>. If there is no hotkey in the control, the value is blank. <a href="Gui.htm#Submit">Gui.Submit</a> stores the same values.</p>
+<p><a href="GuiControl.htm#Value">GuiControl.Value</a> returns the control's hotkey modifiers and name, which are compatible with the <a href="Hotkey.htm">Hotkey</a> function. Examples: <code class="no-highlight">^!c</code>, <code class="no-highlight">+!Home</code>, <code class="no-highlight">+^Down</code>, <code class="no-highlight">^Numpad1</code>, <code class="no-highlight">!NumpadEnd</code>. If there is no hotkey in the control, the value is blank. <a href="Gui.htm#Submit">Gui.Submit</a> stores the same values. <a href="GuiControl.htm#Text">GuiControl.Text</a> is the control's window text rather than its hotkey; on Windows it is blank, as in AutoHotkey.</p>
+<p>On Windows, the control is the native hotkey control. On Linux and macOS, it is a text box which captures the keys pressed in it and displays them in the same form, such as "Ctrl + Alt + C"; there, the <kbd>Win</kbd> modifier (#) is also accepted.</p>
 <p>Whenever the user changes the control's content (by pressing a key), the <a href="GuiOnEvent.htm#Change">Change</a> event is raised. Note that the event is raised even when an incomplete hotkey is present. For example, if the user holds down <kbd>Ctrl</kbd>, the event is raised once and <a href="GuiControl.htm#Value">GuiControl.Value</a> returns only a circumflex (^). When the user completes the hotkey, the event is raised again and <a href="GuiControl.htm#Value">GuiControl.Value</a> returns the complete hotkey.</p>
 <p>The Hotkey control has limited capabilities. For example, it does not support mouse/controller hotkeys or <kbd>Win</kbd> (LWin and RWin). One way to work around this is to provide one or more <a href="#CheckBox">checkboxes</a> as a means for the user to enable extra modifiers such as <kbd>Win</kbd>.</p>
 
@@ -770,7 +772,7 @@ MyLink2 := MyGui.Add("Link",, 'Links may be used anywhere in the text like &lt;a
     <p>Type: <a href="../Concepts.htm#strings">String</a></p>
     <p>In addition to the <a href="Gui.htm#Add_Options">general options and styles</a>, the following are supported or noteworthy:</p>
     <p id="ChooseLB"><strong>Choose</strong><em>N</em>: Specify for <em>N</em> the number of an item to be pre-selected. For example, <code class="no-highlight">Choose5</code> would pre-select the fifth item (as with other options, it can also be a variable such as <code>"Choose" Var</code>). To change the choice after the control has been created, use <a href="GuiControl.htm#Choose">GuiControl.Choose</a>. If the control has the <a href="#ListBoxMulti">Multi</a> option, use <a href="GuiControl.htm#Choose">GuiControl.Choose</a> repeatedly to have multiple items pre-selected.</p>
-    <p id="ListBoxMulti"><strong>Multi</strong> or <strong>0x8</strong>: Allows more than one item to be selected simultaneously via shift-click and control-click. 0x8 allows the same, but without the need for shift/control-click. If this option is present, <a href="GuiControl.htm#Value">GuiControl.Value</a>, <a href="GuiControl.htm#Text">GuiControl.Text</a>, and <a href="Gui.htm#Submit">Gui.Submit</a> return/store an <a href="Array.htm">array</a> of selected items. See the remarks below for details.</p>
+    <p id="ListBoxMulti"><strong>Multi</strong> or <strong>0x8</strong>: Allows more than one item to be selected simultaneously via shift-click and control-click. 0x8 allows the same, but without the need for shift/control-click. If this option is present, <a href="GuiControl.htm#Value">GuiControl.Value</a>, <a href="GuiControl.htm#Text">GuiControl.Text</a>, and <a href="Gui.htm#Submit">Gui.Submit</a> return/store an <a href="Array.htm">array</a> of selected items. On Linux and macOS, the ListBox selects only one item at a time, so these arrays hold at most one item. See the remarks below for details.</p>
     <p><strong>ReadOnly:</strong> Prevents items from being visibly highlighted when they are selected, but <a href="GuiControl.htm#Value">GuiControl.Value</a>, <a href="GuiControl.htm#Text">GuiControl.Text</a>, and <a href="Gui.htm#Submit">Gui.Submit</a> will still return/store the selected item(s).</p>
     <p><strong>Sort:</strong> Sorts the contents of the list alphabetically, which also affects any items added later via <a href="GuiControl.htm#Add">GuiControl.Add</a>. The Sort option also enables incremental searching, which allows an item to be selected by typing the first few characters of its name.</p>
     <p><strong>T</strong><em>n</em>: Sets a tab stop, which can be used to format the text into columns. If the T option is not used, tab stops are set at every 32 dialog units (the width of each "dialog unit" is determined by the operating system). If the T option is used only once, tab stops are set at every <em>n</em> units across the entire width of the control. For example, <code class="no-highlight">t64</code> would double the default distance between tab stops. To have custom tab stops, specify the T option multiple times, e.g. <code class="no-highlight">t8 t16 t32 t64 t128</code>. One tab stop is set for each of the absolute column positions in the list, up to a maximum of 50 tab stops.</p>
@@ -1071,7 +1073,7 @@ MySB.SetText("There are " RowCount " rows selected.")</pre>
   <dt>PartNumber</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>If omitted, it defaults to 1. Otherwise, specify an integer between 1 and 256.</p>
+    <p>If omitted, it defaults to 1. Otherwise, specify an integer between 1 and 256. A part the bar does not have raises an <a href="Error.htm">Error</a>.</p>
   </dd>
   <dt>Style</dt>
   <dd>
@@ -1097,7 +1099,7 @@ MySB.SetText("There are " RowCount " rows selected.")</pre>
 <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
 <p>This method returns the control's <a href="../misc/ControlID.htm#HWND">window handle (HWND)</a>.</p>
 <h4 id="SB_SetParts_Remarks">Remarks</h4>
-<p>Any parts "deleted" by this method will start off with no text the next time they are shown. Furthermore, their icons are automatically destroyed.</p></div>
+<p>Any parts "deleted" by this method will start off with no text the next time they are shown. Furthermore, their icons are automatically destroyed. The parts which remain keep their text and icons.</p></div>
 
 <div class="methodShort" id="SB_SetIcon">
 <h3>SetIcon</h3>
@@ -1118,15 +1120,17 @@ MySB.SetText("There are " RowCount " rows selected.")</pre>
   <dt>PartNumber</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
-    <p>If omitted, it defaults to 1. Otherwise, specify an integer between 1 and 256.</p>
+    <p>If omitted, it defaults to 1. Otherwise, specify an integer between 1 and 256. A part the bar does not have raises an <a href="Error.htm">Error</a>.</p>
   </dd>
 </dl>
 <h4 id="SB_SetIcon_Return_Value">Return Value</h4>
 <p>Type: <a href="../Concepts.htm#numbers">Integer</a></p>
 <p>This method returns the icon's handle (HICON). The HICON is a system resource that can be safely ignored by most scripts because it is destroyed automatically when the status bar's window is destroyed. Similarly, any old icon is destroyed when this method replaces it with a new one. This can be avoided via:</p>
-<pre><a href="SendMessage.htm">SendMessage</a>(0x040F, PartNumber - 1, HICON, MySB)  <em>; 0x040F is SB_SETICON.</em></pre></div>
+<pre><a href="SendMessage.htm">SendMessage</a>(0x040F, PartNumber - 1, HICON, MySB)  <em>; 0x040F is SB_SETICON.</em></pre>
+<p>On Linux and macOS, there is no icon handle, and this method returns 0.</p></div>
 
 <h3 id="StatusBar_Remarks">StatusBar Remarks</h3>
+<p>The <a href="GuiControl.htm#Text">Text</a> property gets or sets the text of the first part. <a href="GuiControl.htm#Value">Value</a> is an empty string and raises an <a href="Error.htm">Error</a> if assigned.</p>
 <p>The simplest use of a status bar is to call <a href="#SB_SetText">SetText</a> whenever something changes that should be reported to the user. To report more than one piece of information, divide the bar into sections via <a href="#SB_SetParts">SetParts</a>. To display icon(s) in the bar, call <a href="#SB_SetIcon">SetIcon</a>.</p>
 <p>Whenever the user clicks on the bar, the <a href="GuiOnEvent.htm#Click">Click</a>, <a href="GuiOnEvent.htm#DoubleClick">DoubleClick</a>, or <a href="GuiOnEvent.htm#ContextMenu">ContextMenu</a> event is raised, and the callback receives the part number. However, the part number might be a very large integer if the user clicks near the sizing grip at the right side of the bar.</p>
 <p>Although the font size, face, and style can be set via <a href="GuiControl.htm#SetFont">GuiControl.SetFont</a> (just like normal controls), the text color cannot be changed. However, the status bar's background color may be changed by using the <a href="#StatusBar_Background">Background</a> option.</p>
@@ -1179,6 +1183,8 @@ MySB.SetText("There are " RowCount " rows selected.")</pre>
 <p>In addition to the <a href="GuiControl.htm">default methods/properties of a GUI control</a>, this control type has the following methods:</p>
 <ul>
   <li><a href="#Tab_UseTab">UseTab</a>: Causes subsequently added controls to be owned by a tab.</li>
+  <li><a href="#Tab_SetImageList">SetImageList</a>: Sets the ImageList which the tabs take their icons from.</li>
+  <li><a href="#Tab_SetTabIcon">SetTabIcon</a>: Shows an icon of that ImageList on a tab.</li>
 </ul>
 <div class="methodShort" id="Tab_UseTab">
 <h3>UseTab</h3>
@@ -1200,6 +1206,20 @@ MySB.SetText("There are " RowCount " rows selected.")</pre>
     <p>If <strong>true</strong>, the tab whose name fully matches the string will be used.</p>
   </dd>
 </dl>
+</div>
+
+<div class="methodShort" id="Tab_SetImageList">
+<h3>SetImageList</h3>
+<p>Sets the <a href="ListView.htm#IL">ImageList</a> which the tabs take their icons from. This method and <a href="#Tab_SetTabIcon">SetTabIcon</a> are Keysharp extensions.</p>
+<pre class="Syntax">PrevImageListID := <a href="GuiControl.htm">GuiCtrl</a>.<span class="func">SetImageList</span>(ImageListID)</pre>
+<p><em>ImageListID</em> is the ID returned by <a href="ListView.htm#IL_Create">IL_Create</a>. The method returns the ID of the ImageList it replaces, or 0 if there was none or <em>ImageListID</em> is not an ImageList's ID.</p>
+</div>
+
+<div class="methodShort" id="Tab_SetTabIcon">
+<h3>SetTabIcon</h3>
+<p>Shows an icon of the control's ImageList on a tab.</p>
+<pre class="Syntax"><a href="GuiControl.htm">GuiCtrl</a>.<span class="func">SetTabIcon</span>(TabIndex, ImageIndex)</pre>
+<p><em>TabIndex</em> is 1 for the first tab, 2 for the second, and so on. <em>ImageIndex</em> is 1 for the first image of the ImageList set by <a href="#Tab_SetImageList">SetImageList</a>; 0 or a number past the last image removes the tab's icon.</p>
 </div>
 
 <h3 id="Tab_Remarks">Tab Remarks</h3>

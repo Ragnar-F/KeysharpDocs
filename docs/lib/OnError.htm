@@ -27,7 +27,7 @@
     <pre class="NoIndent">MyCallback(Thrown, Mode) { ...</pre>
     <p>Although the names you give the parameters do not matter, the following values are sequentially assigned to them:</p>
     <ol>
-      <li>The thrown value, usually an <a href="Error.htm">Error object</a>.</li>
+      <li>The thrown value, usually an <a href="Error.htm">Error object</a>. A thrown value which is not an Error object is passed as <code>Error(Value)</code>.</li>
       <li>The error mode: Return, Exit, or ExitApp. For details, see the <a href="#Error_Modes">table below</a>.</li>
     </ol>
     <p>You can omit one or more parameters from the end of the callback's parameter list if the corresponding information is not needed, but in this case an asterisk must be specified as the final parameter, e.g. <code>MyCallback(Param1, *)</code>.</p>
@@ -73,9 +73,10 @@
 </table>
 
 <h2 id="Remarks">Remarks</h2>
+<p>When a continuable built-in error is continued, the built-in returns immediately. Its call yields an empty string, 0 when the built-in returns a number, or no value when it returns an object.</p>
 <p><em>Callback</em> is called only for errors or exceptions which would normally cause an error message to be displayed. It cannot be called for a load-time error, since OnError cannot be called until after the script has loaded.</p>
 <p><em>Callback</em> is called on the current <a href="../misc/Threads.htm">thread</a>, before it exits (that is, before the call stack unwinds).</p>
-<p id="Unwind">An exception which is not a Keysharp error, such as a .NET exception thrown by <a href="_CSharp.htm">#CSharp</a> code, reaches the callbacks only when it ends the thread, after the call stack has unwound.</p>
+<p id="Unwind">An exception which is not a Keysharp error, such as a .NET exception escaping a built-in function, reaches the callbacks only when it ends the thread, after the call stack has unwound.</p>
 
 <h2 id="Related">Related</h2>
 <p><a href="Try.htm">Try</a>, <a href="Catch.htm">Catch</a>, <a href="Throw.htm">Throw</a>, <a href="OnExit.htm">OnExit</a></p>

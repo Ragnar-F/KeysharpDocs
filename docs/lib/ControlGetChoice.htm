@@ -17,6 +17,7 @@
 <p>Returns the text of the currently selected entry in a list box, combo box, or drop-down list.</p>
 
 <pre class="Syntax">Choice := <span class="func">ControlGetChoice</span>(ControlID <span class="optional">, WinTitle, WinText, ExcludeTitle, ExcludeText</span>)</pre>
+<p class="note"><strong>Note:</strong> On Linux and macOS, this function operates only on the script's own controls. Another program's control raises a <a href="Error.htm#TargetError">TargetError</a>.</p>
 
 <h2 id="Parameters">Parameters</h2>
 <dl>

@@ -26,7 +26,7 @@
 <pre class="Syntax"><span class="func">MsgBox</span> <span class="optional">Text, Title, Options</span>
 Result := <span class="func">MsgBox</span>(<span class="optional">Text, Title, Options</span>)</pre>
 
-<p class="note"><strong>Note:</strong> On Linux and macOS, the Abort/Retry/Ignore (2), Retry/Cancel (5) and Cancel/Try Again/Continue (6) options show only an OK button.</p>
+<p class="note"><strong>Note:</strong> On Linux and macOS, only the button set, the icon and the default button apply: the modality, always-on-top, Help, right-justification and right-to-left options are ignored, and the Abort/Retry/Ignore (2), Retry/Cancel (5) and Cancel/Try Again/Continue (6) options show only an OK button.</p>
 <h2 id="Parameters">Parameters</h2>
 <dl>
 
@@ -147,6 +147,7 @@ Result := <span class="func">MsgBox</span>(<span class="optional">Text, Title, O
 </table>
 
 <h3 id="Group_3_Default_Button">Group #3: Default Button</h3>
+<p>The named <code>DefaultN</code> option accepts 1 through 4. Combining conflicting numeric and named options retains the implementation's existing precedence.</p>
 <p>To indicate the default button, add <u>one</u> of the following values:</p>
 <table class="info">
   <tr>
@@ -255,7 +256,6 @@ Result := <span class="func">MsgBox</span>(<span class="optional">Text, Title, O
 <p>An <a href="Error.htm">Error</a> is thrown on failure, such as if the options are invalid, the <a href="#max">MsgBox limit</a> has been reached, or the message box could not be displayed for some other reason.</p>
 
 <h2 id="Remarks">Remarks</h2>
-<p class="note"><strong>Note:</strong> The modality options and the Help option (16384) are ignored. The message box blocks the window which launched it or, while <a href="Gui.htm#OwnDialogs">OwnDialogs</a> is active, all of the script's GUI windows.</p>
 <p>A message box usually looks like this:</p>
 <img src="../static/dlg_message.png" alt="MsgBox" />
 <p>To determine which button the user pressed, use the function's <a href="#Result">return value</a>. For example:</p>
@@ -269,7 +269,9 @@ if MsgBox("Retry or cancel?",, "R/C") = "Retry"
     MsgBox("You pressed Retry.")</pre>
 <p>To customize the names of the buttons, see <a href="../scripts/index.htm#MsgBoxButtonNames">Changing MsgBox's Button Names</a>.</p>
 <p class="note"><strong>Note:</strong> Pressing <kbd>Ctrl</kbd>+<kbd>C</kbd> while a message box is active will copy its text to the clipboard. This applies to all message boxes, not just those produced by AutoHotkey.</p>
-<p id="Owner"><strong>Using MsgBox with GUI windows:</strong> A GUI window may display a <em>modal</em> message box by means of the <a href="Gui.htm#OwnDialogs">OwnDialogs option</a>. A <em>modal</em> message box prevents the user from interacting with the GUI window until the message box is dismissed. In such a case, it is not necessary to specify the System Modal or Task Modal options from the table above.</p><p>If the <code class="no-highlight">Owner<i>HWND</i></code> option is specified, it takes precedence over any other setting. <i>HWND</i> can be the <a href="../misc/WinTitle.htm#ahk_id">HWND</a> of any window, even one not owned by the script.</p>
+<p id="Owner"><strong>Using MsgBox with GUI windows:</strong> A GUI window may display a <em>modal</em> message box by means of the <a href="Gui.htm#OwnDialogs">OwnDialogs option</a>. A <em>modal</em> message box prevents the user from interacting with the GUI window until the message box is dismissed. In such a case, it is not necessary to specify the System Modal or Task Modal options from the table above.</p>
+<p>On Windows, WinForms disables other visible, enabled windows on the same UI thread until the message box closes, even without <a href="Gui.htm#OwnDialogs">OwnDialogs</a> or the Task Modal option. Specifying an owner does not limit this extra modal handling to that window.</p>
+<p>If the <code class="no-highlight">Owner<i>HWND</i></code> option is specified, it takes precedence over any other setting. <i>HWND</i> can be the <a href="../misc/WinTitle.htm#ahk_id">HWND</a> of any window, even one not owned by the script.</p>
 <p><strong>The Help button:</strong> When the Help button option (16384) is present in <em>Options</em>, pressing the Help button will have no effect unless both of the following are true:</p>
 <ol>
   <li>The message box is owned by a GUI window by means of the <a href="Gui.htm#OwnDialogs">OwnDialogs option</a>.</li>

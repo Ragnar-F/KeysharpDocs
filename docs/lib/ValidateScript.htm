@@ -36,7 +36,7 @@ Result := <span class="func" id="CompileScript">CompileScript</span>(Code)</pre>
   <tr><td><code>Warnings</code></td><td>An Array of warning messages. Always empty for ValidateScript.</td></tr>
 </table>
 <p>A ValidateScript message is prefixed with its location where that is known: the file when <em>Code</em> names one, then the line and column, as in <code class="no-highlight">C:\Scripts\other.ks:3:7: message</code>.</p>
-<p>CompileScript splits the compiler's own report into lines, one line per element, so its Arrays also contain the report's heading lines, such as <code class="no-highlight">The following errors occurred:</code>. When compilation fails, <code>Errors</code> can also contain the report's warning lines, and when the C# generated from the script is what fails to compile, it also contains that generated code.</p>
+<p>CompileScript splits the compiler's own report into lines, one line per element, so its Arrays also contain the report's heading lines, such as <code class="no-highlight">The following errors occurred:</code>. When compilation fails, <code>Errors</code> can also contain the report's warning lines.</p>
 
 <h2 id="Choosing">Which to Use</h2>
 <table class="info">

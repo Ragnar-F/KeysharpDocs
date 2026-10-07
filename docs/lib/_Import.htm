@@ -28,6 +28,7 @@
     <p>Paths can be absolute or relative to any of the <a href="../Modules.htm#Search_Path">search directories</a>.</p>
     <p>To load an <a href="../Program.htm#embedded-scripts">embedded script</a> as a module, specify an asterisk followed by the resource name. For example: <code>"*RESNAME"</code>.</p>
     <p><span class="ver">[v2.1-alpha.21+]</span>: To import a <a href="_Module.htm">sub-module</a> from a different group, use a path-qualified name of the form "Path:ModuleName". <em>Path</em> should identify the main module of the group, which is either the script itself or a file imported by #Import.</p>
+    <p>Omit <em>Path</em> to select a module in the current group, as in <code>":ModuleName"</code>. The name <code>__Init</code> selects the group's initial module; <code>__Main</code> selects the main script module.</p>
   </dd>
   <dt>ModuleAlias</dt>
   <dd>
@@ -36,6 +37,8 @@
   <dt>Name</dt>
   <dd>
     <p>The name of a function, class or global variable in the imported module. This can also be one of that module's imported aliases, whether or not the alias is re-exported for wildcard import.</p>
+    <p>A named import of an undeclared variable creates an unset variable in a script module or AHK. Other built-in modules only accept members they export.</p>
+    <p>A <a href="_CSharp.htm">#CSharp</a> member's <code>[UserDeclaredName("Name")]</code> supplies its name for imports as well as direct and dynamic access. An imported alias retains the original member's storage or identity.</p>
   </dd>
   <dt>Alias</dt>
   <dd>
@@ -44,21 +47,32 @@
 </dl>
 
 <h2 id="Imported_Modules">Import from File</h2>
-<p>Imports are processed after the main script file has been parsed, in an unspecified order. If <em>ModuleName</em> (excluding quote marks) does not match a module defined by <a href="_Module.htm">#Module</a> or previously imported from file, #Import attempts to locate a module file and load it. For details, see <a href="../Modules.htm#Search_Path">Search Path</a>.</p>
+<p>Imports are processed after the main script file has been parsed, in an unspecified order. If <em>ModuleName</em> (excluding quote marks) does not match a module defined by <a href="_Module.htm">#Module</a> in the current group or a built-in module, #Import attempts to locate a module file and load it. For details, see <a href="../Modules.htm#Search_Path">Search Path</a>.</p>
+<p>File lookup begins in the directory of the source file containing the import, including when that source was included with <a href="_Include.htm">#Include</a>. Imports resolving to the same full file path share one module object and variable store. For example, <code>"Lib"</code> and <code>"./Lib.ahk"</code> refer to the same module when both resolve to the same file. Each imported file has its own group of module names, so separate files can define the same module name.</p>
+<p>File paths compare without case on Windows and macOS, and with case on Linux. This is separate from the comparison of identifier names.</p>
 
 <h2 id="Imported_Names">Imported Names</h2>
-<p>The module itself is added to the current module's global namespace only if <em>ModuleAlias</em> is specified or <em>ModuleName</em> is unquoted.</p>
-<p id="Wildcard_Import">If <code>*</code> is used, each unassigned and undeclared name in the current module may implicitly resolve to a name exported from <em>ModuleName</em>. If a name is exported from multiple imported modules, the last import takes precedence. Explicit imports and other declarations take precedence over implicit imports, regardless of order.</p>
+<p>Imported names and aliases use ordinal case-insensitive comparison, including Unicode case pairs; <code>Alias</code>, <code>alias</code> and <code>ALIAS</code> refer to the same binding. See <a href="../Concepts.htm#names">Names</a> for the difference from AutoHotkey.</p>
+<p><span class="ver">[v2.1-alpha.33+]</span>: An import in a function binds names within that function and its nested functions, rather than adding them to the module's global namespace. Imports are resolved at load time and are available throughout the scope, including before the directive. A function's imported names are not exported by the module, even with the Export keyword.</p>
+<p>Keysharp also allows imports in class bodies and ordinary statement blocks. A class-body import is available to that class's methods and properties; an import in a statement block belongs to the surrounding function or module. These placements extend the AutoHotkey syntax.</p>
+<p>The module object is bound in the current scope only if <em>ModuleAlias</em> is specified or <em>ModuleName</em> is unquoted.</p>
+<p id="Wildcard_Import">If <code>*</code> is used, each unassigned and undeclared name in the current scope may implicitly resolve to a name exported from <em>ModuleName</em>. If a name is exported from multiple imported modules, the last applicable import in source order takes precedence, including imports in enclosing functions and the module. Explicit imports and other declarations take precedence over implicit imports, regardless of order.</p>
 <p><span class="ver">[v2.1-alpha.31+]</span>: Each module exports all global names which do not begin with an underscore, except for names imported without the Export keyword.</p>
 <p class="note"><strong>Note:</strong> An implicitly imported variable cannot be the target of an assignment, as the presence of an assignment would cause a new variable to be created in the current module.</p>
-<p>A load-time error is raised if any name used in an explicit import is also used in some other declaration within the current module.</p>
+<p>A load-time error is raised if an explicitly imported name conflicts with another import or declaration in the same scope. Repeating an import of the same binding is allowed. Within a function, parameters and local variables may shadow imported names, while static and global declarations with the same name conflict.</p>
+<p>An imported variable is an alias of the original variable, including when the source module imports that name from another module. Reads, assignments and references reach the original storage. For example, <code>&amp;Alias</code>, <code>&amp;%"Alias"%</code> and <code>ModuleObject.__Ref("Alias")</code> return the same reference when each name resolves to that variable. Ordinary object properties remain property references.</p>
+<p>An explicit alias can use a built-in variable name, such as <code>#Import Source { Value as A_WorkingDir }</code>. Reads use the alias. At module scope, assignments and explicit references also use the alias. Within a function, assignments and explicit references use the built-in unless the function assumes global scope or explicitly imports the alias in its function scope; declaring only <code>global A_WorkingDir</code> does not select the alias.</p>
 
 <h2 id="Export">Export</h2>
 <p>The imported names are only exported (accessible to wildcard import in other modules) if the Export keyword is used.</p>
+<p>A wildcard Export enables lookup through all of the module's wildcard imports, including ordinary wildcard imports. An ordinary named import still prevents that name from being re-exported. Repeating the same named import uses the last directive's Export flag.</p>
+<p>A module cannot wildcard import itself.</p>
+<p>A named import from another module resolves indirect source names at load time. If the source name comes from an ordinary wildcard import, it remains available by name but is not re-exported.</p>
 
 <h2 id="Remarks">Remarks</h2>
 <p>Line breaks can be used inside the braces, due to <a href="../Scripts.htm#continuation-expr">continuation by enclosure</a>.</p>
 <p>Classes and functions are available even before the source module has executed, such as if the module which imports them is executing first due to a circular import.</p>
+<p>Module loading and execution remain eager in Keysharp. Placing an import inside a function does not defer the imported module's initialization until that function is called.</p>
 
 <h2 id="Related">Related</h2>
 <p><a href="../Modules.htm">Modules</a>, <a href="_Module.htm">#Module</a>, <a href="_Include.htm">#Include</a></p>

@@ -13,7 +13,7 @@
 
 
 <h1>ObjAddRef / ObjRelease</h1>
-<p class="note"><strong>Note:</strong> These functions operate on native COM interface pointers and do not affect the lifetime of script objects. They are available only on Windows; on Linux and macOS, they throw an error.</p>
+<p class="note"><strong>Note:</strong> These functions manage native COM references, including those of a script object's COM wrapper, not AutoHotkey's script-object reference count. They are available only on Windows; on Linux and macOS, they throw an error.</p>
 
 <p>Increments or decrements an object's <a href="../Objects.htm#Reference_Counting">reference count</a>.</p>
 

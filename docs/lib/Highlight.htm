@@ -23,7 +23,7 @@
   <dt>Width, Height</dt>
   <dd><p>Type: Integer</p><p>The width and height of the rectangle, in pixels. If omitted, 0 is used, in which case nothing is shown until a size is set.</p></dd>
   <dt>Color</dt>
-  <dd><p>Type: String or Integer</p><p>The border color, as a color name such as <code>"Lime"</code>, a hexadecimal string such as <code>"FF0000"</code>, or a 0xRRGGBB integer. If omitted, red is used.</p></dd>
+  <dd><p>Type: String or Integer</p><p>The border color, as a color name such as <code>"Lime"</code>, a hexadecimal string such as <code>"FF0000"</code>, or a 0xRRGGBB integer. If omitted, red is used. Any other string raises a <a href="Error.htm#ValueError">ValueError</a>.</p></dd>
   <dt>Thickness</dt>
   <dd><p>Type: Integer</p><p>The border thickness in pixels. If omitted, 2 is used. Zero hides the border.</p></dd>
 </dl>
@@ -43,15 +43,15 @@
 <p id="Y"><strong>HighlightObj.Y:</strong> The top edge of the rectangle, in screen pixels.</p>
 <p id="Width"><strong>HighlightObj.Width:</strong> The width of the rectangle, in pixels.</p>
 <p id="Height"><strong>HighlightObj.Height:</strong> The height of the rectangle, in pixels.</p>
-<p id="Color"><strong>HighlightObj.Color:</strong> The border color. It can be set with a color name, a hexadecimal string or a 0xRRGGBB integer, and always reads back as a six-digit hexadecimal string such as <code>"FF0000"</code>.</p>
+<p id="Color"><strong>HighlightObj.Color:</strong> The border color. It can be set with a color name, a hexadecimal string or a 0xRRGGBB integer, and always reads back as a six-digit hexadecimal string such as <code>"FF0000"</code>. Assigning any other string raises a <a href="Error.htm#ValueError">ValueError</a> and keeps the previous color.</p>
 <p id="Thickness"><strong>HighlightObj.Thickness:</strong> The border thickness in pixels. Zero hides the border.</p>
 <p id="IsVisible"><strong>HighlightObj.IsVisible:</strong> Returns 1 if the outline is currently on screen and 0 otherwise. This property is read-only; use <a href="#Show">Show</a> and <a href="#Hide">Hide</a> to change it.</p>
-<p id="Hwnd"><strong>HighlightObj.Hwnd:</strong> The window handle of the overlay, or 0 where the platform draws the overlay without a client-side window. This property is read-only.</p>
+<p id="Hwnd"><strong>HighlightObj.Hwnd:</strong> The window handle of the overlay, or 0 where the platform draws the overlay without a client-side window. This property is read-only. <a href="#Hide">Hide</a> and <a href="#Show">Show</a> leave it unchanged, except for a Wayland layer-shell surface.</p>
 
 <h2 id="Methods">Methods</h2>
 <p id="Show"><strong>HighlightObj.Show(<span class="optional">X, Y, Width, Height</span>):</strong> Displays the outline, creating the overlay on first use, and returns immediately without blocking. Any coordinates given replace the current ones first, so Show doubles as a move or resize.</p>
 <p id="Move"><strong>HighlightObj.Move(<span class="optional">X, Y, Width, Height</span>):</strong> Changes the rectangle without changing visibility. All parameters are optional, so <code>Move(, , 300, 200)</code> resizes without moving. On a hidden outline this only records the new geometry, to be used by the next Show.</p>
-<p id="Hide"><strong>HighlightObj.Hide():</strong> Removes the outline from the screen but keeps the overlay, so a later Show is immediate.</p>
+<p id="Hide"><strong>HighlightObj.Hide():</strong> Removes the outline from the screen but keeps the overlay for reuse. On Windows, Linux/X11 and macOS, the runtime retains its window; Wayland layer-shell surfaces and compositor overlays are created again by the next Show.</p>
 <p id="Destroy"><strong>HighlightObj.Destroy():</strong> Destroys the overlay and frees its resources. It is safe to call more than once, and the object can be reused afterwards: a later Show builds a new overlay.</p>
 
 <h2 id="Related">Related</h2>

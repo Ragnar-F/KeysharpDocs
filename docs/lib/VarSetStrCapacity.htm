@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <title>VarSetStrCapacity - Syntax &amp; Usage | Keysharp</title>
-<meta name="description" content="The VarSetStrCapacity function enlarges a variable's holding capacity or frees its memory. This is not normally needed, but may be used with DllCall or SendMessage or to optimize repeated concatenation." />
+<meta name="description" content="The VarSetStrCapacity function enlarges the memory a variable keeps for native code, or frees it. This is not normally needed, but may be used with DllCall or SendMessage." />
 <meta name="ahk:equiv-v1" content="lib/VarSetCapacity.htm" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,7 +14,7 @@
 
 <h1>VarSetStrCapacity</h1>
 
-<p>Enlarges a variable's holding capacity or frees its memory. This is not normally needed, but may be used with <a href="DllCall.htm">DllCall</a> or <a href="SendMessage.htm">SendMessage</a> or to optimize repeated concatenation.</p>
+<p>Enlarges the memory a variable keeps for native code, or frees it. This is not normally needed, but may be used with <a href="DllCall.htm">DllCall</a> or <a href="SendMessage.htm">SendMessage</a>.</p>
 <pre class="Syntax">GrantedCapacity := <span class="func">VarSetStrCapacity</span>(&amp;TargetVar <span class="optional">, RequestedCapacity</span>)</pre>
 
 <h2 id="Parameters">Parameters</h2>
@@ -23,7 +23,7 @@
   <dt>&amp;TargetVar</dt>
   <dd>
     <p>Type: <a href="../Concepts.htm#variable-references">VarRef</a></p>
-    <p>A reference to a variable. For example: <code>VarSetStrCapacity(&amp;MyVar, 1000)</code>. This can also be a dynamic variable such as <code>MyArray%i%</code> or a <a href="../Functions.htm#ByRef">function's ByRef parameter</a>.</p>
+    <p>A reference to a variable. For example: <code>VarSetStrCapacity(&amp;MyVar, 1000)</code>. This can also be a <a href="../Functions.htm#ByRef">function's ByRef parameter</a>, or a <a href="../Language.htm#dynamic-variables">dynamic reference</a> such as <code>&amp;MyArray%i%</code> to a variable outside the function.</p>
   </dd>
 
   <dt>RequestedCapacity</dt>
@@ -33,9 +33,8 @@
     <p>Specify for <em>RequestedCapacity</em> the number of characters that the variable should be able to hold after the adjustment. <em>RequestedCapacity</em> does not include the internal zero terminator. For example, specifying 1 would allow the variable to hold up to one character in addition to its internal terminator. Note: the variable will auto-expand if the script assigns it a larger value later.</p>
     <p>Since this function is often called simply to ensure the variable has a certain minimum capacity, for performance reasons, it shrinks the variable only when <em>RequestedCapacity</em> is 0. In other words, if the variable's capacity is already greater than <em>RequestedCapacity</em>, it will not be reduced (but the variable will still made blank for consistency).</p>
     <p>Therefore, to explicitly shrink a variable, first free its memory with <code>VarSetStrCapacity(&amp;Var, 0)</code> and then use <code>VarSetStrCapacity(&amp;Var, NewCapacity)</code> -- or simply let it auto-expand from zero as needed.</p>
-    <p>For performance reasons, freeing a variable whose previous capacity was less than 64 characters might have no effect because its memory is of a permanent type. In this case, the current capacity will be returned rather than 0.</p>
-    <p>For performance reasons, the memory of a variable whose capacity is less than 4096 bytes is not freed by storing an empty string in it (e.g. <code>Var := ""</code>). However, <code>VarSetStrCapacity(&amp;Var, 0)</code> does free it.</p>
-    <p id="neg1">Specify -1 for <em>RequestedCapacity</em> to update the variable's internally-stored string length to the length of its current contents. This is useful in cases where the string has been altered indirectly, such as by passing its <a href="StrPtr.htm">address</a> via <a href="DllCall.htm">DllCall</a> or <a href="SendMessage.htm">SendMessage</a>. In this mode, VarSetStrCapacity returns the length rather than the capacity.</p>
+    <p>Assigning a value to the variable keeps its memory, which grows when the value does not fit. <code>VarSetStrCapacity(&amp;Var, 0)</code> frees it and returns 0.</p>
+    <p id="neg1">Specify -1 for <em>RequestedCapacity</em> to set the variable to the text in its memory, up to the first null character. This is useful in cases where the string has been altered indirectly, such as by passing its <a href="StrPtr.htm">address</a> via <a href="DllCall.htm">DllCall</a> or <a href="SendMessage.htm">SendMessage</a>. In this mode, VarSetStrCapacity returns the variable's new length rather than the capacity. For a variable holding a number, it returns the length of the number's string form and leaves the number in place.</p>
   </dd>
 
 </dl>
@@ -47,29 +46,20 @@
 <h2 id="Failure">Failure</h2>
 <p>An exception is thrown under any of the following conditions:</p>
 <ul>
-  <li><em>TargetVar</em> is not a valid variable reference. It is not possible to pass an <a href="../Objects.htm#Usage_Objects">object property</a> or <a href="../Variables.htm#BuiltIn">built-in variable</a> by reference, and therefore not valid to pass one to this function.</li>
+  <li><a href="Error.htm#TypeError">TypeError</a>: <em>TargetVar</em> is neither a <a href="../Concepts.htm#variable-references">VarRef</a> nor an object with a <code>__Value</code> property.</li>
+  <li><a href="Error.htm#TypeError">TypeError</a>: A capacity above 0 is requested for something which has no memory of its own to size, such as a property or built-in variable reference. Dynamic references to locals and statics, and aliases imported through one or more modules, retain the original variable's memory.</li>
+  <li><a href="Error.htm#TypeError">TypeError</a>: <em>RequestedCapacity</em> is omitted and the variable holds a number or an object.</li>
   <li>The requested capacity is too large to fit within any single contiguous memory block available to the script. In rare cases, this may be due to the system running out of memory.</li>
-  <li><em>RequestedCapacity</em> is less than -1 or greater than the capacity theoretically supported by the current platform.</li>
+  <li><a href="Error.htm#ValueError">ValueError</a>: <em>RequestedCapacity</em> is less than -1, or is 2147483647 or greater.</li>
 </ul>
 
 <h2 id="Remarks">Remarks</h2>
 <p>The <a href="Buffer.htm">Buffer</a> object offers superior clarity and flexibility when dealing with binary data, structures, DllCall and similar. For instance, a Buffer object can be assigned to a property or array element or be passed to or returned from a function without copying its contents.</p>
-<p>This function can be used to enhance performance when building a string by means of gradual concatenation. This is because multiple automatic resizings can be avoided when you have some idea of what the string's final length will be. In such a case, <em>RequestedCapacity</em> need not be accurate: if the capacity is too small, performance is still improved and the variable will begin auto-expanding when the capacity has been exhausted. If the capacity is too large, some of the memory is wasted, but only temporarily because all the memory can be freed after the operation by means of <code>VarSetStrCapacity(&amp;Var, 0)</code> or <code>Var := ""</code>.</p>
+<p>Capacity applies to the native memory used by <a href="StrPtr.htm">StrPtr</a> and <a href="DllCall.htm#str">Str/WStr</a> arguments, not concatenation. With -1, a different string assigned since the memory was last synchronized takes precedence, up to its first null; reassigning the string already held preserves native writes. See <a href="StrPtr.htm#CopyIn">StrPtr's synchronization rules</a>.</p>
 
 <h2 id="Related">Related</h2>
 <p><a href="Buffer.htm">Buffer object</a>, <a href="DllCall.htm">DllCall</a>, <a href="NumPut.htm">NumPut</a>, <a href="NumGet.htm">NumGet</a></p>
 <h2 id="Examples">Examples</h2>
-<div class="ex" id="ExConcat">
-<p><a class="ex_number" href="#ExConcat"></a> Optimize by ensuring <em>MyVar</em> has plenty of space to work with.</p>
-<pre>VarSetStrCapacity(&amp;MyVar, 5120000)  <em>; ~10 MB</em>
-Loop
-{
-    <em>; ...</em>
-    MyVar .= StringToConcatenate
-    <em>; ...</em>
-}</pre>
-</div>
-
 <div class="ex" id="ExDllCall">
 <p><a class="ex_number" href="#ExDllCall"></a> Use a variable to receive a string from an external function via <a href="DllCall.htm">DllCall</a>. (Note that the use of a <a href="Buffer.htm#ExString">Buffer object</a> may be preferred; in particular, when dealing with non-Unicode strings.)</p>
 <pre>max_chars := 10
